@@ -1,0 +1,2 @@
+The images contained within this folder are packaged without extra cost and are not provided with Copyrights. You do not have permission to
+use, distribute or edit any image files found within this software package. 
