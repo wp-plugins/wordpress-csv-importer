@@ -89,6 +89,7 @@ function wtgcsv_debugmode(){
 * Uses wp_die if version does not match and displays message 
 */
 function wtgcsv_php_version_check_wp_die(){
+    global $wtgcsv_php_version_minimum;
     if ( version_compare(PHP_VERSION, $wtgcsv_php_version_minimum, '<') ) {
         if ( is_admin() && (!defined('DOING_AJAX') || !DOING_AJAX) ) {
             require_once ABSPATH.'/wp-admin/includes/plugin.php';

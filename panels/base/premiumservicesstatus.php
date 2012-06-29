@@ -11,7 +11,6 @@ $panel_array['tabnumber'] = $wtgcsv_tab_number;
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_array['panel_number'];// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('When a post does not have settings in its custom fields, these defaults are used.');
 $panel_array['panel_help'] = __('Settings which effect posts (that includes pages or custom post types) will be found here. This panel of settings behaves as a default, in many cases the default is ignored when a setting is applied to a specific post i.e. setting value stored in a custom field.'); 
-$panel_array['panel_icon'] = $panel_array['panel_name'].'-notice.png';
 ?>
 <div id="titles" class="postbox">
     <div class="handlediv" title="Click to toggle"><br /></div>
@@ -38,7 +37,7 @@ $panel_array['panel_icon'] = $panel_array['panel_name'].'-notice.png';
                 if($wtgcsv_apiservicestatus){
                     echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webservice/webtechglobal-webservice-online.jpg"/>';                        
                 }else{
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webservice/webtechglobal-webservice-maintenence.png"/>'; 
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webservice/webtechglobal-webservice-maintenence.jpg"/>'; 
                 }
                 
                 ###########################################
@@ -47,11 +46,11 @@ $panel_array['panel_icon'] = $panel_array['panel_name'].'-notice.png';
                 ####                                   ####
                 ###########################################             
                 if(isset($wtgcsv_is_domainregistered) && $wtgcsv_is_domainregistered == true){
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/domain/wordpress-csv-importer-domainstatus-registered.png"/>';    
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/domain/wordpress-csv-importer-domainstatus-registered.jpg"/>';    
                 }elseif(isset($wtgcsv_is_domainregistered) && $wtgcsv_is_domainregistered == false){ 
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/domain/wordpress-csv-importer-domainstatus-notregistered.png"/>';         
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/domain/wordpress-csv-importer-domainstatus-notregistered.jpg"/>';         
                 }else{
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/domain/wordpress-csv-importer-domainstatus-unknown.png"/>';          
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/domain/wordpress-csv-importer-domainstatus-unknown.jpg"/>';          
                 }
                 
                 ###########################################
@@ -62,17 +61,17 @@ $panel_array['panel_icon'] = $panel_array['panel_name'].'-notice.png';
                 /*   
                 Make use of these images and display the service level user is currently getting
                 
-                wordpress-csv-importer-support-level-prioritylevel.png
-                wordpress-csv-importer-support-level-highlevel.png
-                wordpress-csv-importer-support-level-standard.png
-                wordpress-csv-importer-support-level-unknown.png
+                wordpress-csv-importer-support-level-prioritylevel.jpg
+                wordpress-csv-importer-support-level-highlevel.jpg
+                wordpress-csv-importer-support-level-standard.jpg
+                wordpress-csv-importer-support-level-unknown.jpg
                 
                 if(isset($wtgcsv_is_domainregistered) && $wtgcsv_is_domainregistered == true){
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webtechglobal-pluginmembership-online.png"/>';    
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webtechglobal-pluginmembership-online.jpg"/>';    
                 }elseif(isset($wtgcsv_is_domainregistered) && $wtgcsv_is_domainregistered == false){ 
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webtechglobal-pluginmembership-none.png"/>';         
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webtechglobal-pluginmembership-none.jpg"/>';         
                 }else{
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webtechglobal-pluginmembership-unknown.png"/>';          
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webtechglobal-pluginmembership-unknown.jpg"/>';          
                 }*/
                 ?>
 

@@ -136,7 +136,7 @@ function wtgcsv_notice_output(){
  * Adds Script Start and Stylesheets to the beginning of pages
  */
 function wtgcsv_header_page($pagetitle,$layout){
-    global $wtgcsv_mpt_arr,$wtgcsv_adm_set,$wtgcsv_pub_set,$wtgcsv_currentproject_code;
+    global $wtgcsv_mpt_arr,$wtgcsv_adm_set,$wtgcsv_pub_set,$wtgcsv_currentproject_code,$wtgcsv_is_free;
 
     $wtgcsv_adm_set = get_option('wtgcsv_adminset');  
     $wtgcsv_pub_set = get_option('wtgcsv_pubicset');
@@ -1393,6 +1393,13 @@ function wtgcsv_panel_header( $panel_array, $boxintro_div = true ){
     $global_panel_state = ''; 
     if($wtgcsv_panels_closed){
         $global_panel_state = 'closed';    
+    }
+    
+    // override panel state if $panel_array includes specific state
+    if(isset($panel_array['panel_state']) && $panel_array['panel_state'] == 1){
+        $global_panel_state = 'closed';    
+    }elseif(isset($panel_array['panel_state']) && $panel_array['panel_state'] == 0){
+        $global_panel_state = '';
     }?>
 
     <div id="titles" class="postbox <?php echo $global_panel_state;?>">

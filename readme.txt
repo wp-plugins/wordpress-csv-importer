@@ -17,6 +17,10 @@ Wordpress CSV Importer (Beta), data import and post creation plugin
 Initial upload and activation as guided by Wordpress.org standard plugin installation.
  
 == Changelog ==
+= 0.0.9 =
+* BETA Edition
+* An error when activating plugin was found straight after releasing 0.0.8 and fixed
+
 = 0.0.8 =
 * BETA Edition
 * Paid edition features will now be mostly hidden
