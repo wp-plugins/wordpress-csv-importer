@@ -3,7 +3,7 @@
 $pageid = 'install';
 $pagefolder = 'install';
 
-global $wtgcsv_options_array,$wtgcsv_display_testing_info,$wtgcsv_is_installed,$wtgcsv_adm_set,$wtgcsv_mpt_arr,$wpdb,$wtgcsv_apiservicestatus,$wtgcsv_is_subscribed,$wtgcsv_requirements_missing,$wtgcsv_apisession_array,$wtgcsv_nav_type;
+global $wtgcsv_options_array,$wtgcsv_is_installed,$wtgcsv_adm_set,$wtgcsv_mpt_arr,$wpdb,$wtgcsv_apiservicestatus,$wtgcsv_is_subscribed,$wtgcsv_requirements_missing,$wtgcsv_apisession_array,$wtgcsv_nav_type;
 
 // count number of panels, variable used as in code ID to pass to functions, not the TAB number users can see in url
 $panel_number = 0;  

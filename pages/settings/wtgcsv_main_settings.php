@@ -1,5 +1,5 @@
 <?php 
-global $wtgcsv_display_testing_info,$wtgcsv_mpt_arr,$wpdb,$wtgcsv_options_array,$wtgcsv_theme_array,$wtgcsv_nav_type,$wtgcsv_is_free;
+global $wtgcsv_mpt_arr,$wpdb,$wtgcsv_options_array,$wtgcsv_theme_array,$wtgcsv_nav_type,$wtgcsv_is_free;
 $pageid = 'settings';// used to access variable.php configuration
 $pagefolder = 'settings';
 

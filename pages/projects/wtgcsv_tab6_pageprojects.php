@@ -63,7 +63,7 @@ $panel_array['tabnumber'] = $wtgcsv_tab_number;
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('Your basic custom field rules are listed here for reference and to delete');
 $panel_array['panel_help'] = __('Deleting a custom field/meta-key rule has no effect on posts already created with your current project. It will only discontinue the custom field from being created for new posts.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(true,false);
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);
 // Form Settings - create the array that is passed to jQuery form functions
 $jsform_set_override = array();
 $jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);               
@@ -89,6 +89,7 @@ $jsform_set['noticebox_content'] = 'Do you want to delete your custom field rule
 <?php wtgcsv_panel_footer();?> 
 
 <?php
+if(!$wtgcsv_is_free){
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'createadvancedcustomfieldrules';// slug to act as a name and part of the panel ID 
@@ -117,6 +118,7 @@ $jsform_set['noticebox_content'] = 'Do you want to save your new custom field ru
 
     Select Data Column: 
     <select name="wtgcsv_customfield_select_columnandtable" id="wtgcsv_advancedcustomfields_datacolumn" class="wtgcsv_multiselect_menu">
+        <option value="notselected">Not Required</option>       
         <?php wtgcsv_display_project_columnsandtables_menuoptions($wtgcsv_currentproject_code);?>                                                                                                                     
     </select>
 
@@ -134,6 +136,7 @@ $jsform_set['noticebox_content'] = 'Do you want to save your new custom field ru
     <p>                    
         Design: 
         <select name="wtgcsv_customfields_selecttemplate" id="wtgcsv_customfields_selecttemplate" class="wtgcsv_multiselect_menu">
+            <option value="notselected">Not Required</option>
             <?php wtgcsv_display_contenttemplate_menuoptions();?>                                                                                                                     
         </select>        
     </p>
@@ -167,7 +170,8 @@ $jsform_set['noticebox_content'] = 'Do you want to save your new custom field ru
 
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
-<?php wtgcsv_panel_footer();?>
+<?php wtgcsv_panel_footer();
+}?>
 
 <?php 
 ### TODO:HIGHPRIORITY, ClassiPress panel listing all keys and options for adding data too them
@@ -176,6 +180,7 @@ $jsform_set['noticebox_content'] = 'Do you want to save your new custom field ru
 ?>
 
 <?php
+if(!$wtgcsv_is_free){
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'deleteadvancedcustomfieldrules';// slug to act as a name and part of the panel ID 
@@ -186,7 +191,7 @@ $panel_array['tabnumber'] = $wtgcsv_tab_number;
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('Your advanced custom field rules are listed here for reference and to delete');
 $panel_array['panel_help'] = __('Deleting a custom field/meta-key rule has no effect on posts already created with your current project. It will only discontinue the custom field from being created for new posts.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(true,false);
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);
 // Form Settings - create the array that is passed to jQuery form functions
 $jsform_set_override = array();
 $jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);               
@@ -209,7 +214,8 @@ $jsform_set['noticebox_content'] = 'Do you want to delete your custom field rule
 
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
-<?php wtgcsv_panel_footer();?>
+<?php wtgcsv_panel_footer();
+}?>
 
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
@@ -222,7 +228,7 @@ $panel_array['tabnumber'] = $wtgcsv_tab_number;
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('A list of all distinct meta-keys (used as custom field keys) for reference only');
 $panel_array['panel_help'] = __('Any meta-key (custom field key) key you enter for a post will appear in this list. Some of Wordpress own standard/default meta-keys will also show, some will not. I have excluded custom field keys that I feel no one will ever wish to use. Should your project require a standard Wordpress meta-key not displayed in the list or in the menus please request it to be removed from the list of exclusions.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(true,false);
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);
 ?>
 <?php wtgcsv_panel_header( $panel_array );?>
 <?php wtgcsv_list_customfields(); ?>

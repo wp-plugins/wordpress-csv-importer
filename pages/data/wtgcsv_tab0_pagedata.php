@@ -128,7 +128,7 @@ $nonce = wp_create_nonce( "wtgcsv_referer_" . $panel_array['panel_name'] );
     #<?php echo $jsform_set['form_id'];?>loading_jobnamechange { clear:both; background:url(images/loading.gif) center top no-repeat; text-align:center;padding:33px 0px 0px 0px; font-size:12px;display:none; font-family:Verdana, Arial, Helvetica, sans-serif; }                
     </style>
             
-    <p>The Value: <input type='text' name='wtgcsv_jobname_name' id='<?php echo $jobname_id;?>' value='' /><span id="wtgcsv_status_<?php echo $jsform_set['form_id'];?>"></span></p>
+    <p>Job Name: <input type='text' name='wtgcsv_jobname_name' id='<?php echo $jobname_id;?>' value='' size="24" /><span id="wtgcsv_status_<?php echo $jsform_set['form_id'];?>"></span></p>
 
     <?php wtgcsv_selectables_csvfiles('all',$panel_array['panel_name']);?><br /><br />
         
@@ -253,3 +253,67 @@ $jsform_set['noticebox_content'] = 'You are about to delete select data import j
     ?>
 
 <?php wtgcsv_panel_footer();?>
+
+<?php
+if($wtgcsv_is_dev){
+    
+    // Current Job Array Panel
+    ++$panel_number;// increase panel counter so this panel has unique ID
+    $panel_array = array();
+    $panel_array['panel_name'] = 'currentjobarraydump';// slug to act as a name and part of the panel ID 
+    $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
+    $panel_array['panel_title'] = __('Current Job Array Jump');// user seen panel header text 
+    $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
+    $panel_array['tabnumber'] = $wtgcsv_tab_number; 
+    $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
+    $panel_array['panel_intro'] = __('A dump of your current job array');
+    $panel_array['panel_help'] = __('If you have a current data import job set, the jobs array will be dumped here. The array is a set of PHP values stored in the Wordpress options table under the key "wtgcsv_currentjobcode".');
+    $panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);?>
+
+    <?php wtgcsv_panel_header( $panel_array );?>
+
+        <h4>Entire Array</h4>
+        <pre><?php var_dump($wtgcsv_job_array);?>
+
+    <?php wtgcsv_panel_footer();
+    
+    // $wtgcsv_dataimportjobs_array Panel
+    ++$panel_number;// increase panel counter so this panel has unique ID
+    $panel_array = array();
+    $panel_array['panel_name'] = 'dataimportjobsarray';// slug to act as a name and part of the panel ID 
+    $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
+    $panel_array['panel_title'] = __('Data Import Jobs Array');// user seen panel header text 
+    $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
+    $panel_array['tabnumber'] = $wtgcsv_tab_number; 
+    $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
+    $panel_array['panel_intro'] = __('A dump of the array that holds a list of all data import jobs');
+    $panel_array['panel_help'] = __('The data import jobs array is a list of all jobs. It is mainly used to create a list of data import jobs for user to select as their current one.');
+    $panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);?>
+
+    <?php wtgcsv_panel_header( $panel_array );?>
+
+        <h4>Entire Array</h4>
+        <pre><?php var_dump($wtgcsv_dataimportjobs_array);?>
+
+    <?php wtgcsv_panel_footer();    
+
+    // $wtgcsv_jobtable_array Panel
+    ++$panel_number;// increase panel counter so this panel has unique ID
+    $panel_array = array();
+    $panel_array['panel_name'] = 'jobtablesarray';// slug to act as a name and part of the panel ID 
+    $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
+    $panel_array['panel_title'] = __('Job Tables Array');// user seen panel header text 
+    $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
+    $panel_array['tabnumber'] = $wtgcsv_tab_number; 
+    $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
+    $panel_array['panel_intro'] = __('The array dumped here holds all tables created for Data Import Jobs');
+    $panel_array['panel_help'] = __('All database tables created by Wordpress CSV Importer for data import jobs are added to this array. As I write this, entries are not removed when deleting tables. How the plugin deals with this may change later, but for now the left over entries act as a history. The array is stored in $wtgcsv_jobtable_array which can be called globally and used to list tables.');
+    $panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);?>
+
+    <?php wtgcsv_panel_header( $panel_array );?>
+
+        <h4>Entire Array</h4>
+        <pre><?php var_dump($wtgcsv_jobtable_array);?>
+
+    <?php wtgcsv_panel_footer();        
+}?>

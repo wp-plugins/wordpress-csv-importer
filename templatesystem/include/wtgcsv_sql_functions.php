@@ -1,7 +1,4 @@
 <?php
-# TODO clear cache on functions that return specific value and not entire result 
-// $wpdb->flush();
-
 /**
 * Queries distinct values in a giving column
 * 
@@ -137,13 +134,16 @@ function wtgcsv_count_records( $table_name ){
 /**
 * Returns the number of rows imported for a giving database table and also the giving file.
 * Required in multi-file jobs
-* @todo CRITICAL, add WHERE wtgcsv_filedone 
 */
-function wtgcsv_sql_count_records_forfile( $tablename,$csvfile_name,$csvfile_id ){
-    global $wpdb;
+function wtgcsv_sql_count_records_forfile( $tablename,$csvfile_name,$csvfile_id,$file_grouping = 'single' ){
+    global $wpdb,$wtgcsv_is_free;
+    
+    // no file id is to be applied if free edition or single file project, projects only have a single file
+    if($wtgcsv_is_free || $file_grouping == 'single'){$csvfile_id = '';}
+    
     $query = "SELECT COUNT(*) FROM ". $tablename . " WHERE wtgcsv_filedone".$csvfile_id." = 1";
     $records = $wpdb->get_var( $query );
-    if( $records ){return $records;}else{ return '0';}   
+    if( $records ){return $records;}else{return '0';}   
 } 
 /**
  * counts total records in giving project table
@@ -196,13 +196,21 @@ function wtgcsv_sql_row_id_check($table_name,$id){
  * Builds and executes a MySQL UPATE query
  * The WHERE part is simple in this query, it uses a single value, usually record ID to apply the update. 
  */
-function wtgcsv_sql_update_record( $row, $csvfile_name, $column_total, $jobcode, $record_id, $header_array){        
-
+function wtgcsv_sql_update_record( $row, $csvfile_name, $column_total, $jobcode, $record_id, $header_array, $filegrouping){        
+    global $wtgcsv_is_free;
+    
     $col = 0;
     
-    // wtgcsv_get_csvfile_id() = gets csv file id for updating the wtgcsv_filedone column
+    // establish csv file id - if free edition there is no file id
+    if($wtgcsv_is_free || $filegrouping == 'single'){
+        $file_id = '';    
+    }else{
+        $file_id = wtgcsv_get_csvfile_id($csvfile_name,$jobcode);;
+    }    
+    
+    
     // start SET data part of query
-    $set = ' SET wtgcsv_imported = NOW(),wtgcsv_updated = NOW(),wtgcsv_filedone'.wtgcsv_get_csvfile_id($csvfile_name,$jobcode).' = 1';
+    $set = ' SET wtgcsv_imported = NOW(),wtgcsv_updated = NOW(),wtgcsv_filedone'.$file_id.' = 1';
     
     // start where part of query
     $where = ' WHERE wtgcsv_id = ' . $record_id;
@@ -214,10 +222,13 @@ function wtgcsv_sql_update_record( $row, $csvfile_name, $column_total, $jobcode,
       
         $set .= ',';
 
-        // apply single quotes if data is wrapped in double quotes already
-        $set .= $header['sql_adapted'] ." = '". $row[$col] ."'";
-        // TODO:HIGHPRIORITY, apply single or double quotes depending on what quotes (if any) the data value is wrapped in
-         
+        // use different sql column if multiple file (sql_adapted has an appended number to avoid columns with shared names conflicting)
+        if($filegrouping == 'single'){
+            $set .= $header['sql'] ." = '". $row[$col] ."'";    
+        }else{
+            $set .= $header['sql_adapted'] ." = '". $row[$col] ."'";
+        }
+
         ++$col;
     }    
     
@@ -242,8 +253,10 @@ function wtgcsv_query_insert_new_record ( $table_name,$csvfile_modtime ){
 * Create the table for a data import job, table is named using job code
 * 
 * @param mixed $jobcode
+* @param mixed $job_file_group, single or multiple, used to decide if column names should get appended number or not 
 */
-function wtgcsv_create_dataimportjob_table($jobcode){
+function wtgcsv_create_dataimportjob_table($jobcode,$job_file_group){
+    global $wtgcsv_is_free;
 
     /**
     * wtgcsv_id          - record id within data table, not imported id
@@ -276,19 +289,30 @@ function wtgcsv_create_dataimportjob_table($jobcode){
     // loop through jobs files
     foreach($job_array['files'] as $fileid => $csv_filename){
         
-        // add file modification time column for each file
-        $table .= "
-        `wtgcsv_filemoddate".$fileid."` datetime default NULL COMMENT '',
-        `wtgcsv_filedone".$fileid."` text default NULL COMMENT '',";
+        // establish file ID value - if a single file is in use or free edition we do not append a value
+        if($wtgcsv_is_free || $job_file_group == 'single'){$mod_append = '';}else{$mod_append = $fileid;}
+        
+        // add file modification time column for each file, do not append $fileid for single file jobs
         /**
         * wtgcsv_filemod(ID) - the CSV files last checked modification
         * wtgcsv_filedone(ID) - boolean true or false, indicates if the row has been update using specific file (with ID)
-        */
-            
+        */      
+        $table .= "
+        `wtgcsv_filemoddate".$mod_append."` datetime default NULL COMMENT '',
+        `wtgcsv_filedone".$mod_append."` text default NULL COMMENT '',";
+
         // loop through each files set of headers (3 entries in array per header)
         foreach( $job_array[$csv_filename]['headers'] as $header_key => $header){
+            
+            // if this is a single file job, do not append number
+            if($job_file_group == 'single'){
+                $column_name = $header['sql'];
+            }else{
+                $column_name = $header['sql_adapted'];// has appended number based on the order of all files
+            }
+            
             $table .= "
-            `" . $header['sql_adapted'] . "` text default NULL COMMENT '',";                                                                                                              
+            `" . $column_name . "` text default NULL COMMENT '',";                                                                                                              
         }
         
         ++$fileid;
@@ -296,7 +320,7 @@ function wtgcsv_create_dataimportjob_table($jobcode){
 
     // end of table
     $table .= "PRIMARY KEY  (`wtgcsv_id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Table created by Easy CSV Importer';";
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Table created by Wordpress CSV Importer';";
     
     global $wpdb;        
     $createresult1 = $wpdb->query( $table );
@@ -318,145 +342,7 @@ function wtgcsv_create_dataimportjob_table($jobcode){
 function wtgcsv_cleansqlcolumnname( $column ){
     global $wpdb;
     return str_replace( array( ",","/","'\'"," ",".",'-','#','_'),"", strtolower($column) );
-}
-
-#################################################################
-#                                                               #
-#          OLD ECI FUNCTIONS NOT YET EDITED OR USED             # 
-#                                                               #
-#################################################################
-  
-        
-
-/**
- * Standard wordpress prepared insert query with sprintf like ability
- * My function requires the type specifier string, not sure if this works the same as coding it at this time
- * 
- * % - a literal percent character. No argument is required.
- * b - the argument is treated as an integer, and presented as a binary number.
- * c - the argument is treated as an integer, and presented as the character with that ASCII value.
- * d - the argument is treated as an integer, and presented as a (signed) decimal number.
- * e - the argument is treated as scientific notation (e.g. 1.2e+2). The precision specifier stands for the number of digits after the decimal point since PHP 5.2.1. In earlier versions, it was taken as number of significant digits (one less).
- * E - like %e but uses uppercase letter (e.g. 1.2E+2).
- * u - the argument is treated as an integer, and presented as an unsigned decimal number.
- * f - the argument is treated as a float, and presented as a floating-point number (locale aware).
- * F - the argument is treated as a float, and presented as a floating-point number (non-locale aware). Available since PHP 4.3.10 and PHP 5.0.3.
- * g - shorter of %e and %f.
- * G - shorter of %E and %f.
- * o - the argument is treated as an integer, and presented as an octal number.
- * s - the argument is treated as and presented as a string.
- * x - the argument is treated as an integer and presented as a hexadecimal number (with lowercase letters).
- * X - the argument is treated as an integer and presented as a hexadecimal number (with uppercase letters).
- * 
- * @param string $table (full database table name, with prepend value already added)
- * @param string $columns (comma seperated string of columns)
- * @param string $sprint_types (comma seperated string of type specifiers)
- * @param array $value_array (array of values, prepare requires this to be an array)
- */
-function wtgcsv_query_insert($table,$columns,$sprint_types,$value_array){
-    global $wpdb;
-
-    if($wtgcsv_display_errors){$wpdb->show_errors();}
-    $sql_query = $wpdb->prepare( "INSERT INTO `".$table."` (".$columns.") VALUES (".$sprint_types.")",$value_array );
-    $insert_result = $wpdb->query( $sql_query );
-    if($wtgcsv_display_errors){$wpdb->hide_errors();$wpdb->print_error();}
-
-    // clear cache then return result
-    $wpdb->flush();
-    return $insert_result;
-}       
-
-/**
- * Delete query
- * @param string $table (full database table name, with prepend value already added)
- * @param string $argument (argument part of query after WHERE)
- */
-function wtgcsv_query_delete($table,$argument){
-    global $wpdb;
-
-    if($wtgcsv_display_errors){$wpdb->show_errors();}
-    $sql_query = $wpdb->prepare("DELETE FROM ".$table." WHERE ".$argument."" );
-    $delete_result = $wpdb->query( $sql_query );
-    if($wtgcsv_display_errors){$wpdb->hide_errors();$wpdb->print_error();}
-
-    // make log entry
-    $atts = array();
-    $atts['projectname'] = 'NA';// Project name (usually csv file name)               
-    $atts['date'] = wtgcsv_date();// wtgcsv_date()   
-    $atts['line'] = __LINE__;// __LINE__
-    $atts['file'] = __FILE__;// __FILE__
-    $atts['function'] = __FUNCTION__;// __FUNCTION__
-    $atts['logtype'] = 'sql';// general, sql, admin, user, error (can be others but all fit into these categories)
-    $atts['dump'] = 'None';// anything, variable, text, url, html, php
-    $atts['comment'] = 'None';// comment to help users or developers (recommended 60-80 characters long)
-    $atts['sql_result'] = $delete_result;// wordpress sql result value
-    $atts['sql_query'] = $sql_query;// wordpress sql query value
-    $atts['style'] = 'processing';// Notice box style (info,success,warning,error,question,processing,stop)
-    $atts['category'] = 'select,sql,query,database';// used to filter entries, a lowercase keyword // TODO: make this comma seperated values but also make the log viewer search through them
-    wtgcsv_log($atts);
-
-    // clear cache then return result
-    $wpdb->flush();
-    return $delete_result;
-}
-
-/**
- * Select count query
- * @param string $table (full table name included prepend value)
- */
-function wtgcsv_query_count($table){
-    global $wpdb;
-
-    if($wtgcsv_display_errors){$wpdb->show_errors();}
-    $sql_query = $wpdb->prepare("SELECT COUNT(*) FROM `".$table."`;");
-    $count_result = $wpdb->get_var( $wpdb->prepare("SELECT COUNT(*) FROM `".$table."`;") );
-    if($wtgcsv_display_errors){$wpdb->hide_errors();$wpdb->print_error();}
-
-    // make log entry
-    $atts = array();
-    $atts['projectname'] = 'NA';// Project name (usually csv file name)               
-    $atts['date'] = wtgcsv_date();// wtgcsv_date()   
-    $atts['line'] = __LINE__;// __LINE__
-    $atts['file'] = __FILE__;// __FILE__
-    $atts['function'] = __FUNCTION__;// __FUNCTION__
-    $atts['logtype'] = 'sql';// general, sql, admin, user, error (can be others but all fit into these categories)
-    $atts['dump'] = 'None';// anything, variable, text, url, html, php
-    $atts['comment'] = 'None';// comment to help users or developers (recommended 60-80 characters long)
-    $atts['sql_result'] = $count_result;// wordpress sql result value
-    $atts['sql_query'] = $sql_query;// wordpress sql query value
-    $atts['style'] = 'processing';// Notice box style (info,success,warning,error,question,processing,stop)
-    $atts['category'] = 'select,sql,query,database';// used to filter entries, a lowercase keyword // TODO: make this comma seperated values but also make the log viewer search through them
-    wtgcsv_log($atts);
-
-    // clear cache then return result
-    $wpdb->flush();
-    return $count_result;
-}
-
-
-/**
- * Returns an array of all the tables in the giving or default database
- * @param string $database
- * @return false if query fails or an array of table names
- */
-function wtgcsv_SHOW_TABLES_FROM($database_name = 'thewordpressdefault'){
-    global $wpdb;
-
-    // if no attribute value giving for database name we use the default
-    if($database_name == 'thewordpressdefault'){$database_name = $wpdb->dbname;}
-
-    // query the database
-    if($wtgcsv_display_errors){$wpdb->show_errors();}
-    $show_result = mysql_query("SHOW TABLES FROM `".$database_name."`");
-    if($wtgcsv_display_errors){$wpdb->hide_errors();$wpdb->print_error();}
-
-    // record query in history
-    wtgcsv_log(wtgcsv_log_sql_default());
-
-    // clear cache then return result
-    $wpdb->flush();
-    return $show_result;
-}
+} 
 
 /**
  * Checks if a database table name exists or not

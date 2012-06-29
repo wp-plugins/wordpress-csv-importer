@@ -1,10 +1,14 @@
 <?php      
-global $wtgcsv_display_testing_info,$wtgcsv_mpt_arr,$wpdb,$wtgcsv_options_array,$wtgcsv_projectslist_array,$wtgcsv_currentproject_code,$wtgcsv_nav_type,$wtgcsv_project_array,$wtgcsv_is_free,$wtgcsv_is_dev;
+global $wtgcsv_mpt_arr,$wpdb,$wtgcsv_options_array,$wtgcsv_projectslist_array,$wtgcsv_currentproject_code,$wtgcsv_nav_type,$wtgcsv_project_array,$wtgcsv_is_free,$wtgcsv_is_dev;
 $pageid = 'projects';// used to access variable.php configuration
 $pagefolder = 'projects';// the folder in pages folder holding this pages files
 
 // main page header
-$page_title_string = $wtgcsv_mpt_arr[$pageid]['title'] . ' (Name: ' . wtgcsv_get_current_project_name() . ')(ID: '.wtgcsv_convertvalue_projectcodefalse_toostring().')';
+if($wtgcsv_is_free){
+    $page_title_string = 'Your Project Configuration';    
+}else{
+    $page_title_string = $wtgcsv_mpt_arr[$pageid]['title'] . wtgcsv_get_current_project_name() . ' (ID: '.wtgcsv_convertvalue_projectcodefalse_toostring().')';
+}
 wtgcsv_header_page($page_title_string,0);
  
 // create tab menu for the giving page

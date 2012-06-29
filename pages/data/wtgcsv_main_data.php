@@ -1,10 +1,11 @@
 <?php      
-global $wtgcsv_display_testing_info,$wtgcsv_mpt_arr,$wpdb,$wtgcsv_options_array,$wtgcsv_nav_type,$wtgcsv_is_free;
+global $wtgcsv_mpt_arr,$wpdb,$wtgcsv_options_array,$wtgcsv_nav_type,$wtgcsv_is_free,$wtgcsv_job_array,$wtgcsv_is_dev,$wtgcsv_dataimportjobs_array,$wtgcsv_jobtable_array;
 $pageid = 'data';// used to access variable.php configuration
 $pagefolder = 'data';// the folder in pages folder holding this pages files
 
 // main page header
-wtgcsv_header_page($wtgcsv_mpt_arr[$pageid]['title'],0);
+if(!wtgcsv_get_option_currentjobcode()){$id_string = '';}else{$id_string = ' (ID: '.wtgcsv_get_option_currentjobcode().')';}
+wtgcsv_header_page($wtgcsv_mpt_arr[$pageid]['title'] . wtgcsv_get_current_job_name() . $id_string,0);
  
 // create tab menu for the giving page
 wtgcsv_createmenu($pageid); 

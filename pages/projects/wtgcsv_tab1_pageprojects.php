@@ -135,6 +135,7 @@ $templatedesign_array = wtgcsv_get_template_bypostrequest();?>
 <?php wtgcsv_panel_footer();?> 
 
 <?php
+if(!$wtgcsv_is_free){
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'dynamiccontentdesignrulesbyvalue';// slug to act as a name and part of the panel ID 
@@ -204,4 +205,5 @@ $jsform_set['noticebox_content'] = 'You are about to setup a new condition for a
 
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
-<?php wtgcsv_panel_footer();?> 
+<?php wtgcsv_panel_footer();
+}?> 

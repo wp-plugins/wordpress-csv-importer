@@ -15,54 +15,55 @@ Email: zara@webtechglobal.com
 	background-position: 3px center; 
 	display: block;
 	font-size:16px;
+    background-size:20px 20px;
 }
 
 .infoTiny{  
 	color: #00529B;  
 	background-color: #BDE5F8;  
-	background-image: url(../images/info_tiny.png);  
+	background-image: url(../images/info_large.png);  
 	border: 4px solid #86CFF2;
 }  
 
 .successTiny{  
 	color: #4F8A10;  
 	background-color: #DFF2BF;  
-	background-image:url(../images/success_tiny.png);  
+	background-image:url(../images/success_large.png);  
 	border: 5px solid #C4E789;
 }  
 
 .warningTiny{  
 	color: #9F6000;  
 	background-color: #FEEFB3;  
-	background-image: url(../images/warning_tiny.png);  
+	background-image: url(../images/warning_large.png);  
 	border: 3px solid #FDE06C;
 } 
 
 .errorTiny{  
 	color: #D8000C;  
 	background-color: #FFBABA;  
-	background-image: url(../images/error_tiny.png);  
+	background-image: url(../images/error_large.png);  
 	border: 5px solid #FF7979;
 }  
 
 .questionTiny{  
 	color: #00529B;  
 	background-color: #BDE5F8;   
-	background-image: url(../images/question_tiny.png);  
+	background-image: url(../images/question_large.png);  
 	border: 5px solid #86CFF2;
 }
 
 .processingTiny{  
 	color: #4F8A10;  
 	background-color: #DFF2BF;   
-	background-image:url(../images/processing_tiny.png);  
+	background-image:url(../images/processing_large.png);  
 	border: 5px solid #C4E789;
 } 
 
 .stopTiny{  
 	color: #D8000C;  
 	background-color: #FFBABA;  
-	background-image:url(../images/stop_tiny.png);  
+	background-image:url(../images/stop_large.png);  
 	border: 5px solid #FF7979;
 }  
 /*  TINY MESSAGE BOXES FINISH */
@@ -76,54 +77,55 @@ Email: zara@webtechglobal.com
 	background-position: 10px center; 
 	display: block;
 	font-size:18px;
+    background-size:44px 44px;
 }
 
 .infoSmall{  
 	color: #00529B;  
 	background-color: #BDE5F8;  
-	background-image: url(../images/info_small.png);  
+	background-image: url(../images/info_large.png);  
 	border: 4px solid #86CFF2;
 }  
 
 .successSmall{  
 	color: #4F8A10;  
 	background-color: #DFF2BF;  
-	background-image:url(../images/success_small.png);  
+	background-image:url(../images/success_large.png);  
 	border: 5px solid #C4E789;
 }  
 
 .warningSmall{  
 	color: #9F6000;  
 	background-color: #FEEFB3;  
-	background-image: url(../images/warning_small.png);  
+	background-image: url(../images/warning_large.png);  
 	border: 5px solid #FDE06C;
 } 
 
 .errorSmall{  
 	color: #D8000C;  
 	background-color: #FFBABA;  
-	background-image: url(../images/error_small.png);  
+	background-image: url(../images/error_large.png);  
 	border: 5px solid #FF7979;
 }  
 
 .questionSmall{  
 	color: #00529B;  
 	background-color: #BDE5F8;   
-	background-image: url(../images/question_small.png);  
+	background-image: url(../images/question_large.png);  
 	border: 5px solid #86CFF2;
 }
 
 .processingSmall{  
 	color: #4F8A10;  
 	background-color: #DFF2BF;   
-	background-image:url(../images/processing_small.png);  
+	background-image:url(../images/processing_large.png);  
 	border: 5px solid #C4E789;
 } 
 
 .stopSmall{  
 	color: #D8000C;  
 	background-color: #FFBABA;  
-	background-image:url(../images/stop_small.png);  
+	background-image:url(../images/stop_large.png);  
 	border: 5px solid #FF7979;
 }  
 /*  SMALL MESSAGE BOXES FINISH */
@@ -137,7 +139,8 @@ Email: zara@webtechglobal.com
 	background-repeat: no-repeat;  
 	background-position: 10px center; 
 	display: block;
-	font-size:18p
+	font-size:18p;
+    background-size:80px 80px;
 }
 
 .infoLarge{  

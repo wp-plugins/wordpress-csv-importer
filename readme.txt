@@ -6,18 +6,32 @@ Requires at least: 3.3.1
 Tested up to: 3.3.1
 Stable tag: trunk
 
-Wordpress CSV Importer (Alpha)
+Wordpress CSV Importer (Beta)
 
 == Description ==
 
-Wordpress CSV Importer, data import from CSV file and post creation with long term management in mind. This plugin
-is in Alpha phase and Beta is coming soon.
+Wordpress CSV Importer (Beta), data import and post creation plugin
 
 == Installation ==
 
 Initial upload and activation as guided by Wordpress.org standard plugin installation.
  
 == Changelog ==
+= 0.0.8 =
+* BETA Edition
+* Paid edition features will now be mostly hidden
+* More work done to make the free edition easier to use
+
+= 0.0.7 =
+* ALPHA Edition - Plugin is still in developed, thank you for your patience
+* Unfinished tabs have been hidden to avoid confusion for now, watch for them appearing one by one as development continues
+* The number of files have been greatly reduced, especially image files.
+* Numbers will not be appended too single file data import jobs, all functions which expect an appended value had to be changed
+
+= 0.0.6 =
+* ALPHA
+* Plugin is still in developed, thank you for your patience
+
 = 0.0.5 =
 * ALPHA
 * Plugin is still in developed, thank you for your patience

@@ -1,15 +1,15 @@
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
-$panel_array['panel_name'] = 'defaulttagcolumn';// slug to act as a name and part of the panel ID 
+$panel_array['panel_name'] = 'premadetagscolumn';// slug to act as a name and part of the panel ID 
 $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
-$panel_array['panel_title'] = __('Default Tags Column');// user seen panel header text 
+$panel_array['panel_title'] = __('Pre-made Tags Column');// user seen panel header text 
 $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('Select a column of pre-made tags as your default tags data if you have it');
 $panel_array['panel_help'] = __('This feature does not generate tags for you. The plugin can generate tags for you and there are options to configure them for the best results but those features are in other panels. This is also an area I am willing to adapt to suit specific users needs should they request it. The default tags column must be a column of pre-made tags separated by comma. Comma is required by Wordpress, if you have tags separated by another character I could add a feature to replace them.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(true,true);
+$panel_array['help_button'] = wtgcsv_helpbutton_text(true,false);
 // Form Settings - create the array that is passed to jQuery form functions
 $jsform_set_override = array();
 $jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);     
@@ -62,6 +62,7 @@ $jsform_set['noticebox_content'] = 'Posts created from here on will use the data
 <?php wtgcsv_panel_footer();?> 
 
 <?php
+if(!$wtgcsv_is_free){
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'tagrules';// slug to act as a name and part of the panel ID 
@@ -150,4 +151,5 @@ $jsform_set['noticebox_content'] = 'Your changes will effect all posts created f
 
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
-<?php wtgcsv_panel_footer();?> 
+<?php wtgcsv_panel_footer();
+}?> 

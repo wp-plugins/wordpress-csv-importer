@@ -44,19 +44,26 @@ if($cont){
     
     // Test CSV File 
     $cont = wtgcsv_form_test_csvfile();
+    
+    // Create a data rule for replacing specific values after import 
+    $cont = wtgcsv_form_create_datarule_replacevalue();
+    
 }
 
 // Data Screen Form Submissions
 if($cont){
     
-    // Delete Data Import Jobs
-    $cont = wtgcsv_form_delete_dataimportjobs();
-        
     // create a new data import job
     $cont = wtgcsv_form_createdataimportjob();
+        
+    // Delete Data Import Jobs
+    $cont = wtgcsv_form_delete_dataimportjobs();
     
     // Process CSV file upload    
-    $cont = wtgcsv_form_upload_csv_file();    
+    $cont = wtgcsv_form_upload_csv_file(); 
+    
+    // Delete one or more database tables
+    $cont = wtgcsv_form_drop_database_tables();   
 }
 
 // Project Screen Form Submissions (project creation and configuration)
@@ -94,6 +101,9 @@ if($cont){
     
     // Insert new post type value condition (apply post types based on value in table column)
     $cont = wtgcsv_form_save_posttype_condition_byvalue();
+    
+    // Reset date method to Wordpress default
+    $cont = wtgcsv_form_set_datemethod_default();
     
     // Save date column
     $cont = wtgcsv_form_update_datecolumn();
@@ -159,6 +169,68 @@ if($cont){
     $cont = wtgcsv_form_deletecontentfolder();    
 }
 
+  
+
+/**
+* Create a data rule for replacing specific values after import 
+*/
+function wtgcsv_form_create_datarule_replacevalue(){
+    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'data' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'replacevalues'){
+        global $wtgcsv_currentjob_code;
+
+        echo 'UNDER CONSTRUCTION';
+
+        return false;
+    }else{
+        return true;
+    }          
+}
+
+/**
+* Resets publish date method to Wordpress default by deleting the "dates" value in project array 
+*/
+function wtgcsv_form_set_datemethod_default(){
+    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'projectdatemethod'){
+        global $wtgcsv_currentproject_code,$wtgcsv_project_array;
+
+        unset($wtgcsv_project_array['dates']['currentmethod']); 
+                
+        wtgcsv_update_option_postcreationproject($wtgcsv_currentproject_code,$wtgcsv_project_array);
+        
+        wtgcsv_notice('The current projects publish dates will be controlled by Wordpress default.','success','Large','Publish Date Method Reset','','echo');      
+  
+        return false;
+    }else{
+        return true;
+    }          
+}
+
+/**
+* Deletes one or more database tables
+*/
+function wtgcsv_form_drop_database_tables(){
+    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'data' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'createddatabasetableslist'){
+
+        if(!isset($_POST["wtgcsv_table_array"])){
+            wtgcsv_notice('You did not select any database tables. Check the boxes for the tables you want to delete.','warning','Large','No Tables Deleted','','echo');
+            return false;
+        }else{
+            
+            global $wpdb;
+            
+            foreach($_POST["wtgcsv_table_array"] as $key => $table_name){
+                $wpdb->query( 'DROP TABLE '. $table_name );    
+            }
+        }
+
+        wtgcsv_notice('Selected database tables have been deleted (dropped) from your database. This change cannot be reversed.','success','Large','Database Tables Deleted','','echo');
+        return false;
+    }else{
+        return true;
+    }          
+}
+
+
 /**
 * Deletes basic custom field rules
 * @todo HIGHPRIORITY, change to delete many checked boxes at once not just one
@@ -205,8 +277,14 @@ function wtgcsv_form_delete_advancedcustomfields(){
 */
 function wtgcsv_form_save_incrementalpublishdate_settings(){
     if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'incrementalpublishdatessettings'){
-        global $wtgcsv_currentproject_code,$wtgcsv_project_array;
+        global $wtgcsv_currentproject_code,$wtgcsv_project_array,$wtgcsv_is_free;
    
+        // do not allow save if free edition (bypassing this will cause problems during post creation)
+        if($wtgcsv_is_free){
+            wtgcsv_notice('The data method you submitted can only be used in the paid editions advanced post creation scripts. Your post publish dates will always default to the current time and date when they are created.','warning','Large','Date Method Not Available','','echo');
+            return false;
+        }
+        
         // replace spaces in minutes increment string
         $minutes_increment = str_replace(' ','',$_POST['wtgcsv_increment_range']);
         $explode = explode('-',$minutes_increment);
@@ -228,12 +306,18 @@ function wtgcsv_form_save_incrementalpublishdate_settings(){
 
 /**
 * Saves and activates random publish date method settings
-* @todo LOWPRIORITY, validate submitted dates  
+* @todo LOWPRIORITY, validate submitted dates, ensure end date is not before start  
 */
 function wtgcsv_form_save_randompublishdate_settings(){
     if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'randompublishdatesettings'){
-        global $wtgcsv_currentproject_code,$wtgcsv_project_array;
+        global $wtgcsv_currentproject_code,$wtgcsv_project_array,$wtgcsv_is_free;
       
+        // do not allow save if free edition (bypassing this will cause problems during post creation)
+        if($wtgcsv_is_free){
+            wtgcsv_notice('The data method you submitted can only be used in the paid editions advanced post creation scripts. Your post publish dates will always default to the current time and date when they are created.','warning','Large','Date Method Not Available','','echo');
+            return false;
+        }
+              
         $wtgcsv_project_array['dates']['currentmethod'] = 'random'; 
         $wtgcsv_project_array['dates']['random']['start'] = $_POST['wtgcsv_randompublishdate_start'];
         $wtgcsv_project_array['dates']['random']['end'] = $_POST['wtgcsv_randompublishdate_end'];
@@ -419,7 +503,7 @@ function wtgcsv_form_save_default_category(){
 */
 function wtgcsv_form_save_default_tags_column(){
     global $wtgcsv_currentproject_code,$wtgcsv_project_array;
-    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'defaulttagcolumn'){
+    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'premadetagscolumn'){
         
         $wtgcsv_project_array['tags']['default']['table'] = wtgcsv_explode_tablecolumn_returnnode(',',0,$_POST['wtgcsv_defaulttagsdata_select_columnandtable']);
         $wtgcsv_project_array['tags']['default']['column'] = wtgcsv_explode_tablecolumn_returnnode(',',1,$_POST['wtgcsv_defaulttagsdata_select_columnandtable']);                       
@@ -814,14 +898,14 @@ function wtgcsv_form_add_basic_custom_field(){
 *  
 */
 function wtgcsv_form_add_advanced_custom_field(){
-    global $wtgcsv_currentproject_code,$wtgcsv_project_array;
+    global $wtgcsv_currentproject_code,$wtgcsv_project_array,$wtgcsv_is_free;
     if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'createadvancedcustomfieldrules'){
 
-        // ensure meta-key was entered
-        if(!isset($_POST['wtgcsv_key'])){
-        
+        if($wtgcsv_is_free){
+            wtgcsv_notice('Advanced custom fields are not supported in the free edition. The advanced scripts required to process them are only provided in the paid edition and are supported with it.','warning','Large','Paid Edition Only','','echo');        
+        }elseif(!isset($_POST['wtgcsv_key'])){
+            // ensure meta-key was entered
             wtgcsv_notice('You did not enter a meta-key for your custom field rule, please try again.','error','Large','No Meta-Key Entered');
-            
         }else{ 
             
             // extract table name and column name from the string which holds both of them
@@ -834,7 +918,7 @@ function wtgcsv_form_add_advanced_custom_field(){
             }else{
                 $last_array_key = 0;
             }
-            
+                  
             // only save one of each value method - priority goes to templates
             if(isset($_POST['wtgcsv_customfields_selecttemplate'])){
                 $wtgcsv_project_array['custom_fields']['advanced'][$last_array_key]['template_id'] = $_POST['wtgcsv_customfields_selecttemplate'];
@@ -880,7 +964,7 @@ function wtgcsv_form_update_datecolumn(){
         $wtgcsv_project_array['dates']['date_column']['table_name'] = $table_name;            
         $wtgcsv_project_array['dates']['date_column']['column_name'] = $column_name;
         $wtgcsv_project_array['dates']['currentmethod'] = 'data';
-        
+
         // update project option         
         wtgcsv_update_option_postcreationproject($wtgcsv_currentproject_code,$wtgcsv_project_array);
 
@@ -990,11 +1074,13 @@ function wtgcsv_form_update_titletemplates(){
             // only update the posts for which values have been changed
             if( $_POST['wtgcsv_titletemplate_design_'.$i] != $_POST['wtgcsv_titletemplate_design_original_'.$i] ){
 
-                // Update post 37
+                // Update title template post
                 $my_post = array();
                 $my_post['ID'] = $_POST['wtgcsv_titletemplate_postid_'.$i];
                 $my_post['post_content'] = $_POST['wtgcsv_titletemplate_design_'.$i];
-
+                $my_post['post_type'] = 'wtgcsvtitle';            
+                $my_post['post_category'] = array(0);
+                
                 // Update the post into the database
                 $update_result = wp_update_post( $my_post ); 
                 if( wtgcsv_is_WP_Error($update_result)){
@@ -1142,10 +1228,11 @@ function wtgcsv_form_save_contenttemplatedesign_condition_byvalue(){
 }    
   
 /**
-* Saves a template design - new or old, will create new post or update existing one.
+* Saves content template design - new or old (update or insert), will create new post or update existing one.
 * Design ID is also Wordpress post ID 
+* @todo LOWPRIORITY, consider using custom taxonomies (categories) for applying template types
 */
-function wtgcsv_form_save_contenttemplate(){
+function wtgcsv_form_save_contenttemplate(){  
     global $wtgcsv_currentproject_code;// TODO ADD THIS TOO POST IN CUSTOM FIELD
     if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'templateeditor'){
         
@@ -1161,14 +1248,14 @@ function wtgcsv_form_save_contenttemplate(){
                 // update existing design using design ID (post_id for wtgcsvcontent custom post type)
                 $my_post = array();
                 $my_post['ID'] = $_POST['wtgcsv_templateid'];
+                $my_post['post_type'] = 'wtgcsvcontent';
                 $my_post['post_title'] = $_POST['wtgcsv_templatename'];            
                 $my_post['post_content'] = $_POST['wtgcsv_wysiwyg_editor'];
-
+                $my_post['post_category'] = array(0);
+                
                 // Update the post into the database
                 $wp_update_post_result = wp_update_post( $my_post );
-                
-                ### TODO: CRITICALPRIORITY, check outcome and display notice
-                
+
                 // nothing further needs to be done
                 return false;                
                 
@@ -1177,6 +1264,7 @@ function wtgcsv_form_save_contenttemplate(){
                 // the user has changed the template name, this is how the user forces new template to be created
                 $create_new_wtgcsvtemplate_post = true;                  
             }
+            
         }else{
             // no existing id in the $_POST, create new template
             $create_new_wtgcsvtemplate_post = true;            
@@ -1187,22 +1275,25 @@ function wtgcsv_form_save_contenttemplate(){
             $wpinsertpost_result = wtgcsv_insert_post_contenttemplate();// returns post ID
             
             if(wtgcsv_is_WP_Error($wpinsertpost_result)){
-                wtgcsv_notice('Could not create new template design. It requires the insertion of a new post record but Wordpress returned an error. Please try again then report further problems.','error','Large','Could Not Save Template');
+                wtgcsv_notice('Could not create new content template design. It requires the insertion of a new post record but Wordpress returned an error. Please try again then report further problems.','error','Large','Could Not Save Template');
             }else{
                 
                 // if current project does not yet have a default content template
                 $setasdefault = '';
                 $template_id = wtgcsv_get_default_contenttemplate_id($wtgcsv_currentproject_code);
                 if(!$template_id){
+                     
                     // current project has no default content template so we will save the new one as it
                     wtgcsv_update_default_contenttemplate($wtgcsv_currentproject_code,$wpinsertpost_result);
+                    
                     // link the template to the project by adding wtgcsv_project_id custom meta field 
-                    add_post_meta($wpinsertpost_result, 'wtgcsv_project_id', $wtgcsv_currentproject_code, false);
+                    add_post_meta($wpinsertpost_result, 'wtgcsv_project_id', $wtgcsv_currentproject_code, false); 
+                    
                     // extend output message to confirm default also set                    
                     $setasdefault = ' and it has been set as your current projects default content template.';
                 }
                 
-                wtgcsv_notice('Your new template has been saved'.$setasdefault.'. You can select it in your projects settings and edit it using the same editor as you created it with.','success','Large','New Template Saved');
+                wtgcsv_notice('Your new content template has been saved'.$setasdefault.'. You can select it in your projects settings and edit it using the same editor as you created it with.','success','Large','New Template Saved');
             }            
         }
         
@@ -1244,14 +1335,24 @@ function wtgcsv_form_delete_post_creation_projects(){
             if($wtgcsv_is_free){
                 
                 //free edition has one project, so we can use $wtgcsv_currentproject_code
+                // Do not try to get around this limitation, required functions for later processes are not included with the free download
                 wtgcsv_delete_postcreationproject($wtgcsv_currentproject_code);
+                wtgcsv_delete_option_currentprojectcode();
                 wtgcsv_notice('Your project with code '.$wtgcsv_currentproject_code.' has been deleted.','success','Large','Project ('.$wtgcsv_currentproject_code.') Deleted');                
-            
+
             }else{
+                
                 foreach($_POST['wtgcsv_projectcodes_array'] as $key => $project_code){
+                    
+                    // if  $wtgcsv_currentprojectcode equals the project being deleted, then delete current project option
+                    if($wtgcsv_currentproject_code == $project_code){
+                        wtgcsv_delete_option_currentprojectcode();   
+                    }
+                    
                     wtgcsv_delete_postcreationproject($project_code);
                     wtgcsv_notice('Your project with code '.$project_code.' has been deleted.','success','Large','Project '.$project_code.' Deleted');    
                 }
+                
             }
         }
         return false;
@@ -1265,8 +1366,14 @@ function wtgcsv_form_delete_post_creation_projects(){
 */
 function wtgcsv_form_create_post_creation_project(){
     if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'createpostcreationproject'){
+        
+        global $wtgcsv_currentproject_code;
+        
         if(!isset($_POST['wtgcsv_databasetables_array'])){
-            wtgcsv_notice('You did not appear to select any database tables for taking data from and putting into posts. Project was not created.','info','Small');    
+            
+            wtgcsv_notice('You did not appear to select any database tables for taking data from and putting into posts. Project was not created.','info','Large','Database Table Selection Required','','echo');    
+            return false;
+            
         }else{
             
             // free edition does not allow mapping method selection on form
@@ -1286,14 +1393,25 @@ function wtgcsv_form_create_post_creation_project(){
             // create project function will return project code on success
             $createproject_result_code = wtgcsv_create_post_creation_project($_POST['wtgcsv_projectname_name'],$tables_array,$mapping_method);
             if($createproject_result_code){
+                
                 // now set the new project as the Current Project                
-                global $wtgcsv_currentproject_code;
                 $wtgcsv_currentproject_code = $createproject_result_code;
                 wtgcsv_update_currentproject($createproject_result_code);
+                
                 // do notification
                 wtgcsv_notice('Your new Post Creation Project has been made. Please click on the Content Designs tab and create your main content layout for this project or select an existing one.','success','Large','Post Creation Project Created');
+            
             }else{
-                wtgcsv_notice('A problem was detected when making the new Post Creation Project. It is recommended that you attempt to make the project again and report this problem if it continues to happen.','error','Large','Post Creation Project Not Created');    
+                
+                if($wtgcsv_is_free){
+                
+                    wtgcsv_notice('You appear to have already created your project. The free edition allows one project at a time, please complete your post creation then delete the project. You may then create another project with a new database table that holds different data.','warning','Large','Post Creation Project Not Created','','echo');    
+               
+                }else{
+                    
+                    wtgcsv_notice('A problem was detected when making the new Post Creation Project. It is recommended that you attempt to make the project again and report this problem if it continues to happen.','error','Large','Post Creation Project Not Created');    
+                
+                }
             }  
         }
         return false;
@@ -1310,8 +1428,16 @@ function wtgcsv_form_delete_dataimportjobs(){
         if(!isset($_POST['wtgcsv_jobcode_array'])){
             wtgcsv_notice('You did not appear to select any data import jobs for deletion, no changes have been made.','info','Small');    
         }else{
+            global $wtgcsv_currentjob_code;
+            
             // loop through submitted job codes 
             foreach( $_POST['wtgcsv_jobcode_array'] as $jobcode ){
+                
+                // if job being deleted equals the current job, delete the option record for current job
+                if($jobcode == $wtgcsv_currentjob_code){
+                    wtgcsv_delete_option_currentjobcode();
+                }
+                
                 $deletejob_result = wtgcsv_delete_dataimportjob_postrequest($jobcode,true);
             }
         }
@@ -1325,8 +1451,9 @@ function wtgcsv_form_delete_dataimportjobs(){
 * Creates data import job
 */
 function wtgcsv_form_createdataimportjob(){
-    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'data' && isset($_POST[WTG_CSV_ABB.'hidden_panel_name']) && $_POST[WTG_CSV_ABB.'hidden_panel_name'] == 'createdataimportjobcsvfiles'){
- 
+    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'data' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'createdataimportjobcsvfiles'){
+        global $wtgcsv_is_free;
+        
         // set variable for building output html
         $extendednotice = '';
         
@@ -1340,11 +1467,28 @@ function wtgcsv_form_createdataimportjob(){
             if(isset($_POST['wtgcsv_csvfilearray_createdataimportjobcsvfiles'])){
                 
                 // generate job code (used to name database table and option record for job history) 
-                $code = wtgcsv_create_code(); 
-       
+                $code = wtgcsv_create_code(6); 
+        
                 // create an array for the job, to be stored in an option record of its own
                 $jobarray = wtgcsv_create_jobarray($_POST['wtgcsv_jobname_name'],$code);
                 $jobarray['jobname'] = $_POST['wtgcsv_jobname_name'];
+                
+                
+                // determine if this is a multi file job or single
+                if($wtgcsv_is_free){
+                    $job_file_group = 'single';// free edition does not allow multiple files    
+                }else{
+                    // count the number of files submitted
+                    $numbers_of_files = count($_POST['wtgcsv_csvfilearray_createdataimportjobcsvfiles']);
+                    if($numbers_of_files == 1){
+                        $job_file_group = 'multiple';    
+                    }else{
+                        $job_file_group = 'single';
+                    }
+                }
+
+                // add established file group type too the array (no use for it as I add it but adding it just in case)                
+                $jobarray['filegrouping'] = $job_file_group;
                                    
                 // count files, counter acts as file id within the job array, it is also appended to column names 
                 $fileid = 1;
@@ -1377,12 +1521,21 @@ function wtgcsv_form_createdataimportjob(){
                 $result = wtgcsv_save_dataimportjob($jobarray,$code);
                 if($result){
                     
-                    $createtable_result = wtgcsv_create_dataimportjob_table($code);
+                    // set global $wtgcsv_currentjob_code as new code and set global $wtgcsv_job_array
+                    global $wtgcsv_currentjob_code,$wtgcsv_job_array;
+                    $wtgcsv_currentjob_code = $code;
+                    $wtgcsv_job_array = $jobarray;
+                    
+                    // create a database table - multiple file jobs are put into a single table, column names are giving appended values to prevent conflict with shared names    
+                    $createtable_result = wtgcsv_create_dataimportjob_table($code,$job_file_group);
 
                     if(!$createtable_result){
                         $functionoutcome = false;
                         $extendednotice .= wtgcsv_notice('The data import jobs database table could not be created, it is required for storing your data and was to be named wtgcsv_'.$code.'. Please try again then seek support.','warning','Extra','','','return');        
                     }else{
+                        
+                        // update wtgcsv_current_job option record
+                        wtgcsv_update_option_currentjob_code($code);
                         
                         // update the Data Import Jobs Array (the list of all job ID)
                         global $wtgcsv_dataimportjobs_array;
@@ -1847,7 +2000,6 @@ function wtgcsv_form_contactformsubmission(){
         ####   SEND EMAIL    ####
         ####                 ####
         ######################### 
-        global $wtgcsv_contact_emailaddress;
         
         $emailmessage_start = '<html><body>
         
@@ -1868,7 +2020,7 @@ function wtgcsv_form_contactformsubmission(){
      
         $finalemailmessage = $emailmessage_start . $emailmessage_middle . $emailmessage_end;
         
-        wp_mail($wtgcsv_contact_emailaddress,'Contact From '.WTG_CSV_PLUGINTITLE,$emailmessage);
+        wp_mail('help@wordpresscsvimporter.com','Contact From '.WTG_CSV_PLUGINTITLE,$emailmessage);
                             
                         
         /*  LAST POST TEST EXAMPLE VALUES

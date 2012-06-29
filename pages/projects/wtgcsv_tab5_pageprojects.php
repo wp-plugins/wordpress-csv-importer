@@ -1,4 +1,5 @@
 <?php
+### TODO:MEDIUMPRIORITY, add current date method to the panels title
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'projectdatemethod';// slug to act as a name and part of the panel ID 
@@ -8,13 +9,30 @@ $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('Displays your current date method');
-$panel_array['panel_help'] = __('This panel tells you what publish date method is being used for your project. Change it by using a form other methods. By using other forms the plugin assumes you want to use those date methods.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(true,false);
+$panel_array['panel_help'] = __('This panel tells you what publish date method is being used for your project. Change it by using and submitting a form for a different method. You can use the button in this panel to revert back to default Wordpress times for your publish dates.');
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);
+// Form Settings - create the array that is passed to jQuery form functions
+$jsform_set_override = array();
+$jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);                
+$jsform_set['dialoguebox_title'] = 'Use Wordpress Default Publish Dates';
+$jsform_set['noticebox_content'] = 'Do you want to cancel the current date method? Doing this will allow Wordpress to set your publish times based on when each post is created.';
+// TODO: HIGHPRIORITY, write function to test dates, display on this panel and use in processing?>
+<?php wtgcsv_panel_header( $panel_array );?>
 
-wtgcsv_panel_header( $panel_array );?>
+    <?php wtgcsv_formstart_standard($jsform_set['form_name'],$jsform_set['form_id'],'post','wtgcsv_form','');?>
 
+    <?php wtgcsv_display_date_method(); ?>  
+    
+    <?php
+    // add the javascript that will handle our form action, prevent submission and display dialogue box
+    wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
 
-<?php wtgcsv_panel_footer();?> 
+    // add end of form - dialogue box does not need to be within the <form>
+    wtgcsv_formend_standard('Use Wordpress Default Publish Dates',$jsform_set['form_id']);?>
+
+    <?php wtgcsv_jquery_form_prompt($jsform_set);?>
+
+<?php wtgcsv_panel_footer();?>
 
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
@@ -71,13 +89,14 @@ $jsform_set['noticebox_content'] = 'You are saving your dates column so that pos
     wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
 
     // add end of form - dialogue box does not need to be within the <form>
-    wtgcsv_formend_standard('Submit',$jsform_set['form_id']);?>
+    wtgcsv_formend_standard('Use Dates Data',$jsform_set['form_id']);?>
 
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
 <?php wtgcsv_panel_footer();?>
 
 <?php
+if(!$wtgcsv_is_free){
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'incrementalpublishdatessettings';// slug to act as a name and part of the panel ID 
@@ -144,13 +163,15 @@ $jsform_set['noticebox_content'] = 'You are about to switch your project to incr
     wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
 
     // add end of form - dialogue box does not need to be within the <form>
-    wtgcsv_formend_standard('Submit',$jsform_set['form_id']);?>
+    wtgcsv_formend_standard('Use Incremental Dates Method',$jsform_set['form_id']);?>
 
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
    
-<?php wtgcsv_panel_footer();?> 
+<?php wtgcsv_panel_footer();
+}?> 
 
 <?php
+if(!$wtgcsv_is_free){
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'randompublishdatesettings';// slug to act as a name and part of the panel ID 
@@ -202,8 +223,9 @@ $jsform_set['noticebox_content'] = 'You are about to change your random publish 
     wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
 
     // add end of form - dialogue box does not need to be within the <form>
-    wtgcsv_formend_standard('Submit',$jsform_set['form_id']);?>
+    wtgcsv_formend_standard('Use Random Dates Method',$jsform_set['form_id']);?>
 
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
    
-<?php wtgcsv_panel_footer();?> 
+<?php wtgcsv_panel_footer();
+}?> 

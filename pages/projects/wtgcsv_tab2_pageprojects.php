@@ -8,8 +8,8 @@ $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('Copy and paste these to place your data where you will need it in your final posts');
-$panel_array['panel_help'] = __('There is a token for each of your database columns and for all tables included in your project. These are replaced with data from the column they represent. Please be aware that any content which matches these strings will also be replaced however the asterix between table name and column name should help to prevent this.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);?>
+$panel_array['panel_help'] = __('There is a token for each of your database columns and for all tables included in your project. These are replaced with data from the column they represent. Please be aware that any content which matches these strings will also be replaced however the asterix between table name and column name should help to prevent this. Column names may be appended with a number value. This is done to prevent two tables sharing the same column names conflicting with each other. Another approach to prevent conflict is being added however and you may not see appended numbers.');
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);?>
 <?php wtgcsv_panel_header( $panel_array );?>
 
     <form id="wtgcsv_form_opentemplate_id" action="<?php echo $wtgcsv_form_action;?>" method="post" name="wtgcsv_form_opentemplate_name">
@@ -61,7 +61,7 @@ $panel_array['tabnumber'] = $wtgcsv_tab_number;
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('Create title templates by inserting your column replacement tags');
 $panel_array['panel_help'] = __('The plugin allows us to create multiple post title templates for selecting when creating a new project. Over 2012 I will be adding features to allow dynamic or random designs to be applied based on values within your data or any other criteria users want to be taking into consideration.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);
 // Form Settings - create the array that is passed to jQuery form functions
 $jsform_set_override = array();
 $jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);   
@@ -150,8 +150,22 @@ $jsform_set['noticebox_content'] = 'You are saving a column of data to be used a
 
     <?php wtgcsv_formstart_standard($jsform_set['form_name'],$jsform_set['form_id'],'post','wtgcsv_form',$wtgcsv_form_action);?>
 
-    <strong>This feature is under construction, please use the template method which can do the same thing plus more</strong>
 
+     
+    <p>        
+        Data Column: 
+        <select name="wtgcsv_titlecolumn_menu" id="wtgcsv_titlecolumn_menu" class="wtgcsv_multiselect_menu">
+            <?php wtgcsv_display_project_columnsandtables_menuoptions($wtgcsv_currentproject_code);?>                                                                                                                     
+        </select>
+    </p>
+    <script>
+    $("#wtgcsv_titlecolumn_menu").multiselect({
+       multiple: false,
+       header: "Select Database Column (table - column)",
+       noneSelectedText: "Select Database Column",
+       selectedList: 1
+    });
+    </script>    
     <?php
     // add the javascript that will handle our form action, prevent submission and display dialogue box
     wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);

@@ -50,7 +50,7 @@ function wtgcsv_is_activated(){
 */
 function wtgcsv_is_installed(){
     
-    global $wtgcsv_options_array,$wtgcsv_display_testing_info;
+    global $wtgcsv_options_array;
     
     // currently this value is returned, if changed too false
     $returnresult = true;
@@ -85,11 +85,6 @@ function wtgcsv_is_installed(){
         $failcause = 'Core File Missing';        
     }
 
-    if(!$returnresult && $wtgcsv_display_testing_info){
-        var_dump( '<br />wtgcsv_is_installed $failcause: ');
-        var_dump( $failcause );                     
-    }
-     
     return $returnresult;
 }      
 

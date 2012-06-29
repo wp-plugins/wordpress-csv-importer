@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Wordpress CSV Importer
-Version: 0.0.6
+Version: 0.0.8
 Plugin URI: http://www.wordpresscsvimporter.com
 Description: Wordpress CSV Importer released 2012 by Zara Walsh and Ryan Bayne
 Author: Zara Walsh
@@ -9,26 +9,19 @@ Author URI: http://www.wordpresscsvimporter.com
 */
 
 /*********************************************************************************************************************************
-* ALPHA DEVELOPMENT NOTES
-* 0. Switch all web service calls off for 5 min when fault detected and display message
-* 1. Avoid checking web service status for 60 minutes. It should hardly ever go down and this will reduce traffic a lot.
-* 2.  
-* 3. 
-* 4. Test forms in not selected state with any menus and change form submission functions to expect forms that have it
-* 5. Look into removing traces of none required array nodes, it will prevent over processing
-*******************************************************************************************************************************/
-
-/*********************************************************************************************************************************
 * BETA PHASE DEVELOPMENT NOTES
-* 0. Create blank options for all options, prevent SQL error and insert them on activation. The only thing currently to be done during activation.
+* 0. Create blank option values for all options, prevent SQL error and insert them on activation. The only thing currently to be done during activation.
 * 1. Change failure messages for returned falses on saving options to indicate no changes made rather than error/fault
 * 2. Complete form submission and return to tab bug where it loads at bottom of screen, add this too all pages $wtgcsv_form_action = wtgcsv_link_toadmin($_GET['page'],'#tabs-' . $counttabs); , then add $wtgcsv_form_action too all forms 
+* 3. Test forms in not selected state with any menus and change form submission functions to expect forms that have it
+* 4. Look into removing traces of none required array nodes, it will prevent over processing* 
+* 5. Switch all web service calls off for 5 min when fault detected and display message
+* 6. Avoid checking web service status for 60 minutes. It should hardly ever go down and this will reduce traffic a lot.
 *******************************************************************************************************************************/
 
 /*********************************************************************************************************************************
 * DEVELOPMENT NOTES
-* 0. Create blank options for all options, prevent SQL error and insert them on activation. The only thing currently to be done during activation.
-* 1. Can an option be provided to disable jQuery Tabs and make them loadable should loading too many cause issues?
+* 1. 
 * 2. Change failure messages for returned falses on saving options to indicate no changes made rather than error/fault
 * 3. Add ability to stop dialogue from being displayed (where dialogue is not REQUIRED), this allows us to not print the script
 * 4. Create a better form ID value with short variable and apply too object ID to ensure unique
@@ -47,7 +40,6 @@ if ( !function_exists( 'add_option' ) ) {echo "www.WordpressCSVImporter.com by Z
 $UNDERCONSTRUCTIONS_SWITCH = 0;// 0=off  1=on  2=$_POST only
 $wtgcsv_js_switch = true;
 $wtgcsv_display_errors = 0;
-$wtgcsv_display_testing_info = 0;
 $wtgcsv_debugmode_strict = 0;
 $wtgcsv_dumpsoapcalls = 0;
 $wtgcsv_dumppostget = 0;
@@ -56,7 +48,6 @@ if(is_admin() && $UNDERCONSTRUCTIONS_SWITCH != 0 && (!defined('DOING_AJAX') || !
     if($UNDERCONSTRUCTIONS_SWITCH == 1){     
         $wtgcsv_js_switch = true;// switch scripts on and off includes javascript,ajax,jQuery (overiding all other switchings)
         $wtgcsv_display_errors = 1;// true or 1 to display ALL Wordpress errors for all themes and plugins, false or 0 to hide them all which is Wordpress default
-        $wtgcsv_display_testing_info = 1;
         $wtgcsv_debugmode_strict = 1;// true or 1(shows very strict error reporting)  , false or 0   
         $wtgcsv_dumpsoapcalls = 0;// dumps the results of all soap calls
         $wtgcsv_dumppostget = 1;// dump $_POST and $_GET
@@ -112,16 +103,7 @@ if(is_admin()){
     add_action( 'add_meta_boxes', 'wtgcsv_add_custom_boxes_titletemplate' );
     add_action( 'save_post', 'wtgcsv_save_postdata_titletemplate' );
     
-    // initialise core admin only variables ### TODO:MEDIUMPRIORITY, remove variables from here that are always set later even if set to false    
-    $wtgcsv_homesite = 'http://www.wordpresscsvimporter.com/';// must have end slash
-    $wtgcsv_homedomain = 'www.wordpresscsvimporter.com';     
-    $wtgcsv_pluginforum = $wtgcsv_homesite.'forum';
-    $wtgcsv_pluginblog = $wtgcsv_homesite.'blog';
-    $wtgcsv_support_blog_category = 'blog';// configures url in support buttons
-    $wtgcsv_support_blog_page = 'blog';// configures url in support buttons
-    $wtgcsv_contact_emailaddress = 'help@wordpresscsvimporter.com';// email address used for contact form or within support text
-    $wtgcsv_blogpost_bugreport = 'http://www.webtechglobal.co.uk/blog/wordpress/wtg-csv-importer/writing-a-good-bugfault-report';
-    $wtgcsv_pluginsalespage = $wtgcsv_homesite;
+    // initialise core admin only variables ### TODO:MEDIUMPRIORITY, remove variables from here that are always set later even if set to false       
     $wtgcsv_installation_required = true;
     $wtgcsv_apiservicestatus = 'unknown';
     $wtgcsv_is_webserviceavailable = false;                                                       
@@ -174,12 +156,19 @@ if(is_admin()){
             //$wtgcsv_is_subscribed = wtgcsv_is_subscribed();// returns boolean       
         }
     }
-
-    $wtgcsv_currentproject_code = wtgcsv_get_current_project_code();
-    $wtgcsv_project_array = wtgcsv_get_project_array($wtgcsv_currentproject_code);
+    
+    // get data import jobs related variables
+    $wtgcsv_currentjob_code = wtgcsv_get_option_currentjobcode();
+    $wtgcsv_job_array = wtgcsv_get_dataimportjob($wtgcsv_currentjob_code);
     $wtgcsv_jobtable_array = wtgcsv_get_option_jobtable_array(); 
     $wtgcsv_dataimportjobs_array = wtgcsv_get_option_dataimportjobs_array();
+
+    // get post creation project related variables
+    $wtgcsv_currentproject_code = wtgcsv_get_current_project_code();
+    $wtgcsv_project_array = wtgcsv_get_project_array($wtgcsv_currentproject_code);
     $wtgcsv_projectslist_array = wtgcsv_get_projectslist();
+    
+    // get all other admin variables    
     $wtgcsv_was_installed = wtgcsv_was_installed();// boolean - indicates if a trace of previous installation found       
     $wtgcsv_schedule_array = wtgcsv_get_option_schedule_array();
     $wtgcsv_panels_closed = true;// boolean true forces all panels closed, false opens them all

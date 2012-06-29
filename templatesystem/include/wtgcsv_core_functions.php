@@ -151,7 +151,7 @@ function wtgcsv_data_import_from_csvfile( $csvfile_name, $table_name, $rate, $jo
             // determine what the next row ID should be for validation
             // combine $progress (for this file) + $processed rows + 1 
             $expected_rowid = $dataimportjob_array['stats'][$csvfile_name]['progress'] + $processed;
-            
+                     
             // is our $expectedrow_id equal too the current row which should also be equal to $loop_count
             if($expected_rowid == $loop_count){
             
@@ -191,7 +191,7 @@ function wtgcsv_data_import_from_csvfile( $csvfile_name, $table_name, $rate, $jo
                 * UPDATE query is used, we are in the eyes of users, inserting the data for the first time.
                 */
 
-                $updaterecord_result = wtgcsv_sql_update_record_dataimportjob( $record, $csvfile_name, $conf['fields'], $jobcode,$record_id, $dataimportjob_array[$csvfile_name]['headers'] );
+                $updaterecord_result = wtgcsv_sql_update_record_dataimportjob( $record, $csvfile_name, $conf['fields'], $jobcode,$record_id, $dataimportjob_array[$csvfile_name]['headers'],$dataimportjob_array['filegrouping'] );
                 if($updaterecord_result){
                     ++$inserted;    
                 }else{
@@ -265,9 +265,9 @@ function wtgcsv_data_import_from_csvfile( $csvfile_name, $table_name, $rate, $jo
 * @param mixed $record_id
 * @param mixed $headers_array
 */
-function wtgcsv_sql_update_record_dataimportjob( $record, $csvfile_name, $fields, $jobcode,$record_id, $headers_array ){
+function wtgcsv_sql_update_record_dataimportjob( $record, $csvfile_name, $fields, $jobcode,$record_id, $headers_array,$filegrouping ){
     // using new record id - update the record
-    $updaterecord_result = wtgcsv_sql_update_record( $record, $csvfile_name, $fields, $jobcode,$record_id, $headers_array );
+    $updaterecord_result = wtgcsv_sql_update_record( $record, $csvfile_name, $fields, $jobcode,$record_id, $headers_array, $filegrouping );
     // increase $inserted counter if the update was a success, the full process counts as a new inserted record            
     if($updaterecord_result === false){
         return false;
@@ -1311,7 +1311,9 @@ function wtgcsv_get_option_dataimportjobs_array(){
 }
 
 /**
-* Gets array of job tables and returns it as it is from Wordpress options record
+* Gets array of job tables and returns it as it is from Wordpress options record.
+* Can use this to check what tables belong to which jobs and for quickly deleting all job tables etc.
+* 
 * @returns false if no array stored or problem accessing options table 
 */
 function wtgcsv_get_option_jobtable_array(){

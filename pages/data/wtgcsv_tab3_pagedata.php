@@ -9,9 +9,25 @@ $panel_array['tabnumber'] = $wtgcsv_tab_number;
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('A list of database tables created by data import jobs');
 $panel_array['panel_help'] = __('This list helps to monitor the number of tables created by the plugin. It indicates the rows inside each table. Should you be running multiple import jobs this table may help you to decide what data is ready to use for creating posts.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);?>
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);
+// Form Settings - create the array that is passed to jQuery form functions
+$jsform_set_override = array();
+$jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);               
+$jsform_set['dialoguebox_title'] = 'Delete Selected Database Tables';
+$jsform_set['noticebox_content'] = 'Do you want to delete the selected database tables and lose all data they contain?';?>
 <?php wtgcsv_panel_header( $panel_array );?> 
 
-    <?php wtgcsv_display_jobtables();?>
+    <?php wtgcsv_formstart_standard($jsform_set['form_name'],$jsform_set['form_id'],'post','wtgcsv_form','');?>
+
+    <?php wtgcsv_display_jobtables(true);?>
+                       
+    <?php
+    // add the javascript that will handle our form action, prevent submission and display dialogue box
+    wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
+
+    // add end of form - dialogue box does not need to be within the <form>
+    wtgcsv_formend_standard('Submit',$jsform_set['form_id']);?>
+
+    <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
 <?php wtgcsv_panel_footer();?>

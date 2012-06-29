@@ -28,6 +28,12 @@ $jsform_set['noticebox_content'] = 'This rule will replace the specified value i
 
     <?php wtgcsv_formstart_standard($jsform_set['form_name'],$jsform_set['form_id'],'post','wtgcsv_form','');?>
 
+    Select Data Column: 
+    <select name="wtgcsv_datarule_replacevalue_column" id="wtgcsv_datarule_replacevalue_column" class="wtgcsv_multiselect_menu">
+        <?php wtgcsv_display_job_column_menuoptions($wtgcsv_currentjob_code);?>                                                                                                                     
+    </select>
+    
+    
     <table class="widefat post fixed">
         <tr class="first">
             <td width="25"><strong>ID</strong></td>

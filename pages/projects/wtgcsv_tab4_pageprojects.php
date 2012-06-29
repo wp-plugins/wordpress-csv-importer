@@ -37,6 +37,7 @@ $jsform_set['noticebox_content'] = 'Are you sure you want to change your default
 <?php wtgcsv_panel_footer();?>
 
 <?php
+if(!$wtgcsv_is_free){
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'dynamicposttype';// slug to act as a name and part of the panel ID 
@@ -58,7 +59,7 @@ $jsform_set['noticebox_content'] = 'Do you want to save your new post type rule?
     <?php wtgcsv_formstart_standard($jsform_set['form_name'],$jsform_set['form_id'],'post','wtgcsv_form','');?>
 
     <p>        
-        Table Column: 
+        Data Column: 
         <select name="wtgcsv_dynamicposttype_select_columnandtable" id="wtgcsv_dynamicposttype_select_columnandtable_formid" class="wtgcsv_multiselect_menu">
             <?php wtgcsv_display_project_columnsandtables_menuoptions($wtgcsv_currentproject_code);?>                                                                                                                     
         </select>
@@ -104,4 +105,5 @@ $jsform_set['noticebox_content'] = 'Do you want to save your new post type rule?
 
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
-<?php wtgcsv_panel_footer();?> 
+<?php wtgcsv_panel_footer();
+}?> 

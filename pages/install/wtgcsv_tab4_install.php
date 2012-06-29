@@ -4,7 +4,7 @@
 #                                          INITIAL INSTALLATION SCREEN                                       #
 #                                                                                                            #
 ##############################################################################################################
-global $wtgcsv_homesite,$wtgcsv_install_intro_2509,$wtgcsv_install_help_2509,$wtgcsv_reinstall_intro_0110,$wtgcsv_reinstall_help_0110,$wtgcsv_uninstall_intro_0210,$wtgcsv_uninstall_help_0210;
+global $wtgcsv_install_intro_2509,$wtgcsv_install_help_2509,$wtgcsv_reinstall_intro_0110,$wtgcsv_reinstall_help_0110,$wtgcsv_uninstall_intro_0210,$wtgcsv_uninstall_help_0210;
 
 if($wtgcsv_is_installed){
     wtgcsv_notice('Activation has already been done, this tab is displayed to 

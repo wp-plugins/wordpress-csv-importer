@@ -57,18 +57,11 @@ function wtgcsv_admin_menu(){
  */
 function wtgcsv_install_status_display($display = true){
     
-    global $wtgcsv_was_installed,$wtgcsv_is_installed,$wtgcsv_display_testing_info;
+    global $wtgcsv_was_installed,$wtgcsv_is_installed;
            
     // trace of an installation exists but is not fully installed then display warnings 
     if($wtgcsv_was_installed == true && $wtgcsv_is_installed != true){
-
-        if($wtgcsv_display_testing_info){
-            var_dump( ' <br />$wtgcsv_was_installed:');
-            var_dump($wtgcsv_was_installed);  
-            var_dump( ' <br />$wtgcsv_is_installed:');
-            var_dump($wtgcsv_is_installed);                
-        }
-                  
+                      
         if(wtgcsv_templatefiles_missing()){
             wtgcsv_notice('One or more files important for the plugin to operate appear to be missing. Please
             check the plugins Status page and correct the problem using the help tools there.','error','Small',WTG_CSV_PLUGINTITLE . ' Core File Missing: ');             
@@ -141,8 +134,6 @@ function wtgcsv_notice_output(){
 
 /**
  * Adds Script Start and Stylesheets to the beginning of pages
- * 
- * @uses wtgcsv_display_testing_info,wtgcsv_test_header()
  */
 function wtgcsv_header_page($pagetitle,$layout){
     global $wtgcsv_mpt_arr,$wtgcsv_adm_set,$wtgcsv_pub_set,$wtgcsv_currentproject_code;
@@ -177,16 +168,25 @@ function wtgcsv_header_page($pagetitle,$layout){
         // check installation status and display warnings about any critical problems
         wtgcsv_install_status_display();?>
     
-        <?php wtgcsv_notice('<h4>ALPHA version released early as requested by many members of the Wordpress community</h4>
-        <p>Please do not discuss, report or rate the plugin online yet. You will see "Paid Edition Only" on some features. 
-        This is subject to change, exactly what features will be free has no been fully decided.</p>','warning','Extra','Alpha Wordpress CSV Importer'); ?>
-    
+        <?php
+        if($wtgcsv_is_free){
+            
+             wtgcsv_notice('<h4>ALPHA version released early as requested by many members of the Wordpress community</h4>
+            <p>Please do not discuss, report or rate the plugin online yet. You will see "Paid Edition Only" on some features. 
+            This is subject to change, exactly what features will be free has no been fully decided.</p>','warning','Extra','Alpha Wordpress CSV Importer');
+        
+        }else{
+            
+            wtgcsv_notice('Released June 2012, Wordpress CSV Importer is the latest data import and auto-blogging plugin. It is currently a BETA,
+            please make this clear in any public feedback.','warning','Extra','Wordpress CSV Importer Beta','','echo');
+            
+        }
+        ?>
+        
         <div id="icon-options-general" class="icon32"><br /></div>
         <h2><?php echo $pagetitle;?></h2>
 
         <?php wtgcsv_notice_output(); ?>
-        
-        <?php wtgcsv_display_testing_info();?>
         
         <?php 
         // process global security and any other types of checks here such such check systems requirements, also checks installation status
@@ -211,6 +211,18 @@ function wtgcsv_get_current_project_name(){
 }
 
 /**
+*  Returns current job name or string indicating no current job if none 
+*/
+function wtgcsv_get_current_job_name(){
+    global $wtgcsv_currentjob_code,$wtgcsv_job_array;
+    if(!isset($wtgcsv_job_array['name'])){
+        return 'No Current Job';
+    }else{
+        return $wtgcsv_job_array['name'];
+    }    
+}
+
+/**
 * Uses installation and activation state checkers to determine if the plugin
 * 1. is being activated in Wordpress
 * and
@@ -228,7 +240,6 @@ function wtgcsv_first_activation_check(){
  * @param array
  */
 function wtgcsv_helpbutton_closebox($panel_array){
-     global $wtgcsv_homesite;
 
      extract( shortcode_atts( array(
     'panel_name' => 'invalidpanelname',
@@ -240,7 +251,7 @@ function wtgcsv_helpbutton_closebox($panel_array){
     'panel_intro' => 'No Intro Text Found',
     'panel_help' => 'No Help Text Found',
     'panel_icon' => 'invalid-image-or-image-not-yet-created-notice.png',
-    'panel_url' => $wtgcsv_homesite,
+    'panel_url' => 'http://www.wordpresscsvimporter.com/',
     'help_button' => 'Help' 
     ), $panel_array ) );   
     
@@ -270,8 +281,7 @@ function wtgcsv_helpbutton_closebox($panel_array){
 /**
  * Displays author and adds some required scripts
  */
-function wtgcsv_footer(){
-    global $wtgcsv_homesite;?>
+function wtgcsv_footer(){?>
  
                     </div><!-- end of tabs - all content must be displayed before this div -->   
                 </div><!-- end of post boxes -->
@@ -296,7 +306,7 @@ function wtgcsv_footer(){
 * @link http://www.erichynds.com/jquery/jquery-ui-multiselect-widget/
 */
 function wtgcsv_easy_configuration_questionlist_demo(){
-    global $wtgcsv_easyquestions_array,$wtgcsv_display_testing_info;
+    global $wtgcsv_easyquestions_array;
              
     // count number of each type of question added for adding ID value to script
     $singles_created = 0;// count number of single answer questions added (radio button)
@@ -455,8 +465,9 @@ function wtgcsv_easy_configuration_questionlist_demo(){
         }//
     }// end for each question
         
-    // output total number of questions if developer information active    
-    if($wtgcsv_display_testing_info){
+    // output total number of questions if developer information active 
+    $wtgcsv_is_dev = true;// ### TODO:HIGHPRIORITY, change this to the global   
+    if($wtgcsv_is_dev){
         
         echo '<h4>Total Questions</h4>';
         echo '<p>';
@@ -659,70 +670,6 @@ function wtgcsv_install_optionstatus_list(){
         wtgcsv_notice('wtgcsv_publicset is installed', 'success', 'Small', false);
     }else{
         wtgcsv_notice('wtgcsv_publicset not installed <a class="button" href="'.wtgcsv_currenturl().'&test=test">Install Now</a>', 'error', 'Small', false);
-    } 
-}
-        
-/**
-* Call in wtgcsv_header_page()
-*/
-function wtgcsv_display_testing_info(){
-    
-    global $wtgcsv_display_testing_info;
-
-    if($wtgcsv_display_testing_info > 0 ){
-        
-        global $wtgcsv_apiservicestatus,$wtgcsv_productkey,$wtgcsv_activationcode,$wtgcsv_is_subscribed,$wtgcsv_is_installed,$wtgcsv_was_installed;
-        
-        echo '<h2>Displaying Testing Information</h2>';         
-        
-        echo '<ol>';
-        
-        echo '<li>API Service Status: '.$wtgcsv_apiservicestatus.'</li>';  
-        echo '<li>Product Key: '.$wtgcsv_productkey.'</li>'; 
-        echo '<li>Activation Code: '.$wtgcsv_activationcode.'</li>'; 
-        echo '<li>Is Subscribed: '.$wtgcsv_is_subscribed.'</li>'; 
-        echo '<li>Was Installed: '.$wtgcsv_was_installed.'</li>'; 
-        echo '<li>Is Installed: '.$wtgcsv_is_installed.'</li>';
-        
-        echo '</ol>';
-    }
-
-    // display admin settings 
-    if($wtgcsv_display_testing_info >= 2){
-        echo '<h2>Admin Settings</h2>';         
-        
-        echo '<ol>';
-        echo '<li>Theme: '.wtgcsv_get_theme().'</li>';  
-        echo '</ol>';    
-    }
-    
-    // include $_POST dump
-    if($wtgcsv_display_testing_info >= 5){
-        echo '<pre>';
-        var_dump($_POST);
-        echo '</pre>';    
-    } 
-    
-    // pre version release and public status data   
-    if($wtgcsv_display_testing_info >= 9){
-        
-        global $wtgcsv_homesite,$wtgcsv_pluginforum,$wtgcsv_pluginblog,$wtgcsv_pluginsalespage,$wtgcsv_support_blog_category,$wtgcsv_support_blog_page;
-        
-        echo '<h4>Plugin Profile</h4>';
-        
-        echo '<ol>';
-        
-        echo '<li>Home Site: '.$wtgcsv_homesite.'</li>';     
-        echo '<li>Plugin Forum: '.$wtgcsv_pluginforum.'</li>';     
-        echo '<li>Plugin Blog: '.$wtgcsv_pluginblog.'</li>';     
-        echo '<li>Plugin Sales Page: '.$wtgcsv_pluginsalespage.'</li>';     
-        echo '<li>Support Blog Category: '.$wtgcsv_support_blog_category.'</li>';     
-        echo '<li>Support Blog Page: '.$wtgcsv_support_blog_page.'</li>';  
-        
-        ### @todo VERY LOW PRIORITY  add Wordpress free edition download stats if possible, also add sales page Google +1 count, add latest found tweets       
-        
-        echo '</ol>';         
-        
     } 
 }
 
@@ -2058,7 +2005,7 @@ function wtgcsv_list_replacement_tokens($currentproject_code){
     global $wtgcsv_is_free;
     
     if(!$currentproject_code || $currentproject_code == false){
-        echo 'No Current Project';    
+        echo 'No Current Project';  
     }else{
         $project_array = wtgcsv_get_project_array($currentproject_code);
         
@@ -2068,17 +2015,31 @@ function wtgcsv_list_replacement_tokens($currentproject_code){
             echo '<h4>' . $table_name . '</h4>';
             
             $table_columns = wtgcsv_sql_get_tablecolumns($table_name);
-            while ($row_column = mysql_fetch_row($table_columns)) { 
+            
+            if(!$table_columns){
+            
+                echo wtgcsv_notice('The database table named '.$table_name.' does not appear to exist anymore. Have you
+                deleted it manually using this plugin or when editing the database directly?','error','Small','','','return');
                 
-                // if free edition, do not add the table, we make it a little more simple
-                // it is also more secure for users who may be beginners because database table names are not in use
-                if($wtgcsv_is_free){
-                    echo '#' . $row_column[0].'<br />';                    
-                }else{            
-                    echo $table_name . '#' . $row_column[0].'<br />';
-                }
-            }            
+            }else{
+            
+                // excluded columns array
+                $excluded_columns = array('wtgcsv_id','wtgcsv_postid','wtgcsv_postcontent','wtgcsv_inuse','wtgcsv_imported','wtgcsv_updated','wtgcsv_changed','wtgcsv_applied','wtgcsv_filemoddate','wtgcsv_filemoddate1','wtgcsv_filemoddate2','wtgcsv_filemoddate3','wtgcsv_filemoddate4','wtgcsv_filemoddate5','wtgcsv_filedone','wtgcsv_filedone1','wtgcsv_filedone2','wtgcsv_filedone3','wtgcsv_filedone4','wtgcsv_filedone5');
 
+                while ($row_column = mysql_fetch_row($table_columns)) { 
+                    
+                    if(!in_array($row_column[0],$excluded_columns)){
+                        
+                        // if free edition, do not add the table, we make it a little more simple
+                        // it is also more secure for users who may be beginners because database table names are not in use
+                        if($wtgcsv_is_free){
+                            echo '#' . $row_column[0].'<br />';                    
+                        }else{            
+                            echo $table_name . '#' . $row_column[0].'<br />';
+                        }
+                    }
+                } 
+            }           
         }    
     }            
 }
@@ -2205,6 +2166,73 @@ function wtgcsv_display_project_columnsandtables_menuoptions($project_code,$curr
         } 
     }  
 }
+
+function wtgcsv_display_job_column_menuoptions($job_code,$current_table = 'NOTPROVIDED98723462',$current_column = 'NOTPROVIDED09871237'){
+    
+    
+    /*
+    if(!$project_code){
+        echo '<option value="nocurrentproject">No Current Project</option>';        
+    }else{
+
+        $project_array = wtgcsv_get_project_array($project_code);
+        
+        foreach( $project_array['tables'] as $key => $table ){
+            $table_columns = wtgcsv_sql_get_tablecolumns($table);
+            while ($row_column = mysql_fetch_row($table_columns)) {
+                
+                // establish selected status for this option
+                $selected = '';
+                if($current_table != 'NOTPROVIDED98723462' && $current_column != 'NOTPROVIDED09871237'){
+                    if($current_table == $table && $current_column == $row_column[0]){
+                        $selected = 'selected="selected"';
+                    }    
+                } 
+                
+                // must add table name also to avoid confusion when two or more tables share the same column name               
+                echo '<option value="'.$table.','.$row_column[0].'" '.$selected.' >' . $table . ' - '.$row_column[0].'</option>'; 
+            }                          
+        } 
+    }
+    */  
+}
+
+/**
+* Display date method with a short description of what the date method does 
+*/
+function wtgcsv_display_date_method(){
+    global $wtgcsv_project_array;
+    
+    if(isset($wtgcsv_project_array['dates']['currentmethod'])){
+        
+        if($wtgcsv_project_array['dates']['currentmethod'] == 'data'){
+            echo wtgcsv_notice('You selected a column in your project database tables for populating the publish dates of your posts.
+            Please ensure the date formats in your data is suitable if your dates do not turn out as expected.','info','Large','Pre-Set Data Dates','','return');        
+            return;    
+        }
+                
+        if($wtgcsv_project_array['dates']['currentmethod'] == 'random'){
+            echo wtgcsv_notice('Your project is currently setup to create random publish dates. Your 
+            random dates will be generated using the giving start and end dates. All publish dates will fall
+            between those giving dates and will not be created with any increment or in order.','info','Large','Random Dates','','return');        
+            return;    
+        }
+        
+        if($wtgcsv_project_array['dates']['currentmethod'] == 'increment'){
+            echo wtgcsv_notice('The current project is setup to use the incremental publish dates method.
+            The first publish date will be the Start date you submitted. The increment will then be used to 
+            create the next publish date.','info','Large','Incremental Dates','','return');        
+            return;    
+        }
+
+    }
+    
+    // display default
+    echo wtgcsv_notice('Your project will use your blogs default publish date. Wordpress CSV Importer will not apply
+    a date or make modifications to the one decided by Wordpress based on your current Date configuration here on
+    this screen.','info','Large','Wordpress Default Publish Dates','','return');    
+}
+
 
 /**
 * Displays checkbox menu holding all the designs for the giving project
@@ -2527,7 +2555,7 @@ function wtgcsv_table_customfield_rules_advanced(){
             <td width="200"><strong>Meta-Key</strong></td>
             <td width="200"><strong>Table</strong></td>
             <td><strong>Column</strong></td>
-            <td><strong>Template</strong></td>
+            <td><strong>Template ID</strong></td>
             <td><strong>Updating</strong></td>                                                                                               
         </tr>'; 
         
@@ -2647,7 +2675,7 @@ function wtgcsv_display_jobtables($checkbox_column = false){
     <tr class="first">';
     
     if($checkbox_column){
-        echo '<td width="170"><strong>Select</strong></td>';        
+        echo '<td width="50"><strong>Select</strong></td>';        
     }
     
     echo '
@@ -2785,14 +2813,14 @@ function wtgcsv_display_project_database_tables_and_columns(){
 function wtgcsv_display_databasetables_withjobnames($checkbox_column = false,$ignore_free = false){
     global $wtgcsv_dataimportjobs_array,$wtgcsv_jobtable_array,$wtgcsv_is_free;
     
-    echo '<table class="widefat post fixed">
+    $html_table = '<table class="widefat post fixed">
     <tr class="first">';
     
     if($checkbox_column){
-        echo '<td width="80"><strong>Select</strong></td>';        
+        $html_table .= '<td width="80"><strong>Select</strong></td>';        
     }
     
-    echo '
+    $html_table .= '
         <td width="200"><strong>Database Table Names</strong></td>
         <td width="250"><strong>Data Immport Job Names</strong></td>
         <td><strong>Tables Records</strong></td>                                                               
@@ -2801,8 +2829,9 @@ function wtgcsv_display_databasetables_withjobnames($checkbox_column = false,$ig
     $table_count = 0;
 
     $tables = wtgcsv_sql_get_tables();
+
     while ($table_name = mysql_fetch_row($tables)) {                
-        
+           
         // I decided free users should not get a plugin that offers open access to Wordpress database tables.
         // I would like to reduce such access at least until better documentation is released and more security added
         if($wtgcsv_is_free && !strstr($table_name[0],'wtgcsv_')){
@@ -2827,18 +2856,18 @@ function wtgcsv_display_databasetables_withjobnames($checkbox_column = false,$ig
 
             $table_row_count = wtgcsv_sql_counttablerecords($table_name[0]);    
 
-            echo '
+            $html_table .= '
             <tr>';
      
             if($checkbox_column){
                 if($wtgcsv_is_free){
-                    echo '<td><input type="radio" name="wtgcsv_databasetables_array" value="'.$table_name[0].'" /></td>';        
+                    $html_table .= '<td><input type="radio" name="wtgcsv_databasetables_array" value="'.$table_name[0].'" /></td>';        
                 }else{
-                    echo '<td><input type="checkbox" name="wtgcsv_databasetables_array[]" value="'.$table_name[0].'" /></td>';                
+                    $html_table .= '<td><input type="checkbox" name="wtgcsv_databasetables_array[]" value="'.$table_name[0].'" /></td>';                
                 }
             }
                 
-            echo '
+            $html_table .= '
                 <td>'.$table_name[0].'</td>
                 <td>'.$tables_jobname.'</td>
                 <td>'.$table_row_count.'</td>
@@ -2847,7 +2876,14 @@ function wtgcsv_display_databasetables_withjobnames($checkbox_column = false,$ig
         }
     }   
                  
-    echo '</table>';
+    $html_table .= '</table>';
+    
+    // if no applicable database tables would be displayed, display message
+    if($wtgcsv_is_free && $table_count == 0){
+        echo wtgcsv_notice('Your database does not have any tables created by Wordpress CSV Importer. You will need to create a Data Import Job which creates a new database table.','warning','Small','','','return');    
+    }else{
+        echo $html_table;
+    }
     
     return $table_count;               
 }

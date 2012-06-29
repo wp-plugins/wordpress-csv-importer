@@ -18,7 +18,6 @@ function wtgcsv_count_csvfilerows($csvfile_name){
 * @todo LOWPRIORITY, add further checks when the difference between two counts is not great, is it possible to ignore the needles with quotes around them? Maybe ignore columns with large text values
 */
 function wtgcsv_establish_csvfile_separator_fgetmethod( $testnumber,$csv_filename, $output = false ){
-    global $wtgcsv_display_testing_info;
     
     $probable_separator = ','; 
     

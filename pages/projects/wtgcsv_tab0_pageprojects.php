@@ -13,7 +13,8 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </script>
 <?php }?>
 
-<?php          
+<?php 
+if($wtgcsv_is_free){         
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'selectcurrentproject';// slug to act as a name and part of the panel ID 
@@ -73,7 +74,8 @@ $jsform_set['noticebox_content'] = 'You are about to change your current project
 
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
-<?php wtgcsv_panel_footer();?> 
+<?php wtgcsv_panel_footer();
+}?> 
 
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
@@ -163,9 +165,7 @@ $nonce = wp_create_nonce( "wtgcsv_referer_createproject_checkprojectname" );
     <div id='<?php echo $jsform_set['form_id'];?>loading_projectnamechange'>Checking Project Name Please Wait 10 Seconds</div>                 
     <div id='<?php echo $jsform_set['form_id'];?>formstatus'></div>  
     <!-- jquery and ajax output end -->            
-
-    <br />
-    
+    <h4>Select CSV File</h4>
     <?php wtgcsv_display_databasetables_withjobnames(true);?>
 
     <?php // TODO: LOWPRIORITY, only display mapping methods when user selects more than 1 table, only show the third method when user selects 3 or more ?>
@@ -226,7 +226,6 @@ if(!$wtgcsv_is_free){
     <?php wtgcsv_panel_footer();
 }?> 
 
-
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
@@ -279,15 +278,14 @@ $jsform_set['noticebox_content'] = 'Are you sure you want to delete the selected
                 });
             </script><?php 
         }
+        
+        // add the javascript that will handle our form action, prevent submission and display dialogue box
+        wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
+
+        // add end of form - dialogue box does not need to be within the <form>
+        wtgcsv_formend_standard('Delete Project',$jsform_set['form_id']);
+                
+        wtgcsv_jquery_form_prompt($jsform_set);    
     }?>
-    
-    <?php
-    // add the javascript that will handle our form action, prevent submission and display dialogue box
-    wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
 
-    // add end of form - dialogue box does not need to be within the <form>
-    wtgcsv_formend_standard('Delete Project',$jsform_set['form_id']);?>
-
-    <?php wtgcsv_jquery_form_prompt($jsform_set);?>
-
-<?php wtgcsv_panel_footer();?> 
+<?php wtgcsv_panel_footer();?>

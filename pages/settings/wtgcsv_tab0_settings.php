@@ -9,7 +9,7 @@ $panel_array['tabnumber'] = $wtgcsv_tab_number;
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('Still under construction');
 $panel_array['panel_help'] = __('Web services are still under construction.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(true,true);
+$panel_array['help_button'] = wtgcsv_helpbutton_text(true,false);
 // Form Settings - create the array that is passed to jQuery form functions
 $jsform_set_override = array();
 $jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);     

@@ -36,7 +36,7 @@ $panel_array['panel_icon'] = $panel_array['panel_name'].'-notice.png';
                 ####                                   ####
                 ###########################################
                 if($wtgcsv_apiservicestatus){
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webservice/webtechglobal-webservice-online.png"/>';                        
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webservice/webtechglobal-webservice-online.jpg"/>';                        
                 }else{
                     echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webservice/webtechglobal-webservice-maintenence.png"/>'; 
                 }

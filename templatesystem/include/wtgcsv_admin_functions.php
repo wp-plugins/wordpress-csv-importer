@@ -380,7 +380,7 @@ function wtgcsv_update_tabmenu(){
 * @return boolean, true if all files found or false if any are missing 
 */
 function wtgcsv_templatefiles_missing(){
-    global $wtgcsv_templatesystem_files,$wtgcsv_display_testing_info;
+    global $wtgcsv_templatesystem_files;
     foreach( $wtgcsv_templatesystem_files as $key => $fileitem ){
         
         $path = '';          
@@ -390,13 +390,7 @@ function wtgcsv_templatefiles_missing(){
             $path .= '.' . $fileitem['extension']; 
         }
 
-        if(!file_exists($path)){
-        
-            if($wtgcsv_display_testing_info){
-                var_dump( '<br />wtgcsv_templatefiles_missing !file_exists $path: ');
-                var_dump( $path );                     
-            }
-   
+        if(!file_exists($path)){   
             return true;
         } 
     }
@@ -452,6 +446,33 @@ function wtgcsv_create_code($length = 10,$specialchars = false) {
 */
 function wtgcsv_get_current_project_code(){
     return get_option('wtgcsv_currentprojectcode');
+}
+
+/**
+* Deletes the wtgcsv_currentprojectcode option record, used when deleting a project when it is also the current project.
+* I took this approach to help users cleanup the database when removing the plugin. 
+*/
+function wtgcsv_delete_option_currentprojectcode(){
+    return delete_option('wtgcsv_currentprojectcode');    
+}
+
+function wtgcsv_delete_option_currentjobcode(){
+    return delete_option('wtgcsv_currentjobcode');    
+}
+
+/**
+* Updates/Creates option record for holding the current job code
+* 
+* @param mixed $job_code
+*/
+function wtgcsv_update_option_currentjob_code($job_code){
+    global $wtgcsv_currentjob_code;
+    $wtgcsv_currentjob_code = $job_code;
+    return update_option('wtgcsv_currentjobcode',$job_code);     
+}
+
+function wtgcsv_get_option_currentjobcode(){
+    return get_option('wtgcsv_currentjobcode');    
 }
 
 /**

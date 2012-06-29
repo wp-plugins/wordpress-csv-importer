@@ -12,6 +12,7 @@ $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a
 
 <h4>Usage Tips</h4>
 <ol>
+    <li>Always use the Question and Answers form on installation so the plugin configures the interface to suit your needs.</li>
     <li>Two types of panels exist on all pages, global and project. Global control all projects. This approach was decided instead of using a settings page.</li>
     <li>You do not need to use all features, ignore features you do not need</li>
     <li>Delete test projects or data import jobs before beginning on your final ones</li>

@@ -1,5 +1,5 @@
 <?php      
-global $wtgcsv_display_testing_info,$wtgcsv_mpt_arr,$wpdb,$wtgcsv_options_array,$wtgcsv_nav_type,$wtgcsv_projectslist_array,$wtgcsv_schedule_array,$wtgcsv_is_free;
+global $wtgcsv_mpt_arr,$wpdb,$wtgcsv_options_array,$wtgcsv_nav_type,$wtgcsv_projectslist_array,$wtgcsv_schedule_array,$wtgcsv_is_free;
 $pageid = 'creation';// used to access variable.php configuration
 $pagefolder = 'creation';// the folder in pages folder holding this pages files
 

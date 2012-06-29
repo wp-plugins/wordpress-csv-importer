@@ -1,19 +1,16 @@
 <p>
 <strong>Developed in 2012</strong><br />
 <strong>Alpha released June 2012</strong><br />
-<strong>Beta release July 2012</strong>
+<strong>Beta release planned 15th July 2012</strong>
 </p>
 
-<p>Wordpress CSV Importer is an advanced data import and post creation plugin. The plugin is ready to use for data
-importing, that is part of this plugins function. Auto-blogging is half of the plugins function with the data import
-features supporting the design of the post creation features in auto-blogging areas of the plugin. Wordpress CSV Importer
-is ready for use, it just may not have all required features for all projects due to it still being an Alpha. I'm
-keeping it in Alpha status to avoid confusion with users who are only seeking a post creation plugin. That area of the
-plugin still needs a week of work as I type this.</p> 
-
-<p>I have also not started documentation which will be extensive. The interface offers help content and links directly
-too dedicated pages per feature, but the content is yet to be written. I do not want users to be under the impression that I feel
-enough has been done and so it will stay in Alpha status for 2-3 more weeks.</p>
+<p>Wordpress CSV Importer is an advanced data import and post creation plugin created 2012. It will be supported
+for many years. Users can import data, manage it then use newly created database tables in their post creation projects.
+The plugins design allows unlimited expansion while reducing the usual complexity. Unique approaches
+have been implemented to deliver more accurate results, long-term project management and safer auto-blogging. Included in the
+full edition is the ability to update data, apply new data to posts and many other features still not seen in other 
+plugins. The full edition will eventually be supported with Web Services with the aim to deliver a superior service
+by the end of 2013.</p> 
 
 <h4>Still Under Construction - No Public Rating Or Negative Feedback Please</h4>
 <p>The plugin is being released due to requests from the Wordpress public. I have many users and buyers of the full

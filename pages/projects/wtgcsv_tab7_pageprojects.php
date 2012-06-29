@@ -485,6 +485,7 @@ $jsform_set['noticebox_content'] = 'Please ensure you have backed up your Wordpr
 }?> 
 
 <?php
+if(!$wtgcsv_is_free){
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'createcategorymappingrules';// slug to act as a name and part of the panel ID 
@@ -622,7 +623,8 @@ $jsform_set['noticebox_content'] = 'Do you want to save category mapping rules n
 
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
-<?php wtgcsv_panel_footer();?>
+<?php wtgcsv_panel_footer();
+}?>
 
 <?php ### TODO:HIGHPRIORITY, add panel for Single Column Categories (category splitter approach)?>
 

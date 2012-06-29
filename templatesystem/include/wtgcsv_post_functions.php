@@ -321,11 +321,19 @@ function wtgcsv_categorysetup_basicscript_normalcategories($r,$project_array){
 * @returns string, $project_array['code'] if success
 */
 function wtgcsv_create_post_creation_project($project_name,$projecttables_array,$mapping_method){
+    global $wtgcsv_is_free;
+    
     // initialize a new post creation project array
     $project_array = wtgcsv_initialize_postcreationproject_array($project_name);
 
     // generate a unique project code
-    $project_array['code'] = 'pro' . wtgcsv_create_code();
+    if($wtgcsv_is_free){
+        $project_array['code'] = 'freeproject';    
+    }else{
+        $project_array['code'] = 'pro' . wtgcsv_create_code();
+    }
+    
+    // set the csv column to database table mapping method (required for advanced updating)
     $project_array['mappingmethod'] = $mapping_method;
 
     // add tables
