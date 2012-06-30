@@ -29,11 +29,6 @@ $wtgcsv_theme_array[0]['name'] = 'overcast';
 $wtgcsv_theme_array[0]['source'] = 'default';// hardcoded path to default css source
 $wtgcsv_theme_array[0]['thumb'] = 'default';// hardcoded path too themethumb folder
 $wtgcsv_theme_array[0]['author'] = 'jquery.com';// mainly for custom themes where whole icon set etc is changed
-// 2: blitzer
-$wtgcsv_theme_array[1]['name'] = 'blitzer';
-$wtgcsv_theme_array[1]['source'] = 'default';// hardcoded path to default css source
-$wtgcsv_theme_array[1]['thumb'] = 'default';// hardcoded path too themethumb folder
-$wtgcsv_theme_array[1]['author'] = 'jquery.com';// mainly for custom themes where whole icon set etc is changed
 // 3: cupertino
 $wtgcsv_theme_array[2]['name'] = 'cupertino';
 $wtgcsv_theme_array[2]['source'] = 'default';// hardcoded path to default css source
@@ -59,11 +54,6 @@ $wtgcsv_theme_array[6]['name'] = 'smoothness';
 $wtgcsv_theme_array[6]['source'] = 'default';// hardcoded path to default css source
 $wtgcsv_theme_array[6]['thumb'] = 'default';// hardcoded path too themethumb folder
 $wtgcsv_theme_array[6]['author'] = 'jquery.com';// mainly for custom themes where whole icon set etc is changed
-// 8: south-street
-$wtgcsv_theme_array[7]['name'] = 'south-street';
-$wtgcsv_theme_array[7]['source'] = 'default';// hardcoded path to default css source
-$wtgcsv_theme_array[7]['thumb'] = 'default';// hardcoded path too themethumb folder
-$wtgcsv_theme_array[7]['author'] = 'jquery.com';// mainly for custom themes where whole icon set etc is changed
 // 9: start
 $wtgcsv_theme_array[8]['name'] = 'start';
 $wtgcsv_theme_array[8]['source'] = 'default';// hardcoded path to default css source

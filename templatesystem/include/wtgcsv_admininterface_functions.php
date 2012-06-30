@@ -52,8 +52,6 @@ function wtgcsv_admin_menu(){
  * Displays notice. Used in wtgcsv_check_requirements_display 
  * 
  * @return true if a message is being output, indicating a problem. false is returned if this function is not displaying notice
- * 
- * @global $wtgcsv_install_missingparts_0810 (text)
  */
 function wtgcsv_install_status_display($display = true){
     
@@ -676,10 +674,6 @@ function wtgcsv_install_optionstatus_list(){
 /**
  * Checks if plugins minimum requirements are met and displays notices if not
  * Checks: Internet Connection (required for jQuery), PHP version, Soap Extension
- *  
- * @global $wtgcsv_plugintitle
- * @global $wtgcsv_phpversionwarning_0109
- * @global $wtgcsv_nointernet_1010
  * 
  * @todo HIGH PRIORITY check the status of all external files mainly jquery then display warnings i.e.  http://hotlink.jquery.com/jqueryui/jquery-1.6.2.js?ver=3.2.1
  * @todo HIGH PRIORITY begin a system to deal with missing jquery if even possible so that the interface is not unusable
@@ -693,7 +687,7 @@ function wtgcsv_check_requirements($display){
         $requirement_missing = true;
         if($display == true){
             global $wtgcsv_nointernet_1010;
-            wtgcsv_notice($wtgcsv_nointernet_1010,'warning','Large',__('No Internet Connection Detected: '));
+            wtgcsv_notice('An internet connection could not be detected and is required. Wordpress CSV Importer loads files from jQuery.com and Google. Without the files JavaScript, jQuery and Ajax will not work properly. Please note that this test is done by attempting to connect to Google.com due to reliable but should it ever go offline, it will cause this message.','warning','Large',__('No Internet Connection Detected: '));
         }
     }
     @fclose($fp);
@@ -703,8 +697,7 @@ function wtgcsv_check_requirements($display){
         if(WTG_CSV_PHPVERSIONMINIMUM > phpversion()){
             $requirement_missing = true;
             if($display == true){
-                global $wtgcsv_plugintitle,$wtgcsv_phpversionwarning_0109;
-                wtgcsv_notice($wtgcsv_phpversionwarning_0109,'warning','Large',$wtgcsv_plugintitle.' Requires PHP '.WTG_CSV_PHPVERSIONMINIMUM);
+                wtgcsv_notice('The plugin detected an older php version than the minimum requirement which is '.WTG_CSV_PHPVERSIONMINIMUM.'. Wordpress itself also operates better with a later version of php than you are using. Most features will work fine but some important ones will not.','warning','Large','Wordpress CSV Importer Requires PHP '.WTG_CSV_PHPVERSIONMINIMUM);
             }
         }
     }

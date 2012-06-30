@@ -1,6 +1,4 @@
-<?php   
-global $wtgcsv_installstatus_intro_0510,$wtgcsv_installstatus_help_0510,$wtgcsv_logfilestatus_intro_0710 ,$wtgcsv_logfilestatus_help_0710,$wtgcsv_databasetablesstatus_intro_0810,$wtgcsv_databasetablesstatus_help_0810; 
-   
+<?php      
 // include premium services status panel
 include(WTG_CSV_PANELFOLDER_PATH.'premiumservicesstatus'.'.php');   
 
@@ -12,8 +10,8 @@ $panel_array['panel_title'] = __('Critical Option Records (settings) Status');//
 $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
-$panel_array['panel_intro'] = $wtgcsv_installstatus_intro_0510;
-$panel_array['panel_help'] = $wtgcsv_installstatus_help_0510;
+$panel_array['panel_intro'] = 'View the status of option records and database tables';
+$panel_array['panel_help'] = 'Wordpress allows us to store settings/options in the options table. Multiple option values can be held in a single record. This panel allows us to quickly view the status of individual option records and any database tables your current configuration requires.';
 $panel_array['help_button'] = wtgcsv_helpbutton_text(true,false);?>
 <?php wtgcsv_panel_header( $panel_array );?>
     
@@ -62,8 +60,8 @@ $panel_array['panel_title'] = __('Log Files Status');// user seen panel header t
 $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
-$panel_array['panel_intro'] = $wtgcsv_logfilestatus_intro_0710;
-$panel_array['panel_help'] = $wtgcsv_logfilestatus_help_0710;
+$panel_array['panel_intro'] = 'Check what files exist or not and the log recording status.';
+$panel_array['panel_help'] = 'Log files are not required for the plugin to operate but they can help you monitor your projects activity or for troubleshooting should your project settings not be as you need them yet. '.WTG_CSV_PLUGINTITLE.' has multiple log files, each containing rows of information from different aspects of the plugin. You do not need to have all of them active or any of them. Some may not mean a lot to you especially if your not a developer i.e. the sql log file. These files are great for sending by email when requesting support.';
 $panel_array['help_button'] = wtgcsv_helpbutton_text(false,false); 
 ?>
 <?php wtgcsv_panel_header( $panel_array );?>

@@ -1,9 +1,4 @@
 <?php
-// get interface content
-global $wtgcsv_install_intro_2509,$wtgcsv_install_help_2509,$wtgcsv_reinstall_intro_0110,$wtgcsv_reinstall_help_0110,$wtgcsv_uninstall_intro_0210,$wtgcsv_uninstall_help_0210;
-?>
- 
-<?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'reinstall';// slug to act as a name and part of the panel ID 
@@ -12,8 +7,8 @@ $panel_array['panel_title'] = __('Re-Install');// user seen panel header text
 $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
-$panel_array['panel_intro'] = $wtgcsv_reinstall_intro_0110;
-$panel_array['panel_help'] = $wtgcsv_reinstall_help_0110;
+$panel_array['panel_intro'] = 'Re-install all or selected parts of the plugin.';
+$panel_array['panel_help'] = 'Select the specific items you would like to re-install. In most cases you would select them all for a complete fresh install but in some cases you might want to keep existing data/settings to save time configuring your new installation of the plugin.';
 $panel_array['help_button'] = wtgcsv_helpbutton_text(false,false); 
 ?>
 <div id="titles" class="postbox closed">
@@ -133,8 +128,8 @@ $panel_array['panel_title'] = __('Un-Install');// user seen panel header text
 $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_array['panel_number'];// creates a unique id, may change from version to version but within a version it should be unique
-$panel_array['panel_intro'] = $wtgcsv_uninstall_intro_0210;
-$panel_array['panel_help'] = $wtgcsv_uninstall_help_0210;
+$panel_array['panel_intro'] = 'Delete the plugins settings, uploaded files and database tables';
+$panel_array['panel_help'] = 'This tool allows you to delete existing records, files and database tables so that there is no longer a trace of the installation. Settings are stored in the Wordpress options table and will be removed from there. You can leave some elements of the installation in your blog for using in future or possibly to support another plugin. Just ignore this ability if your not sure what it means or you want the most simple way to remove the plugin. Just remember if you do this and then attempt to install the blog in future you may get error type messages simply letting you know something was not installed but really indicating that it already exists.';
 $panel_array['help_button'] = wtgcsv_helpbutton_text(false,false); 
 ?>
 <div id="titles" class="postbox closed">

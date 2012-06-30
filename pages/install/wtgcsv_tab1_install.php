@@ -1,5 +1,5 @@
 <?php 
-global $wtgcsv_installlog_intro_0510,$wtgcsv_installlog_help_0510;
+global $wtgcsv_installlog_help_0510;
 
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
@@ -9,8 +9,8 @@ $panel_array['panel_title'] = __('Installation Log');// user seen panel header t
 $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
-$panel_array['panel_intro'] = $wtgcsv_installlog_intro_0510;
-$panel_array['panel_help'] = $wtgcsv_installlog_help_0510; 
+$panel_array['panel_intro'] = 'Here you can view installation status related entries to the general log file';
+$panel_array['panel_help'] = 'Any actions related to the installation status of '.WTG_CSV_PLUGINTITLE.' will be logged in the General log file. The plugin filters log entries related to install, re-insall or un-install changes. This is mainly for troubleshooting but in some cases we can offer the ability to change your installation without logging into your blog. The log entries are imported to review such changes.'; 
 $panel_array['help_button'] = wtgcsv_helpbutton_text(true,false);?>
 
 <?php wtgcsv_panel_header( $panel_array );?>
@@ -41,7 +41,7 @@ $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_array['panel_number'];// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = $wtgcsv_installlog_intro_0510;
-$panel_array['panel_help'] = $wtgcsv_installlog_help_0510;
+$panel_array['panel_help'] = 'Any actions related to the installation status of '.WTG_CSV_PLUGINTITLE.' will be logged in the General log file. The plugin filters log entries related to install, re-insall or un-install changes. This is mainly for troubleshooting but in some cases we can offer the ability to change your installation without logging into your blog. The log entries are imported to review such changes.';
 $panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);?>
 <?php wtgcsv_panel_header( $panel_array );?>  
 

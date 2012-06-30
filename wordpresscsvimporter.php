@@ -1,11 +1,28 @@
 <?php
 /*
 Plugin Name: Wordpress CSV Importer
-Version: 0.1.0
+Version: 0.1.1
 Plugin URI: http://www.wordpresscsvimporter.com
 Description: Wordpress CSV Importer released 2012 by Zara Walsh and Ryan Bayne
 Author: Zara Walsh
 Author URI: http://www.wordpresscsvimporter.com
+Free Edition License: GPL v3
+
+WordPress CSV Importer
+Copyright (C) 20011-2012, Zara Walsh - zara@wordpresscsvimporter.com
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /*********************************************************************************************************************************
@@ -37,7 +54,7 @@ Author URI: http://www.wordpresscsvimporter.com
 if ( !function_exists( 'add_option' ) ) {echo "www.WordpressCSVImporter.com by Zara Walsh";exit;}
 
 // testing/development variables (will be removed on completion)
-$UNDERCONSTRUCTIONS_SWITCH = 0;// 0=off  1=on  2=$_POST only
+$UNDERCONSTRUCTIONS_SWITCH = 1;// 0=off  1=on  2=$_POST only
 $wtgcsv_js_switch = true;
 $wtgcsv_display_errors = 0;
 $wtgcsv_debugmode_strict = 0;
@@ -59,7 +76,7 @@ if(is_admin() && $UNDERCONSTRUCTIONS_SWITCH != 0 && (!defined('DOING_AJAX') || !
 unset($underconstruction);
 
 // development variable values
-$wtgcsv_currentversion = '0.0.1';
+$wtgcsv_currentversion = '0.1.1';// this value should not be relied on but only used for guidance
 $wtgcsv_php_version_tested = '5.3.1';// current version the plugin is being developed on
 $wtgcsv_php_version_minimum = '5.3.0';// minimum version required for plugin to operate
 // plugin build
@@ -86,7 +103,7 @@ require_once(WTG_CSV_DIR.'templatesystem/wtgcsv_load_admin_arrays_templatesystem
 require_once(WTG_CSV_DIR.'templatesystem/include/wtgcsv_core_functions.php');// must be loaded before initialplugin_configuration.php
 require_once(WTG_CSV_DIR.'templatesystem/wtgcsv_load_initialplugin_configuration.php');// must be loaded after core_functions.php
 require_once(WTG_CSV_DIR.'templatesystem/include/webservices/wtgcsv_api_parent.php');
-if(!$wtgcsv_is_free){require_once(WTG_CSV_DIR.'templatesystem/include/wtgcsv_advanced_functions.php');}
+if(!$wtgcsv_is_free){require_once(WTG_CSV_DIR.'fulledition/wtgcsv_advanced_functions.php');}
 
 // admin end and public load different                  
 if(is_admin()){ 
