@@ -167,7 +167,7 @@ function wtgcsv_header_page($pagetitle,$layout){
         wtgcsv_install_status_display();?>
     
         <?php
-        if($wtgcsv_is_free){
+        if(!$wtgcsv_is_free){
             
              wtgcsv_notice('<h4>ALPHA version released early as requested by many members of the Wordpress community</h4>
             <p>Please do not discuss, report or rate the plugin online yet. You will see "Paid Edition Only" on some features. 
