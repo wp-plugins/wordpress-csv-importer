@@ -75,6 +75,9 @@ This plugins development begun at the end of 2011 and the Beta was released June
 6. You can use up to 3 columns of data to create 3 levels of categories.
  
 == Changelog ==
+= 0.1.2 =
+* BETA Edition
+	* Disabled error reporting (it shows all other plugins errors)
 
 = 0.1.1 = 
 * BETA Edition

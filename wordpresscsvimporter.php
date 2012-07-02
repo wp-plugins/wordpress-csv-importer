@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Wordpress CSV Importer
-Version: 0.1.1
+Version: 0.1.2
 Plugin URI: http://www.wordpresscsvimporter.com
 Description: Wordpress CSV Importer released 2012 by Zara Walsh and Ryan Bayne
 Author: Zara Walsh
@@ -54,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 if ( !function_exists( 'add_option' ) ) {echo "www.WordpressCSVImporter.com by Zara Walsh";exit;}
 
 // testing/development variables (will be removed on completion)
-$UNDERCONSTRUCTIONS_SWITCH = 1;// 0=off  1=on  2=$_POST only
+$UNDERCONSTRUCTIONS_SWITCH = 0;// 0=off  1=on  2=$_POST only
 $wtgcsv_js_switch = true;
 $wtgcsv_display_errors = 0;
 $wtgcsv_debugmode_strict = 0;
@@ -76,7 +76,7 @@ if(is_admin() && $UNDERCONSTRUCTIONS_SWITCH != 0 && (!defined('DOING_AJAX') || !
 unset($underconstruction);
 
 // development variable values
-$wtgcsv_currentversion = '0.1.1';// this value should not be relied on but only used for guidance
+$wtgcsv_currentversion = '0.1.2';// this value should not be relied on but only used for guidance
 $wtgcsv_php_version_tested = '5.3.1';// current version the plugin is being developed on
 $wtgcsv_php_version_minimum = '5.3.0';// minimum version required for plugin to operate
 // plugin build
