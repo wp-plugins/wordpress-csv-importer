@@ -6,7 +6,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: wordpress data import,wordpress data importer,auto blogging,auto blogger,autoblog,mass create posts,mass post creation,csv file importer,csv file data import,post injection,import spreadsheet,excel file import,excel import,www.wordpresscsvimporter.com,wordpresscsvimporter,wordpresscsv import,wordpress import plugin,wordpress data import tool,wordpress data import plugin,wordpress post creation plugin
 Requires at least: 3.3.1
 Tested up to: 3.4.1
-Stable tag: trunk
+Stable tag: 0.1.1
 
 Wordpress CSV Importer (Beta)
 
@@ -21,9 +21,9 @@ The flexability of this approach offers endless potential and is usually safer t
 database table or instant post creation straight from a CSV file.
 
 = Getting Started =
-I have actually written a start guide and tips on the plugin main page. Please browse the guide there. The main thing 
+I have  written a start guide and tips on the plugin main page. Please browse the guide there. The main thing 
 to know is that any problems encountered are not always due to a bug. The plugin may require further development 
-depending on your needs or your project configuration is not compatible with values in your data. 
+depending on your needs or your project configuration is not compatible with values in your data.
 
 Please seek support by creating a ticket here on the [forum](http://wordpress.org/support/plugin/wordpress-csv-importer/)
 
@@ -34,12 +34,9 @@ is giving and users can click another button to open a page on www.wordpresscsvi
 the user needs help for. Some pages will have video tutorials and screenshots. The online support content will be free.
 
 = Paid Services =
-I doubt any developer will deny that plugins of this nature generate a high level of support demand. I've created a 
-paid edition of the plugin with many unique features and new approaches. The ability to export data, delete any database
-table and generally manipulate the blog are available. The paid edition will be supported with Web Services created with
-SOAP and generally aimed at developers who will use it more or anyone who has a complex project. I can also be hired
-however I urge everyone to try the free edition, the consider buying the full edition and only then considering paying me.
-It is my goal to make Wordpress CSV Importer easy and quick enough for anyone to use.
+A very advanced paid edition and services are available if needed. However I urge everyone to try the free edition first.
+For a donation I can add requests for new features to the top of the to do list. If there is something you would like the
+plugin to do but want to avoid paying for the full edition, there are always options.
 
 = Free v Paid =
 It is very important to me that I deliver a useful free plugin for the Wordpress community to use. I must also support
@@ -65,6 +62,30 @@ Initial upload and activation as guided by Wordpress.org standard plugin install
 = When was Wordpress CSV Importer Beta released? =
 This plugins development begun at the end of 2011 and the Beta was released June 2012.
 
+= Is Wordpress CSV Importer well supported? =
+Yes, the plugin will be supported for many years and has a dedicated website.
+
+= Will you make changes to the plugin to suit my needs? =
+We note every request on a "To Do" list and we intend to keep working through the list
+every week. If your needs are more urgent we can be hired. It is mainly Ryan Bayne who 
+handles the more intense requests when clients have deadlines, something we take very 
+serious. 
+
+= Will development continue for this plugin? =
+Our To Do list for Wordpress CSV Importer is already extensive. Ideas, requests and
+requirements for new web technology will keep us busy until 2014. This is why the plugins
+interface has so many screens and offers the ability to hide features not wanted. 
+
+= Why are the features on so many different plugin screens? =
+Long term plans for the development of Wordpress CSV Importer will add an endless list
+of new features. Not only do all the form fields and buttons need to be tidy but
+every feature and ability has to be offered without assumption. Meaning users
+must be able to configure them or opt out of using them or use defaults. Users have that
+choice and flexability which is not offered in all plugins. The entire plugin offers a 
+sandbox approach, especially for those who know a little PHP and can customise it even
+further. The sandbox approach assumes nothing and is expressed on an interface that does
+not push users through a linear step by step process.
+
 == Screenshots ==
 
 1. Start by creating a Data Import Job and import your CSV files data to a new database table created by Wordpress CSV Importer. We have the potential here to import to existing tables and more.
@@ -75,10 +96,14 @@ This plugins development begun at the end of 2011 and the Beta was released June
 6. You can use up to 3 columns of data to create 3 levels of categories.
  
 == Changelog ==
-= 0.1.2 =
+= 0.1.3 = 
 * BETA Edition
-	* Disabled error reporting (it shows all other plugins errors)
+    * Plugin no longer uses wp_die when PHP 5.2 in use, a notification is displayed instead
+    * Improved the use of deactivate_plugins( 'wordpress-csv-importer' ) when PHP 5.2 detected (plugin requires 5.3)
 
+= 0.1.2 = 
+* BETA Edition
+    
 = 0.1.1 = 
 * BETA Edition
     * Reduced the number of files, including the removal of some jQuery UI themes. The plugin size was too large, mainly caused by png images.

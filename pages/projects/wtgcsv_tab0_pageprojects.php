@@ -14,6 +14,12 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 <?php }?>
 
 <?php 
+if(count($wtgcsv_projectslist_array) == 0){
+    echo wtgcsv_notice('Start here on this screen if you want to create posts. You need to create a project, then continue by clicking on the other tabs above.','warning','Tiny','','','return');
+}
+?>
+
+<?php 
 if($wtgcsv_is_free){         
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();

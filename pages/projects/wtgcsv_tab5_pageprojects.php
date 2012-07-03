@@ -1,4 +1,18 @@
 <?php
+if(!isset($wtgcsv_project_array['dates'])){
+    echo wtgcsv_notice('Post publish dates will be the default decided by Wordpress.','warning','Tiny','','','return');
+}else{
+    if(isset($wtgcsv_project_array['dates']['currentmethod'])){
+        if($wtgcsv_project_array['dates']['currentmethod'] == 'random'){
+            echo wtgcsv_notice('Post publish dates will be random.','info','Tiny','','','return');
+        }elseif($wtgcsv_project_array['dates']['currentmethod'] == 'increment'){
+            echo wtgcsv_notice('Post publish dates will be incremental','info','Tiny','','','return');
+        }                                                                    
+    }
+}
+?>
+
+<?php
 ### TODO:MEDIUMPRIORITY, add current date method to the panels title
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();

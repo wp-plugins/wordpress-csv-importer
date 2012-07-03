@@ -1,3 +1,11 @@
+<?php 
+if(!isset($wtgcsv_project_array['default_contenttemplate_id'])){
+    echo wtgcsv_notice('You have not selected a content template yet, this is a requirement for all projects.','warning','Tiny','','','return');
+}else{
+    echo wtgcsv_notice('Your project has a content template setup.','info','Tiny','','','return');
+}
+?>
+
 <?php  
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();

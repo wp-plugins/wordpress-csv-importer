@@ -93,10 +93,11 @@ function wtgcsv_php_version_check_wp_die(){
     if ( version_compare(PHP_VERSION, $wtgcsv_php_version_minimum, '<') ) {
         if ( is_admin() && (!defined('DOING_AJAX') || !DOING_AJAX) ) {
             require_once ABSPATH.'/wp-admin/includes/plugin.php';
-            deactivate_plugins( __FILE__ );
-            wp_die( __('Wordpress 3.2.1 (or a later version) and '.WTG_CSV_PLUGINTITLE.' '.$wtgcsv_currentversion.' requires PHP '.$wtgcsv_php_version_minimum.' 
+            deactivate_plugins( 'wordpress-csv-importer' );
+            wtgcsv_notice('Wordpress 3.2.1 (or a later version) and '.WTG_CSV_PLUGINTITLE.' '.$wtgcsv_currentversion.' requires PHP '.$wtgcsv_php_version_minimum.' 
             or later to operate fully. Your PHP version was detected as '.PHP_VERSION.', it is recommended that you upgrade your PHP
-            on your hosting for security and reliability. You can get suitable hosting here at <a href="http://www.webtechglobal.co.uk">WebTechGlobal Hosting</a>.') );
+            on your hosting for security and reliability. You can get suitable hosting here at <a href="http://www.webtechglobal.co.uk">WebTechGlobal Hosting</a> for
+            free simply for trying the plugin.','error','Extra','Wordpress CSV Importer Requires PHP 5.3 Above','','echo');
         }
     }
 }
@@ -1426,5 +1427,24 @@ function wtgcsv_add_dataimportjob_to_list($code,$jobname){
     }
     $wtgcsv_dataimportjobs_array[$code]['name'] = $jobname;
     wtgcsv_update_option_dataimportjobs($wtgcsv_dataimportjobs_array);    
-}                 
+}
+
+# truncate string to a specific length
+
+/**
+* truncate string to a specific length 
+* 
+* @param string $string, string to be shortened if too long
+* @param integer $max_length, maximum length the string is allowed to be
+* @return string, possibly shortened if longer than
+*/
+function wtgcsv_truncatestring( $string, $max_length ){
+    if (strlen($string) > $max_length) {
+        $split = preg_split("/\n/", wordwrap($string, $max_length));
+        return ($split[0]);
+    }
+    return ( $string );
+}        
+
+         
 ?>

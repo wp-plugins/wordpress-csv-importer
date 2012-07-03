@@ -486,18 +486,55 @@ function wtgcsv_post_poststatus_calculate( $csv,$my_post ){
     return $my_post;
 }
 
-# Ensures Pre-Made Tags Are Valid 
-# TODO: ECI FUNCTIONS NOT COMPLETE
-function wtgcsv_post_createtags_premade($str) {
-    // split passed value - expecting a comma delimited string of values including phrases
-    $splitstr = @explode(",", $str);
-    $new_splitstr = array();
-    foreach ($splitstr as $spstr) 
-    {
-        // ensure individual value is not already in tags array
-        if (strlen($spstr) > 2 && !(in_array(strtolower($spstr), $new_splitstr))){$new_splitstr[] = strtolower($spstr);}
+
+/**
+* Decides which tag generating function to use.
+* You must check that the [tags] array is set before calling this function. This function
+* will then establish what [tags] settings are to be used
+* 
+* @param mixed $my_post
+* @param mixed $record_array
+* @param mixed $project_code
+* @param mixed $project_array
+* @return array $my_post object is returned by default and by wtgcsv_post_generate_tags_premade, wtgcsv_post_generate_tags_advanced
+*/
+function wtgcsv_post_tags($my_post,$record_array,$project_code,$project_array){
+    global $wtgcsv_is_free;
+    
+    /**
+    * If free edition, only allow pre-made tags data to be used.
+    * If not free edition, [default] is set and [generate] not set then call premade function
+    * If not free edition, [default] is not set but [generate] is set then call generate function 
+    */
+    
+    if($wtgcsv_is_free){  
+        if(isset($project_array['tags']['default'])){
+            return wtgcsv_post_generate_tags_premade($my_post,$record_array,$project_code,$project_array);
+        } 
+        return $my_post;   
+    }else{
+        if( isset($project_array['tags']['generator']) ){ 
+            return wtgcsv_post_generate_tags_advanced($my_post,$record_array,$project_code,$project_array);         
+        }elseif( isset($project_array['tags']['default']) ){ 
+            return wtgcsv_post_generate_tags_premade($my_post,$record_array,$project_code,$project_array);
+        }    
     }
-    return @implode(", ", $new_splitstr);
+
+    return $my_post;
+}
+
+/**
+* Adds pre-made tag string to the $my_post object.
+* Tags must be comma seperated,required by Wordpress.
+*/
+function wtgcsv_post_generate_tags_premade($my_post,$record_array,$project_code,$project_array) {
+
+    // ensure tags default column is set and the column value exists in record array, also ensure it is not a null value
+    if(isset($project_array['tags']['default']['column']) && isset($record_array[ $project_array['tags']['default']['column'] ]) && $record_array[ $project_array['tags']['default']['column'] ] != NULL){
+        $my_post['tags_input'] = $record_array[ $project_array['tags']['default']['column'] ];    
+    }  
+    
+    return $my_post;
 }
 
 /**

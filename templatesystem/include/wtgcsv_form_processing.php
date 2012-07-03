@@ -117,6 +117,9 @@ if($cont){
     // Save default tags column
     $cont = wtgcsv_form_save_default_tags_column();
     
+    // Save tag generator settings (full edition only)
+    $cont = wtgcsv_form_save_tag_generator_settings();    
+                               
     // Adds a basic post meta rule - custom field
     $cont = wtgcsv_form_add_basic_custom_field();
     
@@ -143,6 +146,9 @@ if($cont){
     
     // Save default category
     $cont = wtgcsv_form_save_default_category();
+    
+    // Save tag creation rules
+    $cont = wtgcsv_form_save_tag_rules();
 }
 
 // Creation Screen
@@ -180,6 +186,90 @@ function wtgcsv_form_create_datarule_replacevalue(){
 
         echo 'UNDER CONSTRUCTION';
 
+        return false;
+    }else{
+        return true;
+    }          
+} 
+
+/**
+* Saves tag rules submission
+*/
+function wtgcsv_form_save_tag_rules(){
+    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'tagrules'){
+        global $wtgcsv_project_array,$wtgcsv_currentproject_code;
+        
+        // save numeric allow/disallow setting
+        if(isset($_POST['wtgcsv_numerics'])){
+            $wtgcsv_project_array['tags']['rules']['numericterms'] = $_POST['wtgcsv_numerics'];    
+        }
+        
+        // save excluded terms
+        if(isset($_POST['wtgcsv_excludedtag']) && is_string($_POST['wtgcsv_excludedtag'])){
+            
+            // if there are already excluded terms, we need to put them into string for joining to new submission
+            $old_string = '';
+            if(isset($wtgcsv_project_array['tags']['rules']['excluded']) && is_array($wtgcsv_project_array['tags']['rules']['excluded'])){
+                $old_string = implode($wtgcsv_project_array['tags']['rules']['excluded']);
+            }
+            
+            $new_string = $_POST['wtgcsv_excludedtag'] . ',' . $old_string;
+            
+            $wtgcsv_project_array['tags']['rules']['excluded'] = explode(',',$new_string);   
+        }
+        
+        // save tags per post
+        if(isset($_POST['wtgcsv_tagsperpost']) && is_numeric($_POST['wtgcsv_tagsperpost'])){
+            $wtgcsv_project_array['tags']['rules']['tagsperpost'] = $_POST['wtgcsv_tagsperpost'];    
+        }
+        
+        // save tag string length
+        if(isset($_POST['wtgcsv_tagstringlength']) && is_numeric($_POST['wtgcsv_tagstringlength'])){
+            $wtgcsv_project_array['tags']['rules']['tagstringlength'] = $_POST['wtgcsv_tagstringlength'];    
+        }
+        
+        // delete tags
+        if(isset($_POST['wtgcsv_tagslist_delete'])){
+            foreach($_POST['wtgcsv_tagslist_delete'] as $key => $delete_tag){
+                ### TODO:HIGHPRIORITY, establish the best way to locate the tags in array and unset them    
+            }
+        }       
+
+        wtgcsv_update_option_postcreationproject($wtgcsv_currentproject_code,$wtgcsv_project_array);
+        
+        wtgcsv_notice('Tag rules have been saved.','success','Large','Tag Rules/Settings Saved','','echo');
+                
+        return false;
+    }else{
+        return true;
+    }          
+} 
+ 
+  
+/**
+* Saves advanced tag generator settings 
+*/
+function wtgcsv_form_save_tag_generator_settings(){
+    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'generatetags'){
+        global $wtgcsv_project_array,$wtgcsv_currentproject_code;
+      
+        if(!isset($_POST["wtgcsv_taggenerator_columns"])){
+            wtgcsv_notice('No columns were selected. You must select data columns that hold suitable values for generating tags with.','error','Large','Please Select Columns','','echo');    
+            return false;
+        }
+        
+        // loop through selected columns
+        foreach($_POST["wtgcsv_taggenerator_columns"] as $key => $table_column ){
+            $wtgcsv_project_array['tags']['generator']['data'][$key]['table'] = wtgcsv_explode_tablecolumn_returnnode(',',0,$table_column);
+            $wtgcsv_project_array['tags']['generator']['data'][$key]['column'] = wtgcsv_explode_tablecolumn_returnnode(',',1,$table_column);            
+        }
+        
+        $wtgcsv_project_array['tags']['method'] = 'generator';       
+        
+        wtgcsv_update_option_postcreationproject($wtgcsv_currentproject_code,$wtgcsv_project_array);
+        
+        wtgcsv_notice('Tag generator settings have been saved and Wordpress CSV Importer will generator tags from your selected columns for all posts.','success','Large','Tag Generator Settings Saved','','echo');
+        
         return false;
     }else{
         return true;
@@ -507,7 +597,8 @@ function wtgcsv_form_save_default_tags_column(){
         
         $wtgcsv_project_array['tags']['default']['table'] = wtgcsv_explode_tablecolumn_returnnode(',',0,$_POST['wtgcsv_defaulttagsdata_select_columnandtable']);
         $wtgcsv_project_array['tags']['default']['column'] = wtgcsv_explode_tablecolumn_returnnode(',',1,$_POST['wtgcsv_defaulttagsdata_select_columnandtable']);                       
-       
+        $wtgcsv_project_array['tags']['method'] = 'premade';
+        
         wtgcsv_update_option_postcreationproject($wtgcsv_currentproject_code,$wtgcsv_project_array);
         wtgcsv_notice('Your default tags column has been saved and if the tags are formatted as required by Wordpress they will be added to your posts.','success','Large','Default Tags Column Saved');    
                  

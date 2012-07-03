@@ -35,9 +35,9 @@ $panel_array['panel_help'] = __('Settings which effect posts (that includes page
                 ####                                   ####
                 ###########################################
                 if($wtgcsv_apiservicestatus){
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webservice/webtechglobal-webservice-online.jpg"/>';                        
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'statusbanners/webservicebanners/webtechglobal-webservice-online.jpg"/>';                        
                 }else{
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webservice/webtechglobal-webservice-maintenence.jpg"/>'; 
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'statusbanners/webservicebanners/webtechglobal-webservice-maintenence.jpg"/>'; 
                 }
                 
                 ###########################################
@@ -46,11 +46,11 @@ $panel_array['panel_help'] = __('Settings which effect posts (that includes page
                 ####                                   ####
                 ###########################################             
                 if(isset($wtgcsv_is_domainregistered) && $wtgcsv_is_domainregistered == true){
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/domain/wordpress-csv-importer-domainstatus-registered.jpg"/>';    
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'statusbanners/domainstatusbanners/wordpress-csv-importer-domainstatus-registered.jpg"/>';    
                 }elseif(isset($wtgcsv_is_domainregistered) && $wtgcsv_is_domainregistered == false){ 
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/domain/wordpress-csv-importer-domainstatus-notregistered.jpg"/>';         
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'statusbanners/domainstatusbanners/wordpress-csv-importer-domainstatus-notregistered.jpg"/>';         
                 }else{
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/domain/wordpress-csv-importer-domainstatus-unknown.jpg"/>';          
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'statusbanners/domainstatusbanners/wordpress-csv-importer-domainstatus-unknown.jpg"/>';          
                 }
                 
                 ###########################################
@@ -67,11 +67,11 @@ $panel_array['panel_help'] = __('Settings which effect posts (that includes page
                 wordpress-csv-importer-support-level-unknown.jpg
                 
                 if(isset($wtgcsv_is_domainregistered) && $wtgcsv_is_domainregistered == true){
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webtechglobal-pluginmembership-online.jpg"/>';    
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'statusbanners/webtechglobal-pluginmembership-online.jpg"/>';    
                 }elseif(isset($wtgcsv_is_domainregistered) && $wtgcsv_is_domainregistered == false){ 
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webtechglobal-pluginmembership-none.jpg"/>';         
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'statusbanners/webtechglobal-pluginmembership-none.jpg"/>';         
                 }else{
-                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'banners/webtechglobal-pluginmembership-unknown.jpg"/>';          
+                    echo '<img src="'.WTG_CSV_IMAGEFOLDER_URL.'statusbanners/webtechglobal-pluginmembership-unknown.jpg"/>';          
                 }*/
                 ?>
 

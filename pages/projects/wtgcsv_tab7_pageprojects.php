@@ -1,4 +1,12 @@
 <?php
+if(!isset($wtgcsv_project_array['categories'])){ 
+    echo wtgcsv_notice('No categories setup, all posts will be assigned to your blogs default','warning','Tiny','','','return');
+}else{
+    echo wtgcsv_notice('Category settings have been saved for your project.','info','Tiny','','','return');
+}    
+?>
+
+<?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'defaultcategory';// slug to act as a name and part of the panel ID 

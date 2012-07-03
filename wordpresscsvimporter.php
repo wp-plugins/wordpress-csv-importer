@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Wordpress CSV Importer
-Version: 0.1.2
+Version: 0.1.3
 Plugin URI: http://www.wordpresscsvimporter.com
 Description: Wordpress CSV Importer released 2012 by Zara Walsh and Ryan Bayne
 Author: Zara Walsh
@@ -23,6 +23,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+This license does not apply to the paid edition which is bundled with a seperate license file.
 */
 
 /*********************************************************************************************************************************
@@ -49,9 +51,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * 9. Web Services must record traffic and prevent spamming etc
 * 10. Display data import job name, table name and column name above table-column menus
 * 11. Write up a page detailing any security steps i.e. use of is_super_admin()
+* 12. Add validation to all submission, check values are as expected and give advice i.e. pre-made tag data must be comma seperated
+* 13. Provide option to add appended value tp columns, dont auto apply it
+* 14. When user submits new project, chech for duplicate column titles
 *******************************************************************************************************************************/
 
-if ( !function_exists( 'add_option' ) ) {echo "www.WordpressCSVImporter.com by Zara Walsh";exit;}
+if ( !function_exists( 'add_option' ) ) {echo "You cannot access this plugins file directly, see www.WordpressCSVImporter.com by Zara Walsh";exit;}
 
 // testing/development variables (will be removed on completion)
 $UNDERCONSTRUCTIONS_SWITCH = 0;// 0=off  1=on  2=$_POST only

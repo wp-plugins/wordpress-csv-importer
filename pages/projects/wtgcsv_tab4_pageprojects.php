@@ -1,4 +1,12 @@
 <?php
+if(!isset($wtgcsv_project_array['type'])){
+    echo wtgcsv_notice('Current posts type is "post"','warning','Tiny','','','return');    
+}else{
+    echo wtgcsv_notice('Current posts type is "'.$wtgcsv_project_array['type'].'"','info','Tiny','','','return');    
+}
+?>
+
+<?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'defaultposttype';// slug to act as a name and part of the panel ID 

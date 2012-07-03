@@ -1,4 +1,12 @@
 <?php
+if(!isset($wtgcsv_project_array['custom_fields'])){
+    echo wtgcsv_notice('No post meta (custom fields) have been saved.','warning','Tiny','','','return');
+}else{
+    echo wtgcsv_notice('You have saved post meta settings (custom fields) for this project.','info','Tiny','','','return');
+}
+?>
+
+<?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'createbasiccustomfieldrules';// slug to act as a name and part of the panel ID 

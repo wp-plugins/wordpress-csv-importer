@@ -2146,12 +2146,12 @@ function wtgcsv_display_project_columnsandtables_menuoptions($project_code,$curr
         echo '<option value="nocurrentproject">No Current Project</option>';        
     }else{
 
-        $project_array = wtgcsv_get_project_array($project_code);
-        
-        foreach( $project_array['tables'] as $key => $table ){
+        global $wtgcsv_project_array;
+
+        foreach( $wtgcsv_project_array['tables'] as $key => $table ){
             $table_columns = wtgcsv_sql_get_tablecolumns($table);
             while ($row_column = mysql_fetch_row($table_columns)) {
-                
+
                 // establish selected status for this option
                 $selected = '';
                 if($current_table != 'NOTPROVIDED98723462' && $current_column != 'NOTPROVIDED09871237'){
