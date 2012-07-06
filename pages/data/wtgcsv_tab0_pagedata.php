@@ -127,27 +127,40 @@ $nonce = wp_create_nonce( "wtgcsv_referer_" . $panel_array['panel_name'] );
     <style type='text/css'>
     #<?php echo $jsform_set['form_id'];?>loading_jobnamechange { clear:both; background:url(images/loading.gif) center top no-repeat; text-align:center;padding:33px 0px 0px 0px; font-size:12px;display:none; font-family:Verdana, Arial, Helvetica, sans-serif; }                
     </style>
-            
-    <p>Job Name: <input type='text' name='wtgcsv_jobname_name' id='<?php echo $jobname_id;?>' value='' size="24" /><span id="wtgcsv_status_<?php echo $jsform_set['form_id'];?>"></span></p>
+    
+    <h2>Enter Job Name</h2>        
+    <p><input type='text' name='wtgcsv_jobname_name' id='<?php echo $jobname_id;?>' value='' size="30" /><span id="wtgcsv_status_<?php echo $jsform_set['form_id'];?>"></span></p>
 
-    <?php wtgcsv_selectables_csvfiles('all',$panel_array['panel_name']);?><br /><br />
-        
+        <?php
+        // full edition allows multiple file selection (do not bypass this without writing the functions to handle multiple files) 
+        //if($wtgcsv_is_free){
+            //wtgcsv_menu_csvfiles();
+        //}else{
+            //wtgcsv_selectables_csvfiles('all',$panel_array['panel_name']);
+        //}?>
+    
     <!-- jquery and ajax output start -->
     <div id='<?php echo $jsform_set['form_id'];?>loading_jobnamechange'>Checking Job Name Please Wait 10 Seconds</div>                 
     <div id='<?php echo $jsform_set['form_id'];?>formstatus'></div>  
     <!-- jquery and ajax output end -->
-                
-    <script>
-    $(function() {
-        $( "#wtgcsv_tabletype<?php echo $panel_array['panel_name'];?>" ).buttonset();
-    });
-    </script>
+    
+    <h2>Select Table Setup</h2>
+    <p>            
+        <script>
+        $(function() {
+            $( "#wtgcsv_tabletype<?php echo $panel_array['panel_name'];?>" ).buttonset();
+        });
+        </script>
 
-    <div id="wtgcsv_tabletype<?php echo $panel_array['panel_name'];?>">
-        <input type="radio" id="wtgcsv_radio1<?php echo $panel_array['panel_name'];?>" name="radio" checked="checked" /><label for="wtgcsv_radio1<?php echo $panel_array['panel_name'];?>">New Table</label>
-        <input type="radio" id="wtgcsv_radio2<?php echo $panel_array['panel_name'];?>" name="radio" disabled="disabled" /><label for="wtgcsv_radio2<?php echo $panel_array['panel_name'];?>">Existing Table</label>
-    </div>
-
+        <div id="wtgcsv_tabletype<?php echo $panel_array['panel_name'];?>">
+            <input type="radio" id="wtgcsv_radio1<?php echo $panel_array['panel_name'];?>" name="radio" checked="checked" /><label for="wtgcsv_radio1<?php echo $panel_array['panel_name'];?>">New Table</label>
+            <input type="radio" id="wtgcsv_radio2<?php echo $panel_array['panel_name'];?>" name="radio" disabled="disabled" /><label for="wtgcsv_radio2<?php echo $panel_array['panel_name'];?>">Existing Table</label>
+        </div>
+    </p>
+    
+    <h2>Select CSV File/s</h2>
+    <p><?php wtgcsv_display_csvfiles_fornewdataimportjob(); ?></p>
+    
     <?php
     // add the javascript that will handle our form action, prevent submission and display dialogue box
     wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
@@ -162,22 +175,23 @@ $nonce = wp_create_nonce( "wtgcsv_referer_" . $panel_array['panel_name'] );
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
-$panel_array['panel_name'] = 'csvfilelist';// slug to act as a name and part of the panel ID 
+$panel_array['panel_name'] = 'csvfileprofiles';// slug to act as a name and part of the panel ID 
 $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
-$panel_array['panel_title'] = __('CSV File List');// user seen panel header text 
+$panel_array['panel_title'] = __('CSV File Profiles');// user seen panel header text 
 $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
-$panel_array['panel_intro'] = __('A list of all CSV files available to use in ' . WTG_CSV_PLUGINTITLE .', used or not');
-$panel_array['panel_help'] = __('This panel shows all the .csv files for using with '.WTG_CSV_PLUGINTITLE.' and each 
-files statistics i.e. size, number of rows. This panel does not provide controls to begin importing data, please do 
-that on the Import tab. You may use the same file in multiple data import jobs, an ability for those who want to create
-different sets of data with a different combination of CSV files. To check on the progress related to a specific file
-please go to the Import tab and see the Used CSV File List panel. It shows a table of all the used CSV files within all
-the data import jobs and their individual import progress.');
+$panel_array['panel_intro'] = __('Information about all available CSV files, used or not');
+$panel_array['panel_help'] = __('This panel shows all the .csv files available to import data. Some basic information about the files is displayed.');
 $panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);?>
 <?php wtgcsv_panel_header( $panel_array );?>
+    
+    <h4>File Information</h4>
     <?php wtgcsv_available_csv_file_list();?>
+    
+    <h4>File Status</h4>
+    <?php wtgcsv_csv_files_status_list();?>
+
 <?php wtgcsv_panel_footer();?>
 
 
@@ -222,37 +236,25 @@ $jsform_set['noticebox_content'] = 'Do you want to run the full series of tests 
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
-$panel_array['panel_name'] = 'dataimportjoblist';// slug to act as a name and part of the panel ID 
+$panel_array['panel_name'] = 'usedcsvfilelist';// slug to act as a name and part of the panel ID 
 $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
-$panel_array['panel_title'] = __('Data Import Job List');// user seen panel header text 
+$panel_array['panel_title'] = __('Used CSV File List');// user seen panel header text 
 $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
-$panel_array['panel_intro'] = __('A list of all your data import jobs with the ability to delete them');
-$panel_array['panel_help'] = __('A list of all your data import jobs. It is for reference only but has the ability to quickly delete jobs. The delete action will only delete the jobs history and remove the job record from Wordpress options table. It will not delete the jobs database table. All data management is handled in seperate actions. View Data Tables tab for a list of database tables created using Wordpress CSV Importer. It will not delete CSV files being used in the job, that also must be done elsewhere or manually on your server.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);
-// <form> values, seperate from panel value
-$jsform_set_override = array();
-$jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);            
-$jsform_set['dialoguebox_title'] = 'Delete Selected Jobs';
-$jsform_set['noticebox_content'] = 'You are about to delete select data import jobs, are you sure you want to continue?';
-// TODO: LOWPRIORITY, replace table using data table script
-// TODO: LOWPRIORITY, update dialogue content with a list of the selected jobs
-?>
-
+$panel_array['panel_intro'] = __('A list of used files, scroll further down to view import jobs');
+$panel_array['panel_help'] = __('Refreshing the browser will show the latest statistics in this table if you have imported data on this page. This list of files are those used in data import jobs. If a file shows twice it is because you are using it in more than one job. This panel is not for importing data. Scroll further down the Import screen to view individual job panels to begin manual data importing and view their progress.');
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);?>
 <?php wtgcsv_panel_header( $panel_array );?>
+ 
+    <?php $usedcsvfile_count = wtgcsv_used_csv_file_list();?>
+    
+    <?php
+    if($usedcsvfile_count == 0){
+        wtgcsv_notice('You do not have any data import jobs and so no CSV files are in use either.','info','Small');
+    }?>
 
-    <?php wtgcsv_formstart_standard($jsform_set['form_name'],$jsform_set['form_id'],'post','wtgcsv_form','','');?>
-
-    <?php wtgcsv_list_dataimportjobs();?>
-
-    <?php 
-    wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
-    wtgcsv_formend_standard('Delete',$jsform_set['form_id']);
-    wtgcsv_jquery_form_prompt($jsform_set);
-    ?>
-
-<?php wtgcsv_panel_footer();?>
+<?php wtgcsv_panel_footer();?> 
 
 <?php
 if($wtgcsv_is_dev){

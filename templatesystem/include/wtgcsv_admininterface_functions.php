@@ -599,7 +599,7 @@ function wtgcsv_viewhistory($filter_array){
         // PEAR CSV reads file and gets configuration
         $logfile_conf = File_CSV::discoverFormat(wtgcsv_logfilepath($filter_array['logfile']));
 
-        // apply seperator
+        // apply Separator
         $logfile_conf['sep'] = ',';
 
         #### @todo FOR BETA WE WILL HAVE BASIC DETAILS - ADD MORE DETAILS LATER
@@ -1096,12 +1096,15 @@ function wtgcsv_available_csv_file_list(){
                         $filesize_total = $thefilesize;
                         
                         $filemtime = filemtime(WTG_CSV_CONTENTFOLDER_DIR . '/' .$filename);
-                                                        
+                        
+                        $sep_fget = wtgcsv_establish_csvfile_separator_fgetmethod($filename,false );                           
+                        $sep_PEARCSV = wtgcsv_establish_csvfile_separator_PEARCSVmethod($filename,false); 
+                                   
                         echo '
                         <tr>
                             <td>'.$filename.'</td>
-                            <td>'.wtgcsv_establish_csvfile_separator_fgetmethod( 0,$filename,false ).'</td>                            
-                            <td>'.wtgcsv_establish_csvfile_separator_PEARCSVmethod(0,$filename,false).'</td>                            
+                            <td>'.$sep_fget.'</td>                            
+                            <td>'.$sep_PEARCSV.'</td>                            
                             <td>'.count(file(WTG_CSV_CONTENTFOLDER_DIR . '/' .$filename)).'</td>
                             <td>'.wtgcsv_format_file_size($thefilesize).'</td>                                                        
                             <td>'.wtgcsv_ago( date_create(date(WTG_CSV_DATEFORMAT,$filemtime)),true,true,true,true,true,false).'</td>                            
@@ -1115,6 +1118,78 @@ function wtgcsv_available_csv_file_list(){
             echo '</table>';
             
             wtgcsv_notice_filesizetotal($filesize_total);
+
+            // clear stored values
+            clearstatcache();
+
+        }// end $opendir_result
+    }         
+}
+
+/**
+* This table will list all CSV files and indicate any problems.
+* 1. Separator for fgetcsv and PEAR CSV not matching
+*/
+function wtgcsv_csv_files_status_list(){
+    $available = 0;
+ 
+    if (!is_dir(WTG_CSV_CONTENTFOLDER_DIR)) {
+    
+        wtgcsv_notice('The content folder does not exist, has it been deleted or move?','error','Small','','');
+                   
+    }else{    
+        
+        @$opendir_result = opendir( WTG_CSV_CONTENTFOLDER_DIR );
+        
+        if(!$opendir_result){
+            
+            wtgcsv_notice(WTG_CSV_PLUGINTITLE . ' does not have permission to open the plugins content folder','error','Small','','');
+
+        }else{
+
+            echo '
+            <table class="widefat post fixed">
+                <tr class="first">
+                    <td width="175"><strong>Name</strong></td>
+                    <td><strong>Status</strong></td>                                                       
+                </tr>';  
+            
+            $filesize_total = 0;
+                
+            while( false != ( $filename = readdir( $opendir_result ) ) ){
+                if( ($filename != ".") and ($filename != "..") ){
+                    
+                    $fileChunks = explode(".", $filename);
+                                      
+                    // ensure file extension is csv
+                    if( isset( $fileChunks[1] ) && $fileChunks[1] == 'csv'){
+                        
+                        $status = '';
+                        
+                        $file_path = WTG_CSV_CONTENTFOLDER_DIR . '/' . $filename;
+
+                        ### TODO:LOWPRIORITY, display status for when a CSV file is older than the last one used
+                        //$filemtime = filemtime(WTG_CSV_CONTENTFOLDER_DIR . '/' .$filename);
+                        
+                        // if csv file parse methods do not determine the same separator we will display a message
+                        $sep_fget = wtgcsv_establish_csvfile_separator_fgetmethod($filename,false );                           
+                        $sep_PEARCSV = wtgcsv_establish_csvfile_separator_PEARCSVmethod($filename,false); 
+                        if($sep_fget != $sep_PEARCSV){
+                            $status = 'This files separator needs to be set manually to avoid problems, do this on the Import Jobs screen once you use this file to create a Data Import Job.';    
+                        }
+                                   
+                        echo '
+                        <tr>
+                            <td>'.$filename.'</td>
+                            <td>'.$status.'</td>                                                       
+                        </tr>';                    
+                        
+                    }// end if csv
+                    
+                }// end if $filename = .  
+            }// end while    
+                 
+            echo '</table>';
 
             // clear stored values
             clearstatcache();
@@ -1784,7 +1859,14 @@ function wtgcsv_navigation_jquery($thepagekey){
 
     <script>
     $(function() {
-        $( "#wtgcsv_maintabs" ).tabs();
+        
+         $( "#wtgcsv_maintabs" ).tabs({
+            cookie: {
+                // store cookie for a day, without, it would be a session cookie
+                expires: 1
+            }
+        });       
+        
     });
     </script>
                 
@@ -2258,21 +2340,23 @@ function wtgcsv_display_contenttemplate_menuoptions(){
 * @parameter string $range (all = all csv files) use this to control the range of filesr
 * 
 * @todo CRITICAL, check the use of this function and apply ID, do not allow it to be optional 
+* 
+* ### TODO, this should be selectables not a menu like in wtgcsv_menu_csvfiles
 */
 function wtgcsv_selectables_csvfiles($range = 'all',$id = 'noid'){?>
-    
-    <select id="wtgcsv_selectcsvfiles_<?php echo $id;?>" name="wtgcsv_csvfilearray_<?php echo $id;?>[]" class="wtgcsv_multiselect_menu">
+
+    <select multiple='multiple' id="wtgcsv_selectcsvfiles_<?php echo $id;?>" name="wtgcsv_csvfilearray_<?php echo $id;?>[]" class="wtgcsv_multiselect_menu">
         <option value="notselected">Select A CSV File</option>
         <?php wtgcsv_option_items_csvfiles('all');?>
     </select>
-
-    <script>
-    $("#wtgcsv_selectcsvfiles_<?php echo $id;?>").multiselect({
-       multiple: false,
-       header: "Select CSV File",
-       noneSelectedText: "Select CSV File",
-       selectedList: 1
-    });
+     
+    <script type="text/javascript">
+        $(function(){
+            $('#wtgcsv_selectcsvfiles_<?php echo $id;?>').multiSelect({
+              selectableHeader : '<h3>Projects Available</h3>',
+              selectedHeader : '<h3>Delete These</h3>'                
+            });
+        });
     </script><?php    
 }
 
@@ -2675,7 +2759,7 @@ function wtgcsv_display_jobtables($checkbox_column = false){
     <tr class="first">';
     
     if($checkbox_column){
-        echo '<td width="50"><strong>Select</strong></td>';        
+        echo '<td width="50"><strong>Delete Tables</strong></td>';        
     }
     
     echo '
@@ -2985,4 +3069,103 @@ function wtgcsv_helpbutton_text($under_construction = false,$paid_only = false){
 
     return 'Help';
 }
+
+/**
+* Displays a list of CSV file for selection. 
+* User can select separator and quote also. The table also displays the auto determined separator and quote using PEAR CSV.
+* 
+*/
+function wtgcsv_display_csvfiles_fornewdataimportjob(){
+    global $wtgcsv_is_free;  
+
+    echo '<table class="widefat post fixed">';
+    echo '
+    <tr>
+        <td width="50">Select</td>
+        <td width="220">CSV File Name</td>
+        <td width="70">Detected Separator</td>
+        <td width="70">Detected Quote</td>
+        <td width="120">Change Separator</td>
+        <td>Change Quote</td>
+    </tr>';
+    
+    @$opendir_result = opendir( WTG_CSV_CONTENTFOLDER_DIR ); 
+    while( false != ( $filename = readdir( $opendir_result ) ) ){
+        if( ($filename != ".") and ($filename != "..") ){
+            
+            $fileChunks = explode(".", $filename);
+                              
+            // ensure file extension is csv
+            if( isset( $fileChunks[1] ) && $fileChunks[1] == 'csv'){
+                
+                $logfile_array = array('wtgcsv_log_error','wtgcsv_log_general','wtgcsv_log_sql','wtgcsv_log_user','wtgcsv_log_admin');
+                
+                // ignore log files
+                if(!in_array($fileChunks[0],$logfile_array)){     
+                    
+                    echo '
+                    <tr>
+                        <td>';
+                            
+                            // determine radio or checkboxes
+                            $object_type = 'checkbox';
+                            if($wtgcsv_is_free){
+                                $object_type = 'radio';
+                            }?>
+                            
+                            <script>
+                            $(function() {
+                                $( "#wtgcsv_newjob_includefile_<?php echo $object_type;?>_<?php echo $fileChunks[0];?>" ).buttonset();
+                            });
+                            </script>
+
+                            <div id="wtgcsv_newjob_includefile_<?php echo $object_type;?>_<?php echo $fileChunks[0];?>">                    
+                                <input type="<?php echo $object_type;?>" name="wtgcsv_newjob_included_csvfiles[]" id="wtgcsv_newjob_includefile_<?php echo $fileChunks[0];?>" value="<?php echo $filename;?>" />
+                                <label for="wtgcsv_newjob_includefile_<?php echo $fileChunks[0];?>">*</label>                     
+                            </div>
+                            
+                        <?php echo '</td>
+                        <td>'.$filename.'</td>
+                        <td>'.wtgcsv_establish_csvfile_separator_PEARCSVmethod($filename).'</td>
+                        <td>'.wtgcsv_establish_csvfile_quote_PEARCSVmethod($filename).'</td>
+                        <td>'; ?>
+
+                            <script>
+                            $(function() {
+                                $( "#wtgcsv_newjob_separator_radios_<?php echo $fileChunks[0];?>" ).buttonset();
+                            });
+                            </script>
+
+                            <div id="wtgcsv_newjob_separator_radios_<?php echo $fileChunks[0];?>">
+                                <input type="radio" id="wtgcsv_separator_comma_<?php echo $fileChunks[0];?>" name="wtgcsv_newjob_separators<?php echo $fileChunks[0];?>" value="," /><label for="wtgcsv_separator_comma_<?php echo $fileChunks[0];?>">,</label>
+                                <input type="radio" id="wtgcsv_separator_semicolon_<?php echo $fileChunks[0];?>" name="wtgcsv_newjob_separators<?php echo $fileChunks[0];?>" value=";" /><label for="wtgcsv_separator_semicolon_<?php echo $fileChunks[0];?>">;</label>
+                                <input type="radio" id="wtgcsv_separator_tab_<?php echo $fileChunks[0];?>" name="wtgcsv_newjob_separators<?php echo $fileChunks[0];?>" value="|" /><label for="wtgcsv_separator_tab_<?php echo $fileChunks[0];?>">|</label>                
+                            </div>
+
+                        </td>
+                        <td>
+                            <script>
+                            $(function() {
+                                $( "#wtgcsv_newjob_quote_radios_<?php echo $fileChunks[0];?>" ).buttonset();
+                            });
+                            </script>
+
+                            <div id="wtgcsv_newjob_quote_radios_<?php echo $fileChunks[0];?>">
+                                <input type="radio" id="wtgcsv_quote_double_<?php echo $fileChunks[0];?>" name="wtgcsv_newjob_quote<?php echo $fileChunks[0];?>" value='"' /><label for="wtgcsv_quote_double_<?php echo $fileChunks[0];?>">"</label>
+                                <input type="radio" id="wtgcsv_quote_single_<?php echo $fileChunks[0];?>" name="wtgcsv_newjob_quote<?php echo $fileChunks[0];?>" value="'" /><label for="wtgcsv_quote_single_<?php echo $fileChunks[0];?>">'</label>                
+                            </div>                        
+                        
+                        </td>
+                    </tr><?php                         
+                }                   
+                
+            }// end if csv
+            
+        }// end if $filename = .  
+    }// end while
+    
+    echo '</table>';    
+} 
+
+
 ?>

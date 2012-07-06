@@ -175,8 +175,6 @@ if($cont){
     $cont = wtgcsv_form_deletecontentfolder();    
 }
 
-  
-
 /**
 * Create a data rule for replacing specific values after import 
 */
@@ -1515,7 +1513,7 @@ function wtgcsv_form_create_post_creation_project(){
 * Processes request to delete multiple data import jobs selected on Start tab 
 */
 function wtgcsv_form_delete_dataimportjobs(){
-    if(isset( $_POST[WTG_CSV_ABB.'hidden_pageid'] ) && $_POST[WTG_CSV_ABB.'hidden_pageid'] == 'data' && isset($_POST[WTG_CSV_ABB.'hidden_panel_name']) && $_POST[WTG_CSV_ABB.'hidden_panel_name'] == 'dataimportjoblist'){
+    if(isset( $_POST[WTG_CSV_ABB.'hidden_pageid'] ) && $_POST[WTG_CSV_ABB.'hidden_pageid'] == 'data' && isset($_POST[WTG_CSV_ABB.'hidden_panel_name']) && $_POST[WTG_CSV_ABB.'hidden_panel_name'] == 'deletedataimportjob'){
         if(!isset($_POST['wtgcsv_jobcode_array'])){
             wtgcsv_notice('You did not appear to select any data import jobs for deletion, no changes have been made.','info','Small');    
         }else{
@@ -1540,6 +1538,7 @@ function wtgcsv_form_delete_dataimportjobs(){
 
 /**
 * Creates data import job
+* @todo HIGHPRIORITY, failure still shows SUCCESS GREEN notification, improve the failure line to show RED ERROR notification
 */
 function wtgcsv_form_createdataimportjob(){
     if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'data' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'createdataimportjobcsvfiles'){
@@ -1555,7 +1554,7 @@ function wtgcsv_form_createdataimportjob(){
         
         if($importjobname_validate_result){
             
-            if(isset($_POST['wtgcsv_csvfilearray_createdataimportjobcsvfiles'])){
+            if(isset($_POST['wtgcsv_newjob_included_csvfiles'])){
                 
                 // generate job code (used to name database table and option record for job history) 
                 $code = wtgcsv_create_code(6); 
@@ -1563,15 +1562,14 @@ function wtgcsv_form_createdataimportjob(){
                 // create an array for the job, to be stored in an option record of its own
                 $jobarray = wtgcsv_create_jobarray($_POST['wtgcsv_jobname_name'],$code);
                 $jobarray['jobname'] = $_POST['wtgcsv_jobname_name'];
-                
-                
+
                 // determine if this is a multi file job or single
                 if($wtgcsv_is_free){
                     $job_file_group = 'single';// free edition does not allow multiple files    
                 }else{
                     // count the number of files submitted
-                    $numbers_of_files = count($_POST['wtgcsv_csvfilearray_createdataimportjobcsvfiles']);
-                    if($numbers_of_files == 1){
+                    $numbers_of_files = count($_POST['wtgcsv_newjob_included_csvfiles']);
+                    if($numbers_of_files > 1){
                         $job_file_group = 'multiple';    
                     }else{
                         $job_file_group = 'single';
@@ -1586,14 +1584,28 @@ function wtgcsv_form_createdataimportjob(){
                  
                 // add each csv file too the jobarray
                 // we add more default stats here, while we are doing the                            
-                foreach($_POST['wtgcsv_csvfilearray_createdataimportjobcsvfiles'] as $key => $csvfile_name){
+                foreach($_POST['wtgcsv_newjob_included_csvfiles'] as $key => $csvfile_name){
                     
                     // add the file with the $fileid as key, $fileid is simple integer number beginning from 1
                     $jobarray['files'][$fileid] = $csvfile_name;
                                         
-                    // also add an array of each files headers with the file as key
-                    $jobarray[$csvfile_name]['headers'] = wtgcsv_get_file_headers_formatted($csvfile_name,$fileid);
+                    // we need first part of filename for appending in $_POST submissions
+                    $fileChunks = explode(".", $csvfile_name);
                     
+                    // establish separator
+                    if(isset($_POST['wtgcsv_newjob_separators' . $fileChunks[0]])){
+                        $jobarray[$csvfile_name]['separator'] = $_POST['wtgcsv_newjob_separators' . $fileChunks[0]];        
+                    }else{
+                        $jobarray[$csvfile_name]['separator'] = wtgcsv_get_file_separator($csvfile_name,$fileid,'PEAR');
+                    }
+                    
+                    // establish quote
+                    if(isset($_POST['wtgcsv_newjob_quote' . $fileChunks[0]])){
+                        $jobarray[$csvfile_name]['quote'] = $_POST['wtgcsv_newjob_quote' . $fileChunks[0]];        
+                    }else{
+                        $jobarray[$csvfile_name]['quote'] = wtgcsv_get_file_quote($csvfile_name,$fileid,'PEAR');
+                    }                     
+   
                     // add job stats for the file, required for multiple file jobs
                     $jobarray['stats'][$csvfile_name]['progress'] = 0;
                     $jobarray['stats'][$csvfile_name]['inserted'] = 0;    
@@ -1603,6 +1615,9 @@ function wtgcsv_form_createdataimportjob(){
                     $jobarray['stats'][$csvfile_name]['dropped'] = 0;    
                     $jobarray['stats'][$csvfile_name]['duplicates'] = 0;                    
                     $jobarray['stats'][$csvfile_name]['rows'] = wtgcsv_count_csvfilerows($csvfile_name);                    
+                    
+                    // also add an array of each files headers with the file as key
+                    $jobarray[$csvfile_name]['headers'] = wtgcsv_get_file_headers_formatted($csvfile_name,$fileid);
                     
                     // count total rows
                     $jobarray['totalrows'] = $jobarray['totalrows'] + $jobarray['stats'][$csvfile_name]['rows'];
@@ -1685,17 +1700,23 @@ function wtgcsv_form_test_csvfile(){
         $testnumber = 0;
         
         // separator - standard fget method and counting each possible separator
-        ++$testnumber;
-        $sep_test_one = wtgcsv_establish_csvfile_separator_fgetmethod( $testnumber,$_POST['multiselect_wtgcsv_multiselecttestcsvfiles'],$output = true );
+        $sep_test_one = wtgcsv_establish_csvfile_separator_fgetmethod($_POST['multiselect_wtgcsv_multiselecttestcsvfiles'],$output = true );
         
-        // separator - PEAR method which returns its decision
-        ++$testnumber;        
-        $sep_test_two = wtgcsv_establish_csvfile_separator_PEARCSVmethod( $testnumber,$_POST['multiselect_wtgcsv_multiselecttestcsvfiles'],$output = true );
+        // separator - PEAR method which returns its decision     
+        $sep_test_two = wtgcsv_establish_csvfile_separator_PEARCSVmethod($_POST['multiselect_wtgcsv_multiselecttestcsvfiles'],$output = true );
         
+        // compare Separators from all methods and display error notice if no match
+        if($sep_test_one != $sep_test_two){
+            wtgcsv_notice('Separator values from all methods do not match. This often means changes are required in the CSV file. The default separator Wordpress CSV Importer uses is the one established using the PEAR CSV method. If it is wrong you will need to change it. Please seek support if you experience problems from here on.','warning','Large','Separators Do Not Match','','echo');    
+        }
+
         // quote - PEAR method
         ++$testnumber;        
-        $quote_test_two = wtgcsv_establish_csvfile_quote_PEARCSVmethod( $testnumber,$_POST['multiselect_wtgcsv_multiselecttestcsvfiles'],true);
-        
+        $quote_test_two = wtgcsv_establish_csvfile_quote_PEARCSVmethod( $_POST['multiselect_wtgcsv_multiselecttestcsvfiles'],true);
+       
+        // using established separator and quote, attempt to get an array of column titles
+        wtgcsv_test_csvfile_columntitles( $_POST['multiselect_wtgcsv_multiselecttestcsvfiles'], $sep_test_two, $quote_test_two );
+
         return false;
         
     }else{

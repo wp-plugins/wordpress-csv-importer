@@ -96,6 +96,13 @@ not push users through a linear step by step process.
 6. You can use up to 3 columns of data to create 3 levels of categories.
  
 == Changelog ==
+= 0.1.4 = 
+* BETA Edition
+    * Interfaces for paid edition were being hidden in the paid edition, but should only be hidden in free edition
+    * jQuery UI tabs now hold their state when submitting forms
+    * jquery.cookie.js added to bundle
+    * Done some work on how the plugin handles separators and establishing the correct one, plus warning users of any issues
+
 = 0.1.3 = 
 * BETA Edition
     * Plugin no longer uses wp_die when PHP 5.2 in use, a notification is displayed instead

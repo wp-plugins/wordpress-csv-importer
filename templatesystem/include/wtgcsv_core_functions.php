@@ -53,6 +53,10 @@ function wtgcsv_print_admin_scripts() {
         // multi-select (lists, not the same as multiselect menus)
         wp_register_script('jquery-multi-select',WTG_CSV_URL.'templatesystem/script/multi-select-basic/jquery.multi-select.js');
         wp_enqueue_script('jquery-multi-select');
+        
+        // multi-select (lists, not the same as multiselect menus)
+        wp_register_script('jquery-cookie',WTG_CSV_URL.'templatesystem/script/jquery.cookie.js');
+        wp_enqueue_script('jquery-cookie');        
        
      }
 }
@@ -139,8 +143,17 @@ function wtgcsv_data_import_from_csvfile( $csvfile_name, $table_name, $rate, $jo
     
     // use pear to read csv file
     $conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR .'/'. $csvfile_name );
-    $conf['sep'] = ',';// TODO:CRITICAL, require file profiles to be created first        
-    $conf['quote'] = '"';   
+    
+    // apply auto determined or user defined separator and quote values
+    if(isset($dataimportjob_array['separator'])){
+        $conf['sep'] = $dataimportjob_array['separator'];        
+    }
+    
+    if(isset($dataimportjob_array['quote'])){
+        $conf['quote'] = $dataimportjob_array['quote'];        
+    }    
+
+    // loop through records   
     while ( ( $record = File_CSV::read( WTG_CSV_CONTENTFOLDER_DIR .'/'. $csvfile_name, $conf ) ) && $processed < $rate ) {        
 
         // skip first row of csv file at all times
@@ -252,7 +265,25 @@ function wtgcsv_data_import_from_csvfile( $csvfile_name, $table_name, $rate, $jo
     wtgcsv_save_dataimportjob($dataimportjob_array,$jobcode);
         
     return $dataimportjob_array;    
-}       
+}    
+
+function wtgcsv_test_csvfile_columntitles( $csvfile_name, $separator, $quote ){
+    
+    global $wpdb;
+    
+    wtgcsv_pearcsv_include();    
+
+    // use pear to read csv file
+    $conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR .'/'. $csvfile_name );
+    $conf['sep'] = $separator;        
+    $conf['quote'] = $quote;
+    
+    if($conf['fields'] == 0 || $conf['fields'] == 1){
+        wtgcsv_notice('Sorry I could not establish your CSV file column headers/titles. This is probably because the wrong quote was detected. You can create a Data Import Job with this file, then set the separator manually to avoid any problems.','error','Large','Test 4: Count CSV File Column Headers','','echo');    
+    }else{
+        wtgcsv_notice('I counted '.$conf['fields'].' fields. If this happens to be incorrect it must be investigated.','success','Large','Test 4: Count CSV File Column Headers','','echo');
+    }   
+}   
 
 /**
 * Updates empty premade record in data job table using CSV file row.

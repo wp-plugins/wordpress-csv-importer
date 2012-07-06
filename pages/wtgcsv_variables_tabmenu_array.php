@@ -269,7 +269,7 @@ $wtgcsv_mpt_arr['data']['tabs'][0]['display'] = true;
 // 1. Data sub page 1 tab 2
 $wtgcsv_mpt_arr['data']['tabs'][1]['active'] = true;
 $wtgcsv_mpt_arr['data']['tabs'][1]['slug'] = 'tab1_pagedata';
-$wtgcsv_mpt_arr['data']['tabs'][1]['label'] = 'Import';
+$wtgcsv_mpt_arr['data']['tabs'][1]['label'] = 'Import Jobs';
 $wtgcsv_mpt_arr['data']['tabs'][1]['name'] = 'dataimport';
 $wtgcsv_mpt_arr['data']['tabs'][1]['helpurl'] = 'http://www.wordpresscsvimporter.com/';
 $wtgcsv_mpt_arr['data']['tabs'][1]['allowhide'] = true;
@@ -277,7 +277,7 @@ $wtgcsv_mpt_arr['data']['tabs'][1]['display'] = true;
 // 1. Data sub page 1 tab 3
 $wtgcsv_mpt_arr['data']['tabs'][2]['active'] = true;
 $wtgcsv_mpt_arr['data']['tabs'][2]['slug'] = 'tab2_pagedata';
-$wtgcsv_mpt_arr['data']['tabs'][2]['label'] = 'Export';
+$wtgcsv_mpt_arr['data']['tabs'][2]['label'] = 'Export Tools';
 $wtgcsv_mpt_arr['data']['tabs'][2]['name'] = 'dataexport';
 $wtgcsv_mpt_arr['data']['tabs'][2]['helpurl'] = 'http://www.wordpresscsvimporter.com/';
 $wtgcsv_mpt_arr['data']['tabs'][2]['allowhide'] = true;
@@ -322,6 +322,9 @@ $wtgcsv_mpt_arr['data']['tabs'][7]['name'] = 'datasearch';
 $wtgcsv_mpt_arr['data']['tabs'][7]['helpurl'] = 'http://www.wordpresscsvimporter.com/';
 $wtgcsv_mpt_arr['data']['tabs'][7]['allowhide'] = true;
 $wtgcsv_mpt_arr['data']['tabs'][7]['display'] = false;
+### TODO:LOWPRIORITY, add a page that tests all CSV files and lists their status and profile 
+### if however it effects loading, could do it with the files in use or latest files uploaded
+### full edition only 
 
 ######################################################
 #                                                    #

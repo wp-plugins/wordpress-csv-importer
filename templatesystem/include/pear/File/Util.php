@@ -64,7 +64,7 @@ class File_Util
      * @static
      * @access  public
      * @param   array   $parts Array containing the parts to be joined
-     * @param   string  $separator The directory seperator
+     * @param   string  $separator The directory Separator
      */
     function buildPath($parts, $separator = DIRECTORY_SEPARATOR)
     {

@@ -1,5 +1,94 @@
 <?php
 /**
+* Determines if domain owner is subscribing (currently effects premium support services, bonus downloads, extra credits etc)
+* Subscription is not required for activation of full edition, that requires membership (which does not need annual payments)
+* 
+* @return boolean
+*/
+function wtgcsv_is_subscribed(){
+    global $wtgcsv_is_domainregistered;
+                     
+    // is domain registered and has user giving permission for email authorisation
+    if($wtgcsv_is_domainregistered === true){
+   
+        $function_boolean_result = false;
+        
+        // begin result array defaults
+        $soapcall_result_array = array();
+        $soapcall_result_array['result'] = true;
+        $soapcall_result_array['rejected'] = false;
+        $soapcall_result_array['rejectedreason'] = 'Not Rejected';        
+        
+        // use domain to make a call to web services
+        $soapcall_result_array = wtgcsv_api_checksubscriptionstatus_for_domain();
+        $soapcall_result_array['result'] = true;
+        $soapcall_result_array['rejected'] = false;
+        $soapcall_result_array['rejectedreason'] = 'Not Rejected';
+         
+         return $soapcall_result_array['result'];         
+    }
+    
+    return false;// default if domain not registered or user never gave permissions for email authorisation
+}
+
+
+/**
+* Uses SOAP CALL to determine if the last code code is valid and not expired
+* 
+* @param mixed $wtgcsv_callcode
+* @global $wtgcsv_callcode, set in main file
+*/
+function wtgcsv_is_callcodevalid(){
+    global $wtgcsv_callcode;
+               
+    $soapcall_result_array = array();
+    $soapcall_result_array = wtgcsv_validate_call_code($wtgcsv_callcode);
+                   
+    if( $soapcall_result_array['resultcode'] == 2 ){
+        return false;
+    }elseif( $soapcall_result_array['resultcode'] == 3 ){        
+        return true;
+    }else{
+        return false;
+    }    
+}
+
+/**
+* First function to calling web services and confirming domain registered for use with plugin
+*/
+function wtgcsv_is_domainregistered(){
+    
+    $soapcall_result_array = array();
+    $soapcall_result_array = wtgcsv_confirm_current_domain_is_registered();
+    
+    if( $soapcall_result_array['resultcode'] == 2 ){
+        return false;
+    }elseif( $soapcall_result_array['resultcode'] == 3 ){
+
+        // store call code - common use after this function is for generating activation code
+        wtgcsv_update_callcode($soapcall_result_array['callcode']);
+        
+        return true;
+    }else{
+        return false;
+    }
+}
+
+/**
+* Stores call code in Wordpress options table
+*/
+function wtgcsv_update_callcode($callcode){
+    return update_option(WTG_CSV_ABB . 'callcode',$callcode);
+}
+
+/**
+* Gets the call code record if it exists 
+*/
+function wtgcsv_get_callcode(){
+    return get_option(WTG_CSV_ABB . 'callcode');                       
+}
+
+/**
 * Called from main file using add_action. Must always be within an admin check for security. 
 */
 function wtgcsv_export_singlesqltable_as_csvfile(){
@@ -58,27 +147,6 @@ function wtgcsv_build_string($array,$delimeter = ','){
     $comma_separated = implode($delimeter, $array);
         
 }
-
-/**
-* Uses SOAP CALL to determine if the last code code is valid and not expired
-* 
-* @param mixed $wtgcsv_callcode
-* @global $wtgcsv_callcode, set in main file
-*/
-function wtgcsv_is_callcodevalid(){
-    global $wtgcsv_callcode;
-               
-    $soapcall_result_array = array();
-    $soapcall_result_array = wtgcsv_validate_call_code($wtgcsv_callcode);
-                   
-    if( $soapcall_result_array['resultcode'] == 2 ){
-        return false;
-    }elseif( $soapcall_result_array['resultcode'] == 3 ){        
-        return true;
-    }else{
-        return false;
-    }    
-}
                     
 /**
 * Called after wtgcsv_is_activated which determines if plugin currently has full edition activation state
@@ -102,74 +170,6 @@ function wtgcsv_is_activationbroken(){
         return false;          
     }
 }   
-        
-
-/**
-* First function to calling web services and confirming domain registered for use with plugin
-*/
-function wtgcsv_is_domainregistered(){
-    
-    $soapcall_result_array = array();
-    $soapcall_result_array = wtgcsv_confirm_current_domain_is_registered();
-    
-    if( $soapcall_result_array['resultcode'] == 2 ){
-        return false;
-    }elseif( $soapcall_result_array['resultcode'] == 3 ){
-
-        // store call code - common use after this function is for generating activation code
-        wtgcsv_update_callcode($soapcall_result_array['callcode']);
-        
-        return true;
-    }else{
-        return false;
-    }
-}
-
-/**
-* Stores call code in Wordpress options table
-*/
-function wtgcsv_update_callcode($callcode){
-    return update_option(WTG_CSV_ABB . 'callcode',$callcode);
-}
-
-/**
-* Gets the call code record if it exists 
-*/
-function wtgcsv_get_callcode(){
-    return get_option(WTG_CSV_ABB . 'callcode');                       
-}
-
-/**
-* Determines if domain owner is subscribing (currently effects premium support services, bonus downloads, extra credits etc)
-* Subscription is not required for activation of full edition, that requires membership (which does not need annual payments)
-* 
-* @return boolean
-*/
-function wtgcsv_is_subscribed(){
-    global $wtgcsv_is_domainregistered;
-                     
-    // is domain registered and has user giving permission for email authorisation
-    if($wtgcsv_is_domainregistered === true){
-   
-        $function_boolean_result = false;
-        
-        // begin result array defaults
-        $soapcall_result_array = array();
-        $soapcall_result_array['result'] = true;
-        $soapcall_result_array['rejected'] = false;
-        $soapcall_result_array['rejectedreason'] = 'Not Rejected';        
-        
-        // use domain to make a call to web services
-        $soapcall_result_array = wtgcsv_api_checksubscriptionstatus_for_domain();
-        $soapcall_result_array['result'] = true;
-        $soapcall_result_array['rejected'] = false;
-        $soapcall_result_array['rejectedreason'] = 'Not Rejected';
-         
-         return $soapcall_result_array['result'];         
-    }
-    
-    return false;// default if domain not registered or user never gave permissions for email authorisation
-}
 
 /**
  * Formats number to a size for interface display, usually bytes returned from checking a file size

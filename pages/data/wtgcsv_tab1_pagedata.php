@@ -1,27 +1,38 @@
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
-$panel_array['panel_name'] = 'usedcsvfilelist';// slug to act as a name and part of the panel ID 
+$panel_array['panel_name'] = 'deletedataimportjob';// slug to act as a name and part of the panel ID 
 $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
-$panel_array['panel_title'] = __('Used CSV File List');// user seen panel header text 
+$panel_array['panel_title'] = __('Delete Data Import Jobs');// user seen panel header text 
 $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
-$panel_array['panel_intro'] = __('A list of used files, scroll further down to view import jobs');
-$panel_array['panel_help'] = __('Refreshing the browser will show the latest statistics in this table if you have imported data on this page. This list of files are those used in data import jobs. If a file shows twice it is because you are using it in more than one job. This panel is not for importing data. Scroll further down the Import screen to view individual job panels to begin manual data importing and view their progress.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);?>
+$panel_array['panel_intro'] = __('A list of all data import jobs that can be deleted');
+$panel_array['panel_help'] = __('As the plugin becomes more advanced, some Data Import Jobs may not allow deletion in certain circumstances. They will probably show in the list but not allow selection.');
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);
+// <form> values, seperate from panel value
+$jsform_set_override = array();
+$jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);            
+$jsform_set['dialoguebox_title'] = 'Delete Selected Jobs';
+$jsform_set['noticebox_content'] = 'You are about to delete select data import jobs, are you sure you want to continue?';
+// TODO: LOWPRIORITY, replace table using data table script
+// TODO: LOWPRIORITY, update dialogue content with a list of the selected jobs
+?>
+
 <?php wtgcsv_panel_header( $panel_array );?>
- 
-    <?php $usedcsvfile_count = wtgcsv_used_csv_file_list();?>
-    
-    <?php
-    if($usedcsvfile_count == 0){
-        wtgcsv_notice('You do not have any data import jobs and so no CSV files are in use either.','info','Small');
-    }
+
+    <?php wtgcsv_formstart_standard($jsform_set['form_name'],$jsform_set['form_id'],'post','wtgcsv_form','','');?>
+
+    <?php wtgcsv_list_dataimportjobs();?>
+
+    <?php 
+    wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
+    wtgcsv_formend_standard('Delete',$jsform_set['form_id']);
+    wtgcsv_jquery_form_prompt($jsform_set);
     ?>
 
-<?php wtgcsv_panel_footer();?> 
-   
+<?php wtgcsv_panel_footer();?>
+
 <?php
 ##################################################################################
 #                                                                                #
@@ -123,14 +134,10 @@ global $wtgcsv_dataimportjobs_array;
             </script>
             
         <?php }?>
-        
-        
-        
+
         <!-- Start Of Buttons Table --> 
                         
             <?php foreach($job_array['files'] as $key => $csv_filename){?>
-            
-            <h4><?php echo $csv_filename;?> (<?php echo wtgcsv_count_csvfilerows($csv_filename); ?> rows)</h4>
             
             <table>
                 <?php $csv_filename_cleaned = wtgcsv_clean_string($csv_filename);?>
@@ -163,6 +170,12 @@ global $wtgcsv_dataimportjobs_array;
         <div id='formstatus_div_for_<?php echo $jobcode;?>'></div>
         <div id='loading_div_for_<?php echo $jobcode;?>'>Importing Data Please Wait!</div>  
 
+        <h2>Profile For <?php echo $csv_filename;?></h2>
+            
+        <p>Rows: <?php echo wtgcsv_count_csvfilerows($csv_filename); ?></p>
+        <p>Separator: <?php echo wtgcsv_count_csvfilerows($csv_filename); ?></p>    
+        <p>Quote: <?php echo wtgcsv_count_csvfilerows($csv_filename); ?></p>
+            
     <?php wtgcsv_panel_footer();?>             
                     
     <?php }// end of main loop

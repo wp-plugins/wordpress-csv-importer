@@ -12,17 +12,12 @@ function wtgcsv_sql_column_distinctvalues($table_name,$column_name){
     $distinct_values_found = $wpdb->get_results( $query,ARRAY_A );
             
     if(!$distinct_values_found){
-        
         return 0;
-        
     }else{
-        
         return $distinct_values_found;        
-        
     }  
     
-    return false;        
-                    
+    return false;                      
 }
 
 /**
@@ -54,10 +49,8 @@ function wtgcsv_sql_build_columnstring($table_name){
 */
 function wtgcsv_update_project_databasetable_basic($record_id,$post_id,$table_name){
                       
-    $wpdb->query('UPDATE '. $table_name .'
-                                    
-    SET wtgcsv_postid = '.$post_id.',wtgcsv_applied = NOW()
-                                    
+    $wpdb->query('UPDATE '. $table_name .'                       
+    SET wtgcsv_postid = '.$post_id.',wtgcsv_applied = NOW()                            
     WHERE wtgcsv_id = '.$record->eciid.'');
         
     return wp_update_post( $my_post );

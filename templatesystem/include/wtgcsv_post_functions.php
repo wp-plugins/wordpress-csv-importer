@@ -330,7 +330,8 @@ function wtgcsv_create_post_creation_project($project_name,$projecttables_array,
     if($wtgcsv_is_free){
         $project_array['code'] = 'freeproject';    
     }else{
-        $project_array['code'] = 'pro' . wtgcsv_create_code();
+        $project_array['code'] = 'pro' . wtgcsv_create_code(6);
+        ### TODO:HIGHPRIORITY, ensure code is unique else generation another, loop until we have a unique code
     }
     
     // set the csv column to database table mapping method (required for advanced updating)
@@ -379,60 +380,6 @@ function wtgcsv_initialize_postcreationproject_array($project_name){
                                         
     return $project_array;                
 }
-
-/**
-* Update a single post
-* 
-* @param mixed $filename
-* @param mixed $csv
-* @param mixed $output
-* @param mixed $postid
-* @param mixed $eciid
-*/
-function wtgcsv_post_updatepost($filename,$csv,$output,$postid,$eciid)
-{                        
-    if( !isset( $csv['updating']['ready'] ) || $csv['updating']['ready'] != true )
-    {
-        eci_mes('Project Updating Not Configured','You need to configure updating on the Project Configuration screen
-        to run updating. The main thing is to tell the plugin what CSV column holds your datas key. The key data is used to
-        pair CSV file rows with database records. ');                
-    }
-    elseif(!isset( $set['postupdating'] ) || $set['postupdating'] != 'Yes' )
-    {
-        eci_mes('Plugin Global Updating Disabled','Please go to the Settings page and activate Global Post Updating
-        under the Advanced Settings tab. This setting allows us to disable updating for any number of projects, quickly
-        and it is disabled by default.');
-    }
-    else 
-    {
-        global $wpdb;
-    
-        // get the post
-        query_posts( 'p='.$postid.'' );
-    
-        if ( have_posts() ) : while ( have_posts() ) : the_post();
-            
-            // get the current post object
-            global $post;
-            
-            // call update the post and pass current post object too it
-            $result = eci_updatethepost($post);    
-            
-            ###### WE NEED A GOOD WAY TO DETECT IF UPDATE HAPPENED
-            eci_mes('Post Updated','Your post with ID '.$postid.' and record ID '.$eciid.' has been updated');
-            
-        
-        endwhile; else:
-            
-            if($output == true)
-            {
-                eci_mes('Post Not Found','Could not get a post with ID '.$postid.', no update has been carried out');
-            }
-        
-        endif;
-    }
-}
-
 
 /**
  * Create post title. 

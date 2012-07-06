@@ -20,7 +20,7 @@ if(count($wtgcsv_projectslist_array) == 0){
 ?>
 
 <?php 
-if($wtgcsv_is_free){         
+if(!$wtgcsv_is_free){         
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
 $panel_array['panel_name'] = 'selectcurrentproject';// slug to act as a name and part of the panel ID 
