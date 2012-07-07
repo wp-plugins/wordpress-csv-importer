@@ -197,12 +197,14 @@ function wtgcsv_establish_csvfile_quote_PEARCSVmethod( $csv_filename,$output = f
 * Returns array holding the headers of the giving filename
 * It also prepares the array to hold other formats of the column headers in prepartion for the plugins various uses
 */
-function wtgcsv_get_file_headers_formatted($csv_filename,$fileid){
+function wtgcsv_get_file_headers_formatted($csv_filename,$fileid,$separator = ',',$quote = '"'){
     
     wtgcsv_pearcsv_include();
     
     $csv_file_conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR . '/' . $csv_filename );
-        
+    $conf['sep'] = $separator;        
+    $conf['quote'] = $quote; 
+            
     $header_array = array();
     
     // read and loop through the first row in the csv file    

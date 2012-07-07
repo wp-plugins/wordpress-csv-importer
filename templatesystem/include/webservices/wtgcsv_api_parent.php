@@ -142,22 +142,6 @@ function wtgcsv_api_is_activationcodevalid_soapcall( $activationcode ){
 }
 
 /**
-* Returns boolean on if plugins web service is available or not 
-*/
-function wtgcsv_is_webserviceavailable(){
-    $webservice_status_soapcall_result = wtgcsv_api_webservices_status_soapcall();
-    if($webservice_status_soapcall_result == false || $webservice_status_soapcall_result == 'siteoffline'){
-        return false;
-    }else{
-        if($webservice_status_soapcall_result['resultcode'] == 3){
-            return true;
-        }else{
-            return false;
-        }
-    }
-}
-
-/**
 * First function to use before calls to check on session status
 * 
 * @return boolean

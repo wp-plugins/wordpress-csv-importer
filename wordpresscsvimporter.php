@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Wordpress CSV Importer
-Version: 0.1.4
+Version: 0.1.5
 Plugin URI: http://www.wordpresscsvimporter.com
 Description: Wordpress CSV Importer released 2012 by Zara Walsh and Ryan Bayne
 Author: Zara Walsh
@@ -28,18 +28,8 @@ This license does not apply to the paid edition which is bundled with a seperate
 */
 
 /*********************************************************************************************************************************
-* BETA PHASE DEVELOPMENT NOTES
-* 0. Create blank option values for all options, prevent SQL error and insert them on activation. The only thing currently to be done during activation.
-* 1. Change failure messages for returned falses on saving options to indicate no changes made rather than error/fault
-* 2. Complete form submission and return to tab bug where it loads at bottom of screen, add this too all pages $wtgcsv_form_action = wtgcsv_link_toadmin($_GET['page'],'#tabs-' . $counttabs); , then add $wtgcsv_form_action too all forms 
-* 3. Test forms in not selected state with any menus and change form submission functions to expect forms that have it
-* 4. Look into removing traces of none required array nodes, it will prevent over processing* 
-* 5. Switch all web service calls off for 5 min when fault detected and display message
-* 6. Avoid checking web service status for 60 minutes. It should hardly ever go down and this will reduce traffic a lot.
-*******************************************************************************************************************************/
-
-/*********************************************************************************************************************************
 * DEVELOPMENT NOTES
+* 0. Ensure
 * 1. Avoid loading so much and calling so many installation related functions during Wordpress activation, move file includes and arrays inside admin area until public side exists
 * 2. Change failure messages for returned falses on saving options to indicate no changes made rather than error/fault
 * 3. Add ability to stop dialogue from being displayed (where dialogue is not REQUIRED), this allows us to not print the script
@@ -54,6 +44,14 @@ This license does not apply to the paid edition which is bundled with a seperate
 * 12. Add validation to all submission, check values are as expected and give advice i.e. pre-made tag data must be comma seperated
 * 13. Provide option to add appended value tp columns, dont auto apply it
 * 14. When user submits new project, chech for duplicate column titles
+* 15. Create blank option values for all options, prevent SQL error and insert them on activation. The only thing currently to be done during activation.
+* 16. Change failure messages for returned falses on saving options to indicate no changes made rather than error/fault
+* 17. Complete form submission and return to tab bug where it loads at bottom of screen, add this too all pages $wtgcsv_form_action = wtgcsv_link_toadmin($_GET['page'],'#tabs-' . $counttabs); , then add $wtgcsv_form_action too all forms 
+* 18. Test forms in not selected state with any menus and change form submission functions to expect forms that have it
+* 19. Look into removing traces of none required array nodes, it will prevent over processing* 
+* 20. Switch all web service calls off for 5 min when fault detected and display message
+* 21. Avoid checking web service status for 60 minutes. It should hardly ever go down and this will reduce traffic a lot.
+
 *******************************************************************************************************************************/
 
 if ( !function_exists( 'add_option' ) ) {echo "You cannot access this plugins file directly, see www.WordpressCSVImporter.com by Zara Walsh";exit;}
@@ -81,7 +79,7 @@ if(is_admin() && $UNDERCONSTRUCTIONS_SWITCH != 0 && (!defined('DOING_AJAX') || !
 unset($underconstruction);
 
 // development variable values
-$wtgcsv_currentversion = '0.1.4';// this value should not be relied on but only used for guidance
+$wtgcsv_currentversion = '0.1.5';// this value should not be relied on but only used for guidance
 $wtgcsv_php_version_tested = '5.3.1';// current version the plugin is being developed on
 $wtgcsv_php_version_minimum = '5.3.0';// minimum version required for plugin to operate
 // plugin build
@@ -92,6 +90,7 @@ $wtgcsv_notice_array = array();
 $wtgcsv_disableapicalls = 0;// 1 = yes, disable all api calls (handy if errors are being created), 0 allows api calls
 $wtgcsv_is_free = true;// changing this in free copy does not activate a paid edition, it may break the plugin
 $wtgcsv_is_dev = false;// boolean, true displays more panels with even more data i.e. array dumps
+$wtgcsv_is_event = false;// when true, an event is running or has ran, used to avoid over processing 
       
 ##########################################################################################
 #                                                                                        #
@@ -109,6 +108,12 @@ require_once(WTG_CSV_DIR.'templatesystem/include/wtgcsv_core_functions.php');// 
 require_once(WTG_CSV_DIR.'templatesystem/wtgcsv_load_initialplugin_configuration.php');// must be loaded after core_functions.php
 require_once(WTG_CSV_DIR.'templatesystem/include/webservices/wtgcsv_api_parent.php');
 if(!$wtgcsv_is_free){require_once(WTG_CSV_DIR.'fulledition/wtgcsv_advanced_functions.php');}
+
+// run auto post and data updating events if any are due
+if(!$wtgcsv_is_free){add_action('init', 'wtgcsv_event_check');}
+
+//add_action('the_posts', 'eci_updatethepost' );
+
 
 // admin end and public load different                  
 if(is_admin()){ 
@@ -139,11 +144,6 @@ if(is_admin()){
     $wtgcsv_twitter = 'WPCSVImporter';
     $wtgcsv_feedburner = 'wordpresscsvimporter';
     $wtgcsv_currentproject = 'No Project Set'; 
-    
-    // initialize full edition variables (thos related to SOAP Web Services API Post and Data Updating Ticket Services Advanced Contact Form etc)
-    if(!$wtgcsv_is_free){
-        ### TODO: HIGHPRIORITY, move more functions into full edition folder to lighten the free edition    
-    }
 
     #################################################################################################
     #                                                                                               #

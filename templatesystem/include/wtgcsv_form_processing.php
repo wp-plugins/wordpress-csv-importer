@@ -1591,7 +1591,7 @@ function wtgcsv_form_createdataimportjob(){
                                         
                     // we need first part of filename for appending in $_POST submissions
                     $fileChunks = explode(".", $csvfile_name);
-                    
+
                     // establish separator
                     if(isset($_POST['wtgcsv_newjob_separators' . $fileChunks[0]])){
                         $jobarray[$csvfile_name]['separator'] = $_POST['wtgcsv_newjob_separators' . $fileChunks[0]];        
@@ -1601,7 +1601,15 @@ function wtgcsv_form_createdataimportjob(){
                     
                     // establish quote
                     if(isset($_POST['wtgcsv_newjob_quote' . $fileChunks[0]])){
-                        $jobarray[$csvfile_name]['quote'] = $_POST['wtgcsv_newjob_quote' . $fileChunks[0]];        
+                        
+                        if($_POST['wtgcsv_newjob_quote' . $fileChunks[0]] == 'doublequote'){
+                            $jobarray[$csvfile_name]['quote'] = '"';    
+                        }elseif($_POST['wtgcsv_newjob_quote' . $fileChunks[0]] == 'singlequote'){
+                            $jobarray[$csvfile_name]['quote'] = "'";
+                        }else{
+                            $jobarray[$csvfile_name]['quote'] = '"';
+                        }
+                                
                     }else{
                         $jobarray[$csvfile_name]['quote'] = wtgcsv_get_file_quote($csvfile_name,$fileid,'PEAR');
                     }                     
@@ -1617,7 +1625,7 @@ function wtgcsv_form_createdataimportjob(){
                     $jobarray['stats'][$csvfile_name]['rows'] = wtgcsv_count_csvfilerows($csvfile_name);                    
                     
                     // also add an array of each files headers with the file as key
-                    $jobarray[$csvfile_name]['headers'] = wtgcsv_get_file_headers_formatted($csvfile_name,$fileid);
+                    $jobarray[$csvfile_name]['headers'] = wtgcsv_get_file_headers_formatted($csvfile_name,$fileid,$jobarray[$csvfile_name]['separator'],$jobarray[$csvfile_name]['quote']);
                     
                     // count total rows
                     $jobarray['totalrows'] = $jobarray['totalrows'] + $jobarray['stats'][$csvfile_name]['rows'];

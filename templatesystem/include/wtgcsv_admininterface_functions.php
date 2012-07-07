@@ -166,21 +166,6 @@ function wtgcsv_header_page($pagetitle,$layout){
         // check installation status and display warnings about any critical problems
         wtgcsv_install_status_display();?>
     
-        <?php
-        if(!$wtgcsv_is_free){
-            
-             wtgcsv_notice('<h4>ALPHA version released early as requested by many members of the Wordpress community</h4>
-            <p>Please do not discuss, report or rate the plugin online yet. You will see "Paid Edition Only" on some features. 
-            This is subject to change, exactly what features will be free has no been fully decided.</p>','warning','Extra','Alpha Wordpress CSV Importer');
-        
-        }else{
-            
-            wtgcsv_notice('Released June 2012, Wordpress CSV Importer is the latest data import and auto-blogging plugin. It is currently a BETA,
-            please make this clear in any public feedback.','warning','Extra','Wordpress CSV Importer Beta','','echo');
-            
-        }
-        ?>
-        
         <div id="icon-options-general" class="icon32"><br /></div>
         <h2><?php echo $pagetitle;?></h2>
 
@@ -3151,8 +3136,8 @@ function wtgcsv_display_csvfiles_fornewdataimportjob(){
                             </script>
 
                             <div id="wtgcsv_newjob_quote_radios_<?php echo $fileChunks[0];?>">
-                                <input type="radio" id="wtgcsv_quote_double_<?php echo $fileChunks[0];?>" name="wtgcsv_newjob_quote<?php echo $fileChunks[0];?>" value='"' /><label for="wtgcsv_quote_double_<?php echo $fileChunks[0];?>">"</label>
-                                <input type="radio" id="wtgcsv_quote_single_<?php echo $fileChunks[0];?>" name="wtgcsv_newjob_quote<?php echo $fileChunks[0];?>" value="'" /><label for="wtgcsv_quote_single_<?php echo $fileChunks[0];?>">'</label>                
+                                <input type="radio" id="wtgcsv_quote_double_<?php echo $fileChunks[0];?>" name="wtgcsv_newjob_quote<?php echo $fileChunks[0];?>" value="doublequote" /><label for="wtgcsv_quote_double_<?php echo $fileChunks[0];?>">"</label>
+                                <input type="radio" id="wtgcsv_quote_single_<?php echo $fileChunks[0];?>" name="wtgcsv_newjob_quote<?php echo $fileChunks[0];?>" value="singlequote" /><label for="wtgcsv_quote_single_<?php echo $fileChunks[0];?>">'</label>                
                             </div>                        
                         
                         </td>

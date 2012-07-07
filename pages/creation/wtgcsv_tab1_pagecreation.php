@@ -244,3 +244,25 @@ $jsform_set['noticebox_content'] = 'These are global settings and will take effe
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
 <?php wtgcsv_panel_footer();?> 
+
+
+
+<?php
+if(!$wtgcsv_is_free){
+    ++$panel_number;// increase panel counter so this panel has unique ID
+    $panel_array = array();
+    $panel_array['panel_name'] = 'dripfeedprojectsarraydump';// slug to act as a name and part of the panel ID 
+    $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
+    $panel_array['panel_title'] = __('Drip Feed Project Array Dump');// user seen panel header text 
+    $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
+    $panel_array['tabnumber'] = $wtgcsv_tab_number; 
+    $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
+    $panel_array['panel_intro'] = __('Dump of the array used to hold projects on automatic post creation');
+    $panel_array['panel_help'] = __('A dump of the array that holds all projects currently included in automatic post creation. Automatic post creation is also known as drip feeding posts into Wordpress or auto-blogging. In Wordpress CSV Importer drip-feeding events are triggered when the blog is visited on both public and admin side. During the loading of Wordpress, this plugin is also loaded and any due events are processed.');
+    $panel_array['help_button'] = wtgcsv_helpbutton_text(true,true);?>
+    <?php wtgcsv_panel_header( $panel_array );?>
+        
+        <?php var_dump(); ?>
+
+    <?php wtgcsv_panel_footer();
+}?> 

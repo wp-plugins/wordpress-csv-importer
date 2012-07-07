@@ -3,7 +3,7 @@
 $pageid = 'install';
 $pagefolder = 'install';
 
-global $wtgcsv_options_array,$wtgcsv_is_installed,$wtgcsv_adm_set,$wtgcsv_mpt_arr,$wpdb,$wtgcsv_apiservicestatus,$wtgcsv_is_subscribed,$wtgcsv_requirements_missing,$wtgcsv_apisession_array,$wtgcsv_nav_type;
+global $wtgcsv_options_array,$wtgcsv_is_installed,$wtgcsv_adm_set,$wtgcsv_mpt_arr,$wpdb,$wtgcsv_apiservicestatus,$wtgcsv_is_subscribed,$wtgcsv_requirements_missing,$wtgcsv_apisession_array,$wtgcsv_nav_type,$wtgcsv_is_free;
 
 // count number of panels, variable used as in code ID to pass to functions, not the TAB number users can see in url
 $panel_number = 0;  
@@ -14,7 +14,7 @@ $wtgcsv_tab_number = wtgcsv_get_tabnumber();
 // include tab screen file - this system allows us to be dynamic about which file to include  
 if( $wtgcsv_is_installed == false ){// change to do a check on $wtgcsv_is_activated for full installs when extended security in place
 
-    wtgcsv_header_page('Install ' . WTG_CSV_PLUGINTITLE,0);  
+    wtgcsv_header_page('Install Wordpress CSV Importer',0);  
 
     // create tab menu for the giving page
     wtgcsv_createmenu($pageid);

@@ -145,12 +145,12 @@ function wtgcsv_data_import_from_csvfile( $csvfile_name, $table_name, $rate, $jo
     $conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR .'/'. $csvfile_name );
     
     // apply auto determined or user defined separator and quote values
-    if(isset($dataimportjob_array['separator'])){
-        $conf['sep'] = $dataimportjob_array['separator'];        
+    if(isset($dataimportjob_array[$csvfile_name]['separator'])){
+        $conf['sep'] = $dataimportjob_array[$csvfile_name]['separator'];        
     }
     
-    if(isset($dataimportjob_array['quote'])){
-        $conf['quote'] = $dataimportjob_array['quote'];        
+    if(isset($dataimportjob_array[$csvfile_name]['quote'])){
+        $conf['quote'] = $dataimportjob_array[$csvfile_name]['quote'];        
     }    
 
     // loop through records   

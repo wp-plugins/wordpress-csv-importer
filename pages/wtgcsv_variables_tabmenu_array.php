@@ -413,7 +413,7 @@ $wtgcsv_mpt_arr['projects']['tabs'][8]['label'] = 'Update Options';
 $wtgcsv_mpt_arr['projects']['tabs'][8]['name'] = 'updateoptions';
 $wtgcsv_mpt_arr['projects']['tabs'][8]['helpurl'] = 'http://www.wordpresscsvimporter.com/';
 $wtgcsv_mpt_arr['projects']['tabs'][8]['allowhide'] = true;// is tab screen allowed to be hidden (boolean)
-$wtgcsv_mpt_arr['projects']['tabs'][8]['display'] = false;
+$wtgcsv_mpt_arr['projects']['tabs'][8]['display'] = true;
 // 2. Project sub page 1 tab 10
 $wtgcsv_mpt_arr['projects']['tabs'][9]['active'] = true;
 $wtgcsv_mpt_arr['projects']['tabs'][9]['slug'] = 'tab9_pageprojects';
@@ -487,7 +487,7 @@ $wtgcsv_mpt_arr['creation']['tabs'][1]['label'] = 'Drip Feed';
 $wtgcsv_mpt_arr['creation']['tabs'][1]['name'] = 'dripfeed';
 $wtgcsv_mpt_arr['creation']['tabs'][1]['helpurl'] = 'http://www.wordpresscsvimporter.com/';
 $wtgcsv_mpt_arr['creation']['tabs'][1]['allowhide'] = false;// is tab screen allowed to be hidden (boolean)
-$wtgcsv_mpt_arr['creation']['tabs'][1]['display'] = false; 
+$wtgcsv_mpt_arr['creation']['tabs'][1]['display'] = true; 
 // 3. Results sub page 1 tab 3
 $wtgcsv_mpt_arr['creation']['tabs'][2]['active'] = true;
 $wtgcsv_mpt_arr['creation']['tabs'][2]['slug'] = 'tab2_pagecreation';
@@ -495,7 +495,7 @@ $wtgcsv_mpt_arr['creation']['tabs'][2]['label'] = 'Update Posts';
 $wtgcsv_mpt_arr['creation']['tabs'][2]['name'] = 'updateposts';
 $wtgcsv_mpt_arr['creation']['tabs'][2]['helpurl'] = 'http://www.wordpresscsvimporter.com/';
 $wtgcsv_mpt_arr['creation']['tabs'][2]['allowhide'] = true;// is tab screen allowed to be hidden (boolean)
-$wtgcsv_mpt_arr['creation']['tabs'][2]['display'] = false;
+$wtgcsv_mpt_arr['creation']['tabs'][2]['display'] = true;
 // 3. Results sub page 1 tab 4
 $wtgcsv_mpt_arr['creation']['tabs'][3]['active'] = true;
 $wtgcsv_mpt_arr['creation']['tabs'][3]['slug'] = 'tab3_pagecreation';
