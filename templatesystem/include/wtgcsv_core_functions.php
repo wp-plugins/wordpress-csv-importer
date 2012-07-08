@@ -1475,7 +1475,16 @@ function wtgcsv_truncatestring( $string, $max_length ){
         return ($split[0]);
     }
     return ( $string );
-}        
+}
 
-         
+/**
+* Checks if DOING_AJAX is set, indicating header is loaded for ajax request only
+* @return boolean true if Ajax request ongoing else false        
+*/
+function wtgcsv_DOING_AJAX(){
+    if(defined('DOING_AJAX')){
+        return true;
+    }
+    return false;    
+}       
 ?>

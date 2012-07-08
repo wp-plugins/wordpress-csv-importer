@@ -83,7 +83,7 @@ $panel_array['tabnumber'] = $wtgcsv_tab_number;
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('Green indicates posts will be created on that day or time');
 $panel_array['panel_help'] = __('A simple approach to controlling when your projects drip feeding is allowed to happen. These settings/times are global and effect all projects with drip feeding applied above.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(true,true);
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);
 // Form Settings - create the array that is passed to jQuery form functions
 $jsform_set_override = array();
 $jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);   
@@ -137,16 +137,16 @@ $jsform_set['noticebox_content'] = 'You are about to change the drip-feeding sch
     <div id="wtgcsv_dripfeed_hours_format">    
     <?php
     // loop 24 times and create a checkbox for each hour
-    for($i=1;$i<25;$i++){
+    for($i=0;$i<24;$i++){
         
         // check if the current hour exists in array, if it exists then it is permitted, if it does not exist it is not permitted
-        if(isset($wtgcsv_schedule_array['times']['hours']['hour'.$i])){
+        if(isset($wtgcsv_schedule_array['times']['hours'][$i])){
             $hour_checked = ' checked'; 
         }else{
             $hour_checked = '';
         }
         
-        echo '<input type="checkbox" name="wtgcsv_schedulehour_list[]" id="hourcheck'.$i.'"  value="hour'.$i.'" '.$hour_checked.' /><label for="hourcheck'.$i.'">'.$i.'</label>';    
+        echo '<input type="checkbox" name="wtgcsv_schedulehour_list[]" id="hourcheck'.$i.'"  value="'.$i.'" '.$hour_checked.' /><label for="hourcheck'.$i.'">'.$i.'</label>';    
     }
     ?>                                                                                     
     </div>  
@@ -173,7 +173,7 @@ $panel_array['tabnumber'] = $wtgcsv_tab_number;
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('Quick and easy controls to apply the general rate of post creation during drip feeding sessions');
 $panel_array['panel_help'] = __('These controls tell the plugin how many posts to create during a drip feed session. It is a quick and easy approach to applying the rate of post creation. The plugin strictly avoids going over limits, this is considered higher priority than reaching the limit. The plugin will only begin a drip feed session when someone visits the blog; Wordpress loading triggers the schedule to be checked. The plugin will avoid doing this too often so that users do not get a negative experience. A cooldown between drip feed sessions also helps to avoid triggering server problems and using up too much bandwidth within a very short time which can also cause hosting to raise concerns.');
-$panel_array['help_button'] = wtgcsv_helpbutton_text(true,true);
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);
 // Form Settings - create the array that is passed to jQuery form functions
 $jsform_set_override = array();
 $jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);            
@@ -245,8 +245,6 @@ $jsform_set['noticebox_content'] = 'These are global settings and will take effe
 
 <?php wtgcsv_panel_footer();?> 
 
-
-
 <?php
 if(!$wtgcsv_is_free){
     ++$panel_number;// increase panel counter so this panel has unique ID
@@ -257,12 +255,43 @@ if(!$wtgcsv_is_free){
     $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
     $panel_array['tabnumber'] = $wtgcsv_tab_number; 
     $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
-    $panel_array['panel_intro'] = __('Dump of the array used to hold projects on automatic post creation');
-    $panel_array['panel_help'] = __('A dump of the array that holds all projects currently included in automatic post creation. Automatic post creation is also known as drip feeding posts into Wordpress or auto-blogging. In Wordpress CSV Importer drip-feeding events are triggered when the blog is visited on both public and admin side. During the loading of Wordpress, this plugin is also loaded and any due events are processed.');
-    $panel_array['help_button'] = wtgcsv_helpbutton_text(true,true);?>
+    $panel_array['panel_intro'] = __('Dump of project list array, also holds settings for drip feed activation');
+    $panel_array['panel_help'] = __('A dump of the array that holds all projects. It also holds the value that causes a project to be included in automatic post creation. Automatic post creation is also known as drip feeding posts into Wordpress or auto-blogging. In Wordpress CSV Importer drip-feeding events are triggered when the blog is visited on both public and admin side. During the loading of Wordpress, this plugin is also loaded and any due events are processed.');
+    $panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);?>
     <?php wtgcsv_panel_header( $panel_array );?>
         
-        <?php var_dump(); ?>
+        <pre><?php var_dump($wtgcsv_projectslist_array); ?></pre>
+        
+    <?php wtgcsv_panel_footer();
+}?> 
 
+<?php
+if(!$wtgcsv_is_free){
+    ++$panel_number;// increase panel counter so this panel has unique ID
+    $panel_array = array();
+    $panel_array['panel_name'] = 'dripfeedschedulearraydump';// slug to act as a name and part of the panel ID 
+    $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
+    $panel_array['panel_title'] = __('Drip Feed Schedule Array Dump');// user seen panel header text 
+    $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
+    $panel_array['tabnumber'] = $wtgcsv_tab_number; 
+    $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
+    $panel_array['panel_intro'] = __('Dump of schedule and limits array used for drip-feeding events');
+    $panel_array['panel_help'] = __('This array dump shows the permitted days of the week and hours per day for drip-feed events to happen. The values apply to all projects, contact us if you need projects to run different schedules.');
+    $panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);?>
+    <?php wtgcsv_panel_header( $panel_array );?>
+        
+        <h4>Days</h4>
+        <pre><?php var_dump($wtgcsv_schedule_array['times']['days']); ?></pre>
+
+        <h4>Hours</h4>
+        <pre><?php var_dump($wtgcsv_schedule_array['times']['hours']); ?></pre>
+        
+        <h4>Creation Limits</h4>
+        <p>These are used to avoid over processing on the server</p>
+        <pre><?php var_dump($wtgcsv_schedule_array['limits']); ?></pre>
+        
+        <h4>Entire Array</h4>
+        <pre><?php var_dump($wtgcsv_schedule_array); ?></pre>
+                
     <?php wtgcsv_panel_footer();
 }?> 

@@ -1623,10 +1623,10 @@ function wtgcsv_form_createdataimportjob(){
                     $jobarray['stats'][$csvfile_name]['dropped'] = 0;    
                     $jobarray['stats'][$csvfile_name]['duplicates'] = 0;                    
                     $jobarray['stats'][$csvfile_name]['rows'] = wtgcsv_count_csvfilerows($csvfile_name);                    
-                    
+
                     // also add an array of each files headers with the file as key
                     $jobarray[$csvfile_name]['headers'] = wtgcsv_get_file_headers_formatted($csvfile_name,$fileid,$jobarray[$csvfile_name]['separator'],$jobarray[$csvfile_name]['quote']);
-                    
+
                     // count total rows
                     $jobarray['totalrows'] = $jobarray['totalrows'] + $jobarray['stats'][$csvfile_name]['rows'];
                     ++$fileid;                        

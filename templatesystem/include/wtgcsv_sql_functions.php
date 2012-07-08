@@ -265,14 +265,15 @@ function wtgcsv_create_dataimportjob_table($jobcode,$job_file_group){
     
     // CREATE TABLE beginning
     $table = "CREATE TABLE `wtgcsv_". $jobcode ."` (
-    `wtgcsv_id` int(10) unsigned NOT NULL auto_increment,    
-    `wtgcsv_postid` int(10) unsigned default NULL COMMENT '',    
-    `wtgcsv_postcontent` int(10) unsigned default NULL COMMENT '',    
-    `wtgcsv_inuse` int(10) unsigned default NULL COMMENT '',        
+    `wtgcsv_id` int(10) unsigned NOT NULL auto_increment,
+    `wtgcsv_postid` int(10) unsigned default NULL COMMENT '',
+    `wtgcsv_postcontent` int(10) unsigned default NULL COMMENT '',
+    `wtgcsv_inuse` int(10) unsigned default NULL COMMENT '',
     `wtgcsv_imported` datetime NOT NULL COMMENT '',
-    `wtgcsv_updated` datetime NOT NULL COMMENT '',    
+    `wtgcsv_updated` datetime NOT NULL COMMENT '',
     `wtgcsv_changed` datetime NOT NULL COMMENT '',
     `wtgcsv_applied` datetime NOT NULL COMMENT '',";
+    
                                              
     $column_int = 0;
     $fileid = 1;
@@ -323,6 +324,8 @@ function wtgcsv_create_dataimportjob_table($jobcode,$job_file_group){
         wtgcsv_add_jobtable('wtgcsv_' . $jobcode);  
         return true; 
     }else{
+        wtgcsv_notice('SQL Query failed. The query itself should be studied, please submit it to support if you
+        require assistance:<br /><br />' . wtgcsv_sql_formatter($table),'error','Large','','','echo','');
         return false;
     }        
 }
@@ -385,5 +388,14 @@ function wtgcsv_sql_is_categorywithparent( $category_term,$parent_id ){
     AND $wpdb->terms.term_id = $wpdb->term_taxonomy.term_id
     AND $wpdb->term_taxonomy.parent = '".$parent_id."'
     LIMIT 1");
+}
+
+/**
+* NOT IN USE YET - Formats SQL string for displaying in HTML.
+* Using something like https://github.com/jdorn/sql-formatter
+* @todo LOWPRIORITY
+*/
+function wtgcsv_sql_formatter($sql_query){
+    return $sql_query;    
 }
 ?>

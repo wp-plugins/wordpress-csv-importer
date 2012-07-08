@@ -89,7 +89,9 @@ function wtgcsv_get_callcode(){
 }
 
 /**
-* Called from main file using add_action. Must always be within an admin check for security. 
+* Called from main file using add_action. Must always be within an admin check for security.
+* 
+* @todo HIGHPRIORITY, Ajax wont do anything with this but add the code for avoiding it when ajax call 
 */
 function wtgcsv_export_singlesqltable_as_csvfile(){
     if(isset($_POST['wtgcsv_post_processing_required'])){

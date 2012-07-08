@@ -202,8 +202,8 @@ function wtgcsv_get_file_headers_formatted($csv_filename,$fileid,$separator = ',
     wtgcsv_pearcsv_include();
     
     $csv_file_conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR . '/' . $csv_filename );
-    $conf['sep'] = $separator;        
-    $conf['quote'] = $quote; 
+    $csv_file_conf['sep'] = $separator;        
+    $csv_file_conf['quote'] = $quote; 
             
     $header_array = array();
     

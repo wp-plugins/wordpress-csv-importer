@@ -6,7 +6,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: Wordpress CSV Importer, Wordpress CSV Importer Plugin, Wordpress CSV Importer Software, WordpressCSVImporter, wordpress data import,wordpress data importer,auto blogging,auto blogger,autoblog,mass create posts,mass post creation,csv file importer,csv file data import,post injection,import spreadsheet,excel file import,excel import,www.wordpresscsvimporter.com,wordpresscsvimporter,wordpresscsv import,wordpress import plugin,wordpress data import tool,wordpress data import plugin,wordpress post creation plugin
 Requires at least: 3.3.1
 Tested up to: 3.4.1
-Stable tag: 0.1.1
+Stable tag: trunk
 
 Wordpress CSV Importer
 
@@ -96,6 +96,9 @@ not push users through a linear step by step process.
 6. You can use up to 3 columns of data to create 3 levels of categories.
  
 == Changelog ==
+= 0.1.6 = 
+* Bug fix in reading CSV file columns for none comma files
+    
 = 0.1.5 = 
 * Further improvements made for manually applying separator and quote
     

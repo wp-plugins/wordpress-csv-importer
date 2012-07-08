@@ -29,7 +29,9 @@ $panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);?>
             <h4>Common PHP Functions (returned value)</h4>
             <ul>
                 <li><strong>time():</strong> <?php echo time();?></li>
-                <li><strong>date('Y-m-d H:i:s'):</strong> <?php echo date('Y-m-d H:i:s');?></li>                   
+                <li><strong>date('Y-m-d H:i:s'):</strong> <?php echo date('Y-m-d H:i:s');?></li>
+                <li><strong>date('e'):</strong> <?php echo date('e');?> (timezone identifier)</li>
+                <li><strong>date('G'):</strong> <?php echo date('G');?> (24-hour format)</li>                   
             </ul>
             
 <?php wtgcsv_panel_footer();?> 
