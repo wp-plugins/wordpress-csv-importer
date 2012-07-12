@@ -96,7 +96,7 @@ not push users through a linear step by step process.
 6. You can use up to 3 columns of data to create 3 levels of categories.
  
 == Changelog ==
-= 0.1.8
+= 0.1.8 =
 * Bug Fixes
     * Error related to wtgcsv_sql_query_unusedrecords_singletable() missing parameter
 * Interface Improvements
