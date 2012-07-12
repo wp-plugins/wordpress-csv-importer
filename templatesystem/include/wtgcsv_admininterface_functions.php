@@ -3064,14 +3064,14 @@ function wtgcsv_display_csvfiles_fornewdataimportjob(){
     global $wtgcsv_is_free;  
 
     echo '<table class="widefat post fixed">';
+        
     echo '
     <tr>
         <td width="50">Select</td>
-        <td width="220">CSV File Name</td>
-        <td width="70">Detected Separator</td>
-        <td width="70">Detected Quote</td>
-        <td width="120">Change Separator</td>
-        <td>Change Quote</td>
+        <td>CSV File Name</td>
+        <td width="80">Columns</td>        
+        <td width="110">Separator</td>
+        <td>Quote</td>    
     </tr>';
     
     @$opendir_result = opendir( WTG_CSV_CONTENTFOLDER_DIR ); 
@@ -3109,10 +3109,11 @@ function wtgcsv_display_csvfiles_fornewdataimportjob(){
                                 <label for="wtgcsv_newjob_includefile_<?php echo $fileChunks[0];?>">*</label>                     
                             </div>
                             
-                        <?php echo '</td>
+                        <?php 
+                        ### TODO:HIGHPRIORITY, change the PEARCSVmethod for quote in the fget column
+                        echo '</td>
                         <td>'.$filename.'</td>
-                        <td>'.wtgcsv_establish_csvfile_separator_PEARCSVmethod($filename).'</td>
-                        <td>'.wtgcsv_establish_csvfile_quote_PEARCSVmethod($filename).'</td>
+                        <td><input type="text" name="wtgcsv_csvfile_fieldcount" size="2" maxlength="2" /></td>
                         <td>'; ?>
 
                             <script>

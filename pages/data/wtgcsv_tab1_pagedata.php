@@ -169,12 +169,6 @@ global $wtgcsv_dataimportjobs_array;
         <br />
         <div id='formstatus_div_for_<?php echo $jobcode;?>'></div>
         <div id='loading_div_for_<?php echo $jobcode;?>'>Importing Data Please Wait!</div>  
-
-        <h2>Profile For <?php echo $csv_filename;?></h2>
-            
-        <p>Rows: <?php echo wtgcsv_count_csvfilerows($csv_filename); ?></p>
-        <p>Separator: <?php echo wtgcsv_count_csvfilerows($csv_filename); ?></p>    
-        <p>Quote: <?php echo wtgcsv_count_csvfilerows($csv_filename); ?></p>
             
     <?php wtgcsv_panel_footer();?>             
                     

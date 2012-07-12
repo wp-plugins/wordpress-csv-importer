@@ -141,19 +141,13 @@ function wtgcsv_data_import_from_csvfile( $csvfile_name, $table_name, $rate, $jo
     $duplicate_check = false;
     $default_order = true;
     
-    // use pear to read csv file
-    $conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR .'/'. $csvfile_name );
-    
-    // apply auto determined or user defined separator and quote values
-    if(isset($dataimportjob_array[$csvfile_name]['separator'])){
-        $conf['sep'] = $dataimportjob_array[$csvfile_name]['separator'];        
-    }
-    
-    if(isset($dataimportjob_array[$csvfile_name]['quote'])){
-        $conf['quote'] = $dataimportjob_array[$csvfile_name]['quote'];        
-    }    
+    // set configuration array
+    $conf = array();
+    $conf['sep'] = $dataimportjob_array[$csvfile_name]['separator'];
+    $conf['quote'] = $dataimportjob_array[$csvfile_name]['quote'];
+    $conf['fields'] = $dataimportjob_array[$csvfile_name]['fields'];    
 
-    // loop through records   
+    // loop through records using PEAR CSV File_CSV::read   
     while ( ( $record = File_CSV::read( WTG_CSV_CONTENTFOLDER_DIR .'/'. $csvfile_name, $conf ) ) && $processed < $rate ) {        
 
         // skip first row of csv file at all times
@@ -267,23 +261,175 @@ function wtgcsv_data_import_from_csvfile( $csvfile_name, $table_name, $rate, $jo
     return $dataimportjob_array;    
 }    
 
-function wtgcsv_test_csvfile_columntitles( $csvfile_name, $separator, $quote ){
+/**
+* CSV file test - uses the configuration established through fget function and over-rides the configuration
+* established using PEAR CSV. This is to test File_CSV::read works when giving correct config. 
+*/
+function wtgcsv_test_csvfile_countfields_fgetpriority( $csvfile_name, $separator, $quote ){
     
     global $wpdb;
     
-    wtgcsv_pearcsv_include();    
+    wtgcsv_pearcsv_include();  
+    
+    ################################################################################################
+    #                                                                                              #
+    #           FGET FIRST - USE COLUMN COUNT IN PEAR CSV TO DETERMINE IF THE RESULT IS EQUAL      #
+    #                                                                                              #
+    ################################################################################################
+    
+    // get the header row
+    if (($handle = fopen(WTG_CSV_CONTENTFOLDER_DIR . '/' . $csvfile_name, "r")) !== FALSE) {
 
+        // one row at a time we will count each possible Separator
+        while (($header_row_string = fgets($handle, 4096)) !== false) {
+            break;                        
+        }  
+
+        fclose($handle); 
+    }    
+
+    // if PEAR CSV somehow could not get header row we end the test here
+    if(!$header_row_string){
+        wtgcsv_notice('The plugin could not retrieve the header row from your CSV file while running a test. Please ensure you select the correct separator then try again and seek support if you continue to experience problems.','error','Large','Test 4: Count CSV File Column Headers Using fget','','echo');
+        return;
+    } 
+
+    $header_array = explode($separator,$header_row_string);// explode the header row 
+    $fgetcsv_header_count = count( $header_array );// count number of values in array 
+    
+    ###############################################################################################
+    #                                                                                             #
+    #        PEAR CSV NOW - DO NOT USE File_CSV::discoverFormat WE WILL SET $conf ourselves       #
+    #                                                                                             #
+    ###############################################################################################
+    
     // use pear to read csv file
     $conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR .'/'. $csvfile_name );
-    $conf['sep'] = $separator;        
-    $conf['quote'] = $quote;
+    $conf['fields'] = $fgetcsv_header_count;
     
-    if($conf['fields'] == 0 || $conf['fields'] == 1){
-        wtgcsv_notice('Sorry I could not establish your CSV file column headers/titles. This is probably because the wrong quote was detected. You can create a Data Import Job with this file, then set the separator manually to avoid any problems.','error','Large','Test 4: Count CSV File Column Headers','','echo');    
+    // apply auto determined or user defined separator and quote values
+    if(isset($dataimportjob_array[$csvfile_name]['separator'])){
+        $conf['sep'] = $separator;        
+    }
+    
+    if(isset($dataimportjob_array[$csvfile_name]['quote'])){
+        $conf['quote'] = $quote;        
+    }    
+
+    // loop through records   
+    while ( ( $record = File_CSV::read( WTG_CSV_CONTENTFOLDER_DIR .'/'. $csvfile_name, $conf ) ) ) {        
+        $PEARCSV_count = count($record);
+    }
+
+    if(!isset($PEARCSV_count)){
+        wtgcsv_notice('Could not establish CSV file column header number using PEAR CSV, possibly due to the 
+        wrong separator being used. Please ensure the correct separator is in use then run more tests or 
+        seek support.','warning','Large','Test 4: Count CSV File Column Headers Using PEAR CSV','','echo');    
+        return;
     }else{
-        wtgcsv_notice('I counted '.$conf['fields'].' fields. If this happens to be incorrect it must be investigated.','success','Large','Test 4: Count CSV File Column Headers','','echo');
-    }   
+        
+        // compare both counts
+        if($PEARCSV_count != $fgetcsv_header_count){
+            wtgcsv_notice('Two methods of counting your CSV files returned different results. This is not a fault,
+            it happens with certain formats of CSV file i.e. no quotes or tab instead of comma. This test is to 
+            establish the best method to read your CSV file '.$csvfile_name.'.
+            Below are the returned counts.<br /><br />
+             <ul>
+             <li><strong>PEAR CSV: '.$conf['fields'].'</strong></li>
+             <li><strong>fgetcsv: '.$fgetcsv_header_count.'</strong></li>             
+             </ul><br /><br />You must use the method that has counted the correct number of columns or alter your
+             CSV file so that both methods works. PEAR CSV is the plugins default.','warning','Large','Test 4: Count CSV File Column Headers Using All Methods (fget is priority)','','echo');
+            return;
+        }     
+        wtgcsv_notice('I counted '.$conf['fields'].' fields/columns in '.$csvfile_name.'. If this happens to be incorrect it must be investigated. This test
+        establishes your files configuration using fget and over-rides the PEAR CSV method.','success','Large','Test 4: Count CSV File Column Headers Using All Methods (fget is priority)','','echo');
+    }  
 }   
+
+/**
+* CSV file test - this test will show a fail if the config from PEAR CSV File_CSV::discoverFormat
+* does not match the fget result. This will usually indicate user needs to use fget method.
+*/
+function wtgcsv_test_csvfile_countfields_pearcsvpriority( $csvfile_name, $separator, $quote ){
+    
+    global $wpdb;
+    
+    wtgcsv_pearcsv_include();  
+    
+    ################################################################################################
+    #                                                                                              #
+    #           FGET FIRST - USE COLUMN COUNT IN PEAR CSV TO DETERMINE IF THE RESULT IS EQUAL      #
+    #                                                                                              #
+    ################################################################################################
+    
+    // get the header row
+    if (($handle = fopen(WTG_CSV_CONTENTFOLDER_DIR . '/' . $csvfile_name, "r")) !== FALSE) {
+
+        // one row at a time we will count each possible Separator
+        while (($header_row_string = fgets($handle, 4096)) !== false) {
+            break;                        
+        }  
+
+        fclose($handle); 
+    }    
+
+    // if PEAR CSV somehow could not get header row we end the test here
+    if(!$header_row_string){
+        wtgcsv_notice('The plugin could not retrieve the header row from your CSV file while running a test. Please ensure you select the correct separator then try again and seek support if you continue to experience problems.','error','Large','Test 5: Count CSV File Column Headers Using fget','','echo');
+        return;
+    } 
+
+    $header_array = explode($separator,$header_row_string);// explode the header row 
+    $fgetcsv_header_count = count( $header_array );// count number of values in array 
+    
+    ###############################################################################################
+    #                                                                                             #
+    #        PEAR CSV NOW - DO NOT USE File_CSV::discoverFormat WE WILL SET $conf ourselves       #
+    #                                                                                             #
+    ###############################################################################################
+    
+    // use pear to read csv file
+    $conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR .'/'. $csvfile_name );
+
+    // apply auto determined or user defined separator and quote values
+    if(isset($dataimportjob_array[$csvfile_name]['separator'])){
+        $conf['sep'] = $separator;        
+    }
+    
+    if(isset($dataimportjob_array[$csvfile_name]['quote'])){
+        $conf['quote'] = $quote;        
+    }    
+
+    // loop through records   
+    while ( ( $record = File_CSV::read( WTG_CSV_CONTENTFOLDER_DIR .'/'. $csvfile_name, $conf ) ) ) {        
+        $PEARCSV_count = count($record);
+    }
+
+    if(!isset($PEARCSV_count) || $PEARCSV_count == 1){
+        wtgcsv_notice('Could not establish CSV file column headers number using PEAR CSV. If you are sure that
+        all quotes and separators are in the correct place. You should use the fget method for reading your CSV file
+        rather then PEAR CSV.','warning','Large','Test 5: Count CSV File Column Headers Using PEAR CSV','','echo');    
+        return;
+    }else{
+        
+        // compare both counts
+        if($PEARCSV_count != $fgetcsv_header_count){
+            wtgcsv_notice('Two methods of counting your CSV files returned different results. This is not a fault,
+            it happens with certain formats of CSV file i.e. no quotes or tab instead of comma. This test is to 
+            establish the best method to read your CSV file '.$csvfile_name.'.
+            Below are the returned counts.<br /><br />
+             <ul>
+             <li><strong>PEAR CSV: '.$conf['fields'].'</strong></li>
+             <li><strong>fgetcsv: '.$fgetcsv_header_count.'</strong></li>             
+             </ul><br /><br />You must use the method that has counted the correct number of columns or alter your
+             CSV file so that both methods works. PEAR CSV is the plugins default.','warning','Large','Test 5: Count CSV File Column Headers Using All Methods','','echo');
+            return;
+        }     
+        wtgcsv_notice('I counted '.$conf['fields'].' fields/columns in '.$csvfile_name.'. If this happens to be incorrect it must be investigated. This test
+        establishes your files configuration using fget and also does it using PEAR CSV. Comparison of field/column count is made
+        to help establish what method of reading CSV files is suitable for '.$csvfile_name.'.','success','Large','Test 5: Count CSV File Column Headers Using All Methods','','echo');
+    }  
+}
 
 /**
 * Updates empty premade record in data job table using CSV file row.
@@ -794,8 +940,9 @@ function wtgcsv_templatefunction(){
  * @param mixed $output_type, how to handle message (echo will add notice too $wtgcsv_notice_array and passing return will return the entire html)
  * @param mixed $persistent, boolean (true will mean the message stays until user deletes it manually)
  * 
+ * @todo MEDIUMPRIORITY, make the entire notification clickable, when help url in use
  * @todo LOWPRIORITY, provide permanent closure button, will this be done with a dialogue ID to prevent it opening again 
- * @todo LOWPRIORITY, make use of the help url, style it as a button or link within messages i.e. appended sentence.
+ * @todo LOWPRIORITY, add url to all notifications, this could take days!
  * @todo LOWPRIORITY, add a paragraphed section of the message for a second $message variable for extra information
  */
 function wtgcsv_notice($message,$type = 'success',$size = 'Extra',$title = false, $helpurl = 'http://www.webtechglobal.co.uk/forum', $output_type = 'echo',$persistent = false){
@@ -1486,5 +1633,25 @@ function wtgcsv_DOING_AJAX(){
         return true;
     }
     return false;    
+}
+
+/**
+* Uses fget, not PEAR CSV, to get header row of csv file and count number of fields/columns
+* @return int
+*/
+function wtgcsv_establish_csvfile_fieldnumber($csvfile_name,$separator){
+     // get the header row
+    if (($handle = fopen(WTG_CSV_CONTENTFOLDER_DIR . '/' . $csvfile_name, "r")) !== FALSE) {
+
+        // one row at a time we will count each possible Separator
+        while (($header_row_string = fgets($handle, 4096)) !== false) {
+            break;                        
+        }  
+
+        fclose($handle); 
+    }    
+
+    $header_array = explode($separator,$header_row_string);// explode the header row 
+    return count( $header_array );// count number of values in array    
 }       
 ?>

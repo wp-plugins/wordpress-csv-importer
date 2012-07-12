@@ -70,16 +70,9 @@ $panel_array['tabnumber'] = $wtgcsv_tab_number;
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('Create a data import job using one or more CSV files');
 $panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);
-$panel_array['panel_help'] = __('First you must enter a name for your project. Some uses of your name will require the
-plugin to adapt the name for different uses i.e. for the database name. So look out for for one or two variations of
-the name you enter. You must also enter a data import job Name that has never been used, unless you want your new
-project to adopt older data, this can be complicated however and is an approach that is being worked on.
-You can select more than one file to setup a new data import job. Click either the single file you want to import
-data from or click on multiple files to import data from those files and merge it to make a single set of data.
-A data import project has nothing to do with post creation or creation or anything other than a database table that
- holds data. This plugin requires you to import data before creating posts, users or anything else in Wordpress. 
- Partly finish or complete your entire data import project to then use your prepared database table for a Post 
- Creation Project.');
+$panel_array['panel_help'] = __('Select the files you want to import, each files separator, quote and enter
+the number of fields/columns each file has. The plugin will try to establish all of these automatically however
+for accurate results you should enter the values manually.');
 // <form> values, seperate from panel value
 $jsform_set_override = array();
 $jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);            
@@ -235,8 +228,22 @@ $jsform_set['noticebox_content'] = 'Do you want to run the full series of tests 
 
     <?php wtgcsv_formstart_standard($jsform_set['form_name'],$jsform_set['form_id'],'post','wtgcsv_form');?>
 
+    <h2>Select CSV File</h2>
     <?php wtgcsv_menu_csvfiles('all',$panel_array['panel_name']);?>
 
+    <script>
+        $(function() {
+            $( "#wtgcsv_separators_<?php echo $panel_array['panel_name'];?>" ).buttonset();
+        });
+    </script>
+
+    <h2>Select Files Separator</h2>
+    <div id="wtgcsv_separators_<?php echo $panel_array['panel_name'];?>">
+        <input type="radio" id="wtgcsv_separator_radio1<?php echo $panel_array['panel_name'];?>" name="wtgcsv_testcsvfile_separator_radiogroup" value="," /><label for="wtgcsv_separator_radio1<?php echo $panel_array['panel_name'];?>">,</label>
+        <input type="radio" id="wtgcsv_separator_radio2<?php echo $panel_array['panel_name'];?>" name="wtgcsv_testcsvfile_separator_radiogroup" value=";" /><label for="wtgcsv_separator_radio2<?php echo $panel_array['panel_name'];?>">;</label>
+        <input type="radio" id="wtgcsv_separator_radio3<?php echo $panel_array['panel_name'];?>" name="wtgcsv_testcsvfile_separator_radiogroup" value="|" /><label for="wtgcsv_separator_radio3<?php echo $panel_array['panel_name'];?>">|</label>
+    </div>
+    
     <?php
     // add the javascript that will handle our form action, prevent submission and display dialogue box
     wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
@@ -279,7 +286,7 @@ if($wtgcsv_is_dev){
     $panel_array = array();
     $panel_array['panel_name'] = 'currentjobarraydump';// slug to act as a name and part of the panel ID 
     $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
-    $panel_array['panel_title'] = __('Current Job Array Jump');// user seen panel header text 
+    $panel_array['panel_title'] = __('Current Job Array Dump');// user seen panel header text 
     $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
     $panel_array['tabnumber'] = $wtgcsv_tab_number; 
     $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique

@@ -9,46 +9,8 @@
 // exit validation function calls variable - use to avoid calling functions once $_POST processing done 
 $cont = true;   
 global $wtgcsv_notice_result;
-      
-#################################################################
-####                                                         ####
-####      COMMON POST VALIDATION FUNCTION CALLS FIRST        ####
-####                                                         ####
-#################################################################
+
 # TODO: add hidden input with value uses in these arguments to skip more function calls i.e. one per page
-if($cont){
-    
-    // Log File Installation Post Validation
-    $cont = wtgcsv_form_logfileinstallation();
-
-    // Delete Log File Post Validation
-    $cont = wtgcsv_form_deletelogfile();
-    
-    // Disable Log File Post Validation  
-    $cont = wtgcsv_form_disablelogfile();
-    
-    // Activate Log File Post Validation
-    $cont = wtgcsv_form_activatelogfile();
-    
-    // View Log File Post Validation
-    $cont = wtgcsv_form_viewlogfile();
-    
-    // Contact Form Submission Post Validation
-    $cont = wtgcsv_form_contactformsubmission();
-    
-    // Hide Tab Post Validation
-    $cont = wtgcsv_form_hidetab();
-
-    // Tab Display Settings Post Validation  
-    $cont = wtgcsv_form_tabdisplay();
-    
-    // Test CSV File 
-    $cont = wtgcsv_form_test_csvfile();
-    
-    // Create a data rule for replacing specific values after import 
-    $cont = wtgcsv_form_create_datarule_replacevalue();
-    
-}
 
 // Data Screen Form Submissions
 if($cont){
@@ -163,6 +125,39 @@ if($cont){
     
     // Start post creation even manually
     $cont = wtgcsv_form_start_post_creation();        
+}
+
+if($cont){
+    
+    // Log File Installation Post Validation
+    $cont = wtgcsv_form_logfileinstallation();
+
+    // Delete Log File Post Validation
+    $cont = wtgcsv_form_deletelogfile();
+    
+    // Disable Log File Post Validation  
+    $cont = wtgcsv_form_disablelogfile();
+    
+    // Activate Log File Post Validation
+    $cont = wtgcsv_form_activatelogfile();
+    
+    // View Log File Post Validation
+    $cont = wtgcsv_form_viewlogfile();
+    
+    // Contact Form Submission Post Validation
+    $cont = wtgcsv_form_contactformsubmission();
+    
+    // Hide Tab Post Validation
+    $cont = wtgcsv_form_hidetab();
+
+    // Tab Display Settings Post Validation  
+    $cont = wtgcsv_form_tabdisplay();
+    
+    // Test CSV File 
+    $cont = wtgcsv_form_test_csvfile();
+    
+    // Create a data rule for replacing specific values after import 
+    $cont = wtgcsv_form_create_datarule_replacevalue(); 
 }
 
 // rare used forms      
@@ -1596,7 +1591,7 @@ function wtgcsv_form_createdataimportjob(){
                     if(isset($_POST['wtgcsv_newjob_separators' . $fileChunks[0]])){
                         $jobarray[$csvfile_name]['separator'] = $_POST['wtgcsv_newjob_separators' . $fileChunks[0]];        
                     }else{
-                        $jobarray[$csvfile_name]['separator'] = wtgcsv_get_file_separator($csvfile_name,$fileid,'PEAR');
+                        $jobarray[$csvfile_name]['separator'] = wtgcsv_get_file_separator($csvfile_name,$fileid);
                     }
                     
                     // establish quote
@@ -1614,6 +1609,13 @@ function wtgcsv_form_createdataimportjob(){
                         $jobarray[$csvfile_name]['quote'] = wtgcsv_get_file_quote($csvfile_name,$fileid,'PEAR');
                     }                     
    
+                    // establish number of fields/columns - we need seperator at least to do this if user never submitted integer value
+                    if(isset($_POST['wtgcsv_csvfile_fieldcount']) && is_numeric($_POST['wtgcsv_csvfile_fieldcount'])){
+                        $jobarray[$csvfile_name]['fields'] = $_POST['wtgcsv_csvfile_fieldcount'];    
+                    }else{
+                        $jobarray[$csvfile_name]['fields'] = wtgcsv_establish_csvfile_fieldnumber($csvfile_name,$separator);
+                    }   
+                    
                     // add job stats for the file, required for multiple file jobs
                     $jobarray['stats'][$csvfile_name]['progress'] = 0;
                     $jobarray['stats'][$csvfile_name]['inserted'] = 0;    
@@ -1625,8 +1627,8 @@ function wtgcsv_form_createdataimportjob(){
                     $jobarray['stats'][$csvfile_name]['rows'] = wtgcsv_count_csvfilerows($csvfile_name);                    
 
                     // also add an array of each files headers with the file as key
-                    $jobarray[$csvfile_name]['headers'] = wtgcsv_get_file_headers_formatted($csvfile_name,$fileid,$jobarray[$csvfile_name]['separator'],$jobarray[$csvfile_name]['quote']);
-
+                    $jobarray[$csvfile_name]['headers'] = wtgcsv_get_file_headers_formatted($csvfile_name,$fileid,$jobarray[$csvfile_name]['separator'],$jobarray[$csvfile_name]['quote'],$jobarray[$csvfile_name]['fields']);
+                     
                     // count total rows
                     $jobarray['totalrows'] = $jobarray['totalrows'] + $jobarray['stats'][$csvfile_name]['rows'];
                     ++$fileid;                        
@@ -1705,28 +1707,62 @@ function wtgcsv_form_createdataimportjob(){
 function wtgcsv_form_test_csvfile(){
     if(isset( $_POST[WTG_CSV_ABB.'hidden_pageid'] ) && $_POST[WTG_CSV_ABB.'hidden_pageid'] == 'data' && isset($_POST[WTG_CSV_ABB.'hidden_panel_name']) && $_POST[WTG_CSV_ABB.'hidden_panel_name'] == 'testcsvfiles'){
 
-        $testnumber = 0;
+        // TEST 1: fgets separator - standard fgets method and counting each possible separator
+        $sep_test_one = wtgcsv_establish_csvfile_separator_fgetmethod($_POST['multiselect_wtgcsv_multiselecttestcsvfiles'],true );
         
-        // separator - standard fget method and counting each possible separator
-        $sep_test_one = wtgcsv_establish_csvfile_separator_fgetmethod($_POST['multiselect_wtgcsv_multiselecttestcsvfiles'],$output = true );
-        
-        // separator - PEAR method which returns its decision     
-        $sep_test_two = wtgcsv_establish_csvfile_separator_PEARCSVmethod($_POST['multiselect_wtgcsv_multiselecttestcsvfiles'],$output = true );
-        
-        // compare Separators from all methods and display error notice if no match
-        if($sep_test_one != $sep_test_two){
-            wtgcsv_notice('Separator values from all methods do not match. This often means changes are required in the CSV file. The default separator Wordpress CSV Importer uses is the one established using the PEAR CSV method. If it is wrong you will need to change it. Please seek support if you experience problems from here on.','warning','Large','Separators Do Not Match','','echo');    
-        }
+        // TEST 2: PEAR CSV separator - PEAR method which returns its decision     
+        $sep_test_two = wtgcsv_establish_csvfile_separator_PEARCSVmethod($_POST['multiselect_wtgcsv_multiselecttestcsvfiles'],true );
 
-        // quote - PEAR method
-        ++$testnumber;        
+        // TEST 3: PEAR CSV quote       
         $quote_test_two = wtgcsv_establish_csvfile_quote_PEARCSVmethod( $_POST['multiselect_wtgcsv_multiselecttestcsvfiles'],true);
        
-        // using established separator and quote, attempt to get an array of column titles
-        wtgcsv_test_csvfile_columntitles( $_POST['multiselect_wtgcsv_multiselecttestcsvfiles'], $sep_test_two, $quote_test_two );
+        // if user submitted separator, use that from here on
+        if(isset($_POST['wtgcsv_testcsvfile_separator_radiogroup'])){
+            $sep_test_two = $_POST['wtgcsv_testcsvfile_separator_radiogroup'];    
+        }
+       
+        // TEST 4: using established separator and quote, count column titles using fget method as priority
+        wtgcsv_test_csvfile_countfields_fgetpriority( $_POST['multiselect_wtgcsv_multiselecttestcsvfiles'], $sep_test_two, $quote_test_two );
 
-        return false;
+        // TEST 5: using established separator and quote, count column titles using PEAR CSV method as priority
+        wtgcsv_test_csvfile_countfields_pearcsvpriority( $_POST['multiselect_wtgcsv_multiselecttestcsvfiles'], $sep_test_two, $quote_test_two );
+
+        // TEST 6: compare Separators from all methods and display error notice if no match
+        $separators_match = true;
+        if($sep_test_one != $sep_test_two){
+            $separators_match = false;        
+        }
         
+        if(isset($_POST['wtgcsv_testcsvfile_separator_radiogroup']) && $_POST['wtgcsv_testcsvfile_separator_radiogroup'] != $sep_test_one){
+            $separators_match = false;    
+        }
+
+        if(isset($_POST['wtgcsv_testcsvfile_separator_radiogroup']) && $_POST['wtgcsv_testcsvfile_separator_radiogroup'] != $sep_test_two){
+            $separators_match = false;    
+        }
+                    
+        if(!$separators_match){            
+            wtgcsv_notice('Separator values from all methods used to establish the correct character, including the 
+            separator you submitted (if any), do not match each other. This is very common when working with CSV files.
+             You may always need to use manual separator options. This message is to make you aware that
+             not all methods of reading CSV files will work with your file.','warning','Large','Test 6: Compare Separator Sources','','echo');    
+        }else{
+            wtgcsv_notice('Separator values from all methods used to establish the correct character, including the separator you submitted (if any), do not match each other. This is very common when working with CSV files. You may always need to use manual separator options.','warning','Large','Test 6: Compare Separator Sources','','echo');            
+        }
+        
+        wtgcsv_notice('
+        <p>A well created CSV file can get a positive/tick notification for each test but it is not required. The
+        tests do not decide if you can use the plugin or not, they help to determine what methods should be used for
+        handling your file.</p>
+        <p>
+            <ul>
+                <li>1. Green (tick) indicates no problems or simply information for you to review and make decisions yourself</li>
+                <li>2. Yellow (caution/warning) caution means one or more methods for handling has not worked and you should use the methods that do work</li>
+                <li>3. Red (cross/error) notifications mean there was a total failure in one of the tests, could indicate a badly formatted CSV file</li>
+            </ul>
+        </p>','info','Large','Test Notifications Explained','','echo');
+                
+        return false;
     }else{
         return true;
     }     

@@ -197,19 +197,24 @@ function wtgcsv_establish_csvfile_quote_PEARCSVmethod( $csv_filename,$output = f
 * Returns array holding the headers of the giving filename
 * It also prepares the array to hold other formats of the column headers in prepartion for the plugins various uses
 */
-function wtgcsv_get_file_headers_formatted($csv_filename,$fileid,$separator = ',',$quote = '"'){
+function wtgcsv_get_file_headers_formatted($csv_filename,$fileid,$separator = ',',$quote = '"',$fields = 0){
     
     wtgcsv_pearcsv_include();
     
-    $csv_file_conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR . '/' . $csv_filename );
+    if($fields == 0){
+        
+    }
+    
+    $csv_file_conf = array();    
+    $csv_file_conf['fields'] = $fields;    
     $csv_file_conf['sep'] = $separator;        
     $csv_file_conf['quote'] = $quote; 
             
     $header_array = array();
-    
+
     // read and loop through the first row in the csv file    
     while ( ( $readone = File_CSV::read( WTG_CSV_CONTENTFOLDER_DIR . '/' . $csv_filename,$csv_file_conf ) ) ){                
-
+               
         for ( $i = 0; $i < $csv_file_conf['fields']; $i++ ){
             $header_array[$i]['original'] = $readone[$i];
             $header_array[$i]['sql'] = wtgcsv_cleansqlcolumnname($readone[$i]);// none adapted/original sql version of headers, could have duplicates with multi-file jobs
@@ -228,16 +233,26 @@ function wtgcsv_get_file_headers_formatted($csv_filename,$fileid,$separator = ',
 * @param string $csv_filename
 * @param string $method, either PEAR or FGETCSV (not in use yet)
 */
-function wtgcsv_get_file_separator($csv_filename,$method = 'PEAR'){
+function wtgcsv_get_file_separator($csv_filename){
+    global $wtgcsv_csvmethod;
+    $pearcsv_failed = false;
     
-    wtgcsv_pearcsv_include();
-    
-    $csv_file_conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR . '/' . $csv_filename );
+    if($wtgcsv_csvmethod == 0){
+        wtgcsv_pearcsv_include();
         
-    if(!$csv_file_conf || !isset($csv_file_conf['sep']) || $csv_file_conf['sep'] == false){
-        return ',';### TODO:LOWPRIORITY, log this event
+        $csv_file_conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR . '/' . $csv_filename );
+            
+        if(!$csv_file_conf || !isset($csv_file_conf['sep']) || $csv_file_conf['sep'] == false){
+            $pearcsv_failed = true;
+        }else{
+            return $csv_file_conf['sep'];
+        }
     }
-    return $csv_file_conf['sep'];    
+    
+    // if method is 1 (fget without PEAR CSV) OR it is PEAR CSV but PEAR CSV failed
+    if($pearcsv_failed == true || $wtgcsv_csvmethod == 1){
+        return wtgcsv_establish_csvfile_separator_fgetmethod($csv_filename,false);    
+    }   
 }
 
 /**
@@ -248,14 +263,24 @@ function wtgcsv_get_file_separator($csv_filename,$method = 'PEAR'){
 * @return string, should be a single character
 */
 function wtgcsv_get_file_quote($csv_filename,$method = 'PEAR'){
+    global $wtgcsv_csvmethod;
+    $pearcsv_failed = false;
     
-    wtgcsv_pearcsv_include();
-    
-    $csv_file_conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR . '/' . $csv_filename );
-    
-    if(!$csv_file_conf || !isset($csv_file_conf['quote']) || $csv_file_conf['quote'] == false){
-        return '"';### TODO:LOWPRIORITY, log this event
+    if($wtgcsv_csvmethod == 0){
+        wtgcsv_pearcsv_include();
+        
+        $csv_file_conf = File_CSV::discoverFormat( WTG_CSV_CONTENTFOLDER_DIR . '/' . $csv_filename );
+            
+        if(!$csv_file_conf || !isset($csv_file_conf['quote']) || $csv_file_conf['quote'] == false){
+            $pearcsv_failed = true;
+        }else{
+            return $csv_file_conf['quote'];
+        }
     }
-    return $csv_file_conf['quote'];    
+ 
+    // if method is 1 (fget without PEAR CSV) OR it is PEAR CSV but PEAR CSV failed
+    if($pearcsv_failed == true || $wtgcsv_csvmethod == 1){
+        return '"';### TODO:MEDIUMPRIORITY, add a function that does not use PEAR CSV to determine quote    
+    }    
 }
 ?>

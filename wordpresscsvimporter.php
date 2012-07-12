@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Wordpress CSV Importer
-Version: 0.1.6
+Version: 0.1.8
 Plugin URI: http://www.wordpresscsvimporter.com
 Description: Wordpress CSV Importer released 2012 by Zara Walsh and Ryan Bayne
 Author: Zara Walsh
@@ -29,7 +29,6 @@ This license does not apply to the paid edition which is bundled with a seperate
 
 /*********************************************************************************************************************************
 * DEVELOPMENT NOTES
-* 0. Ensure
 * 1. Avoid loading so much and calling so many installation related functions during Wordpress activation, move file includes and arrays inside admin area until public side exists
 * 2. Change failure messages for returned falses on saving options to indicate no changes made rather than error/fault
 * 3. Add ability to stop dialogue from being displayed (where dialogue is not REQUIRED), this allows us to not print the script
@@ -79,7 +78,7 @@ if(is_admin() && $UNDERCONSTRUCTIONS_SWITCH != 0 && (!defined('DOING_AJAX') || !
 unset($underconstruction);
 
 // development variable values
-$wtgcsv_currentversion = '0.1.6';// this value should not be relied on but only used for guidance
+$wtgcsv_currentversion = '0.1.8';// this value should not be relied on but only used for guidance
 $wtgcsv_php_version_tested = '5.3.1';// current version the plugin is being developed on
 $wtgcsv_php_version_minimum = '5.3.0';// minimum version required for plugin to operate
 // plugin build
@@ -91,7 +90,8 @@ $wtgcsv_disableapicalls = 0;// 1 = yes, disable all api calls (handy if errors a
 $wtgcsv_is_free = true;// changing this in free copy does not activate a paid edition, it may break the plugin
 $wtgcsv_is_dev = false;// boolean, true displays more panels with even more data i.e. array dumps
 $wtgcsv_is_event = false;// when true, an event is running or has ran, used to avoid over processing 
-      
+$wtgcsv_csvmethod = 1;// 0=PEAR CSV 1=fget/fgetcsv only
+
 ##########################################################################################
 #                                                                                        #
 #                            LOAD CORE VARIABLES AND FILES                               #
@@ -112,8 +112,7 @@ if(!$wtgcsv_is_free){require_once(WTG_CSV_DIR.'fulledition/wtgcsv_advanced_funct
 // run auto post and data updating events if any are due
 if(!$wtgcsv_is_free){add_action('init', 'wtgcsv_event_check');}
 
-//add_action('the_posts', 'eci_updatethepost' );
-
+//add_action('the_posts', 'eci_updatethepost' );// this will be used for updating posts being queried
 
 // admin end and public load different                  
 if(is_admin()){ 

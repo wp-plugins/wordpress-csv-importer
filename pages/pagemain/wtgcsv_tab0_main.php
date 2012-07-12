@@ -1,3 +1,9 @@
+<?php 
+echo wtgcsv_notice('This plugin is very new, released June 2012. We would appreciate it greatly if you submit
+feedback on the plugins
+<a href="http://wordpress.org/support/plugin/wordpress-csv-importer">support forum</a>. Please use the 
+"Test CSV File" tool if you have any difficutly using your file with the plugin and submit the results to us.','info','Large','New For 2012','','return');
+?>
 
 <style>
 #sortablewtg { list-style-type: none; margin: 0; padding: 0; }
@@ -83,6 +89,7 @@ $(function() {
         </a>Contact
     </li>
     
+    <?php if($wtgcsv_is_free){?>
     <li>
     
         <script type="text/javascript"><!--
@@ -97,6 +104,7 @@ $(function() {
         src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
         </script>
     </li>
+    <?php }?>
 
 </ul>
 

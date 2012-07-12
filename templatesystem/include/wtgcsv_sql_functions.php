@@ -61,7 +61,7 @@ function wtgcsv_update_project_databasetable_basic($record_id,$post_id,$table_na
 * 
 * @param string $table_name
 */
-function wtgcsv_sql_query_unusedrecords_singletable($table_name,$posts_target){
+function wtgcsv_sql_query_unusedrecords_singletable($table_name,$posts_target = '1'){
     global $wpdb,$wtgcsv_is_free;
     
     // if free edition then we do not allow us of specific target as the interface does not allow the entry

@@ -96,6 +96,22 @@ not push users through a linear step by step process.
 6. You can use up to 3 columns of data to create 3 levels of categories.
  
 == Changelog ==
+= 0.1.8
+* Bug Fixes
+    * Error related to wtgcsv_sql_query_unusedrecords_singletable() missing parameter
+* Interface Improvements
+    * None
+* Web Services, Support and Websites changes
+    * New YouTube video, a lot more to come: http://www.youtube.com/watch?v=uGA8R0PVR8M
+* Public Messages
+    * Thanks to Eric from Quebec for days of good feedback
+    
+= 0.1.7 = 
+* Added support to read CSV files using 2 different methods: PEAR CSV and fget/fgetcsv (each method often suits different files or purposes)
+* Can select files separator on the Test CSV File panel
+* CSV file test now uses PEAR CSV and php fget function to count columns
+* CSV file test compares user submitted separator (if any) with PEAR CSV and fget method separators
+    
 = 0.1.6 = 
 * Bug fix in reading CSV file columns for none comma files
     

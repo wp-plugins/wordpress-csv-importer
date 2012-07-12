@@ -199,6 +199,8 @@ $jsform_set['noticebox_content'] = 'These are global settings and will take effe
         <input type="radio" id="wtgcsv_radio4_dripfeedrate_maximumperday" name="day" value="50" <?php if(isset($wtgcsv_schedule_array['limits']['day']) && $wtgcsv_schedule_array['limits']['day'] == 50){echo 'checked';} ?> /><label for="wtgcsv_radio4_dripfeedrate_maximumperday">50</label>
         <input type="radio" id="wtgcsv_radio5_dripfeedrate_maximumperday" name="day" value="250" <?php if(isset($wtgcsv_schedule_array['limits']['day']) && $wtgcsv_schedule_array['limits']['day'] == 250){echo 'checked';} ?> /><label for="wtgcsv_radio5_dripfeedrate_maximumperday">250</label>
         <input type="radio" id="wtgcsv_radio6_dripfeedrate_maximumperday" name="day" value="1000" <?php if(isset($wtgcsv_schedule_array['limits']['day']) && $wtgcsv_schedule_array['limits']['day'] == 1000){echo 'checked';} ?> /><label for="wtgcsv_radio6_dripfeedrate_maximumperday">1000</label>                                                                                                                       
+        <input type="radio" id="wtgcsv_radio7_dripfeedrate_maximumperday" name="day" value="2000" <?php if(isset($wtgcsv_schedule_array['limits']['day']) && $wtgcsv_schedule_array['limits']['day'] == 2000){echo 'checked';} ?> /><label for="wtgcsv_radio7_dripfeedrate_maximumperday">2000</label> 
+        <input type="radio" id="wtgcsv_radio8_dripfeedrate_maximumperday" name="day" value="5000" <?php if(isset($wtgcsv_schedule_array['limits']['day']) && $wtgcsv_schedule_array['limits']['day'] == 5000){echo 'checked';} ?> /><label for="wtgcsv_radio8_dripfeedrate_maximumperday">5000</label>   
     </div>
                 
     <h4>Maximum Per Hour</h4>
@@ -214,11 +216,13 @@ $jsform_set['noticebox_content'] = 'These are global settings and will take effe
         <input type="radio" id="wtgcsv_radio3_dripfeedrate_maximumperhour" name="hour" value="10" <?php if(isset($wtgcsv_schedule_array['limits']['hour']) && $wtgcsv_schedule_array['limits']['hour'] == 10){echo 'checked';} ?> /><label for="wtgcsv_radio3_dripfeedrate_maximumperhour">10</label>
         <input type="radio" id="wtgcsv_radio9_dripfeedrate_maximumperhour" name="hour" value="24" <?php if(isset($wtgcsv_schedule_array['limits']['hour']) && $wtgcsv_schedule_array['limits']['hour'] == 24){echo 'checked';} ?> /><label for="wtgcsv_radio9_dripfeedrate_maximumperhour">24</label>                    
         <input type="radio" id="wtgcsv_radio4_dripfeedrate_maximumperhour" name="hour" value="50" <?php if(isset($wtgcsv_schedule_array['limits']['hour']) && $wtgcsv_schedule_array['limits']['hour'] == 50){echo 'checked';} ?> /><label for="wtgcsv_radio4_dripfeedrate_maximumperhour">50</label>
-        <input type="radio" id="wtgcsv_radio5_dripfeedrate_maximumperhour" name="hour" value="250" <?php if(isset($wtgcsv_schedule_array['limits']['hour']) && $wtgcsv_schedule_array['limits']['hour'] == 250){echo 'checked';} ?> /><label for="wtgcsv_radio5_dripfeedrate_maximumperhour">250</label>
-        <input type="radio" id="wtgcsv_radio6_dripfeedrate_maximumperhour" name="hour" value="1000" <?php if(isset($wtgcsv_schedule_array['limits']['hour']) && $wtgcsv_schedule_array['limits']['hour'] == 1000){echo 'checked';} ?> /><label for="wtgcsv_radio6_dripfeedrate_maximumperhour">1000</label>                                                                                                                        
+        <input type="radio" id="wtgcsv_radio5_dripfeedrate_maximumperhour" name="hour" value="100" <?php if(isset($wtgcsv_schedule_array['limits']['hour']) && $wtgcsv_schedule_array['limits']['hour'] == 100){echo 'checked';} ?> /><label for="wtgcsv_radio5_dripfeedrate_maximumperhour">100</label>
+        <input type="radio" id="wtgcsv_radio6_dripfeedrate_maximumperhour" name="hour" value="250" <?php if(isset($wtgcsv_schedule_array['limits']['hour']) && $wtgcsv_schedule_array['limits']['hour'] == 250){echo 'checked';} ?> /><label for="wtgcsv_radio6_dripfeedrate_maximumperhour">250</label>
+        <input type="radio" id="wtgcsv_radio7_dripfeedrate_maximumperhour" name="hour" value="500" <?php if(isset($wtgcsv_schedule_array['limits']['hour']) && $wtgcsv_schedule_array['limits']['hour'] == 500){echo 'checked';} ?> /><label for="wtgcsv_radio7_dripfeedrate_maximumperhour">500</label>        
+        <input type="radio" id="wtgcsv_radio8_dripfeedrate_maximumperhour" name="hour" value="1000" <?php if(isset($wtgcsv_schedule_array['limits']['hour']) && $wtgcsv_schedule_array['limits']['hour'] == 1000){echo 'checked';} ?> /><label for="wtgcsv_radio8_dripfeedrate_maximumperhour">1000</label>                                                                                                                        
     </div>
                     
-    <h4>Maximum Per Session Session</h4>
+    <h4>Maximum Per Session</h4>
     <script>
     $(function() {
         $( "#wtgcsv_dripfeedrate_maximumpersession" ).buttonset();
@@ -228,10 +232,11 @@ $jsform_set['noticebox_content'] = 'These are global settings and will take effe
         <input type="radio" id="wtgcsv_radio1_dripfeedrate_maximumpersession" name="session" value="1" <?php if(isset($wtgcsv_schedule_array['limits']['session']) && $wtgcsv_schedule_array['limits']['session'] == 1){echo 'checked';} ?> /><label for="wtgcsv_radio1_dripfeedrate_maximumpersession">1</label>
         <input type="radio" id="wtgcsv_radio2_dripfeedrate_maximumpersession" name="session" value="5" <?php if(isset($wtgcsv_schedule_array['limits']['session']) && $wtgcsv_schedule_array['limits']['session'] == 5){echo 'checked';} ?> /><label for="wtgcsv_radio2_dripfeedrate_maximumpersession">5</label>
         <input type="radio" id="wtgcsv_radio3_dripfeedrate_maximumpersession" name="session" value="10" <?php if(isset($wtgcsv_schedule_array['limits']['session']) && $wtgcsv_schedule_array['limits']['session'] == 10){echo 'checked';} ?> /><label for="wtgcsv_radio3_dripfeedrate_maximumpersession">10</label>
-        <input type="radio" id="wtgcsv_radio9_dripfeedrate_maximumpersession" name="session" value="24" <?php if(isset($wtgcsv_schedule_array['limits']['session']) && $wtgcsv_schedule_array['limits']['session'] == 24){echo 'checked';} ?> /><label for="wtgcsv_radio9_dripfeedrate_maximumpersession">24</label>                    
+        <input type="radio" id="wtgcsv_radio9_dripfeedrate_maximumpersession" name="session" value="25" <?php if(isset($wtgcsv_schedule_array['limits']['session']) && $wtgcsv_schedule_array['limits']['session'] == 25){echo 'checked';} ?> /><label for="wtgcsv_radio9_dripfeedrate_maximumpersession">25</label>                    
         <input type="radio" id="wtgcsv_radio4_dripfeedrate_maximumpersession" name="session" value="50" <?php if(isset($wtgcsv_schedule_array['limits']['session']) && $wtgcsv_schedule_array['limits']['session'] == 50){echo 'checked';} ?> /><label for="wtgcsv_radio4_dripfeedrate_maximumpersession">50</label>
-        <input type="radio" id="wtgcsv_radio5_dripfeedrate_maximumpersession" name="session" value="250" <?php if(isset($wtgcsv_schedule_array['limits']['session']) && $wtgcsv_schedule_array['limits']['session'] == 250){echo 'checked';} ?> /><label for="wtgcsv_radio5_dripfeedrate_maximumpersession">250</label>
-        <input type="radio" id="wtgcsv_radio6_dripfeedrate_maximumpersession" name="session" value="1000" <?php if(isset($wtgcsv_schedule_array['limits']['session']) && $wtgcsv_schedule_array['limits']['session'] == 1000){echo 'checked';} ?> /><label for="wtgcsv_radio6_dripfeedrate_maximumpersession">1000</label>                                                                                                                        
+        <input type="radio" id="wtgcsv_radio5_dripfeedrate_maximumpersession" name="session" value="100" <?php if(isset($wtgcsv_schedule_array['limits']['session']) && $wtgcsv_schedule_array['limits']['session'] == 100){echo 'checked';} ?> /><label for="wtgcsv_radio5_dripfeedrate_maximumpersession">100</label>
+        <input type="radio" id="wtgcsv_radio6_dripfeedrate_maximumpersession" name="session" value="200" <?php if(isset($wtgcsv_schedule_array['limits']['session']) && $wtgcsv_schedule_array['limits']['session'] == 200){echo 'checked';} ?> /><label for="wtgcsv_radio6_dripfeedrate_maximumpersession">200</label>                                                                                                                        
+        <input type="radio" id="wtgcsv_radio7_dripfeedrate_maximumpersession" name="session" value="300" <?php if(isset($wtgcsv_schedule_array['limits']['session']) && $wtgcsv_schedule_array['limits']['session'] == 300){echo 'checked';} ?> /><label for="wtgcsv_radio7_dripfeedrate_maximumpersession">300</label>    
     </div>
     
      <?php
@@ -280,18 +285,21 @@ if(!$wtgcsv_is_free){
     $panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);?>
     <?php wtgcsv_panel_header( $panel_array );?>
         
+        <h4>Event</h4>
+        <pre><?php if(isset($wtgcsv_schedule_array['history'])){var_dump($wtgcsv_schedule_array['history']);}else{echo 'No schedule history recorded';} ?></pre>
+               
         <h4>Days</h4>
-        <pre><?php var_dump($wtgcsv_schedule_array['times']['days']); ?></pre>
-
-        <h4>Hours</h4>
-        <pre><?php var_dump($wtgcsv_schedule_array['times']['hours']); ?></pre>
+        <pre><?php if(isset($wtgcsv_schedule_array['times']['days'])){var_dump($wtgcsv_schedule_array['times']['days']);}else{echo 'No days settings stored';} ?></pre>
         
+        <h4>Hours</h4>
+        <pre><?php if(isset($wtgcsv_schedule_array['times']['hours'])){var_dump($wtgcsv_schedule_array['times']['hours']);}else{echo 'No hours settings stored';} ?></pre>
+
         <h4>Creation Limits</h4>
         <p>These are used to avoid over processing on the server</p>
-        <pre><?php var_dump($wtgcsv_schedule_array['limits']); ?></pre>
+        <pre><?php if(isset($wtgcsv_schedule_array['limits'])){var_dump($wtgcsv_schedule_array['limits']);}else{echo 'No limits/target settings stored';} ?></pre>
         
         <h4>Entire Array</h4>
-        <pre><?php var_dump($wtgcsv_schedule_array); ?></pre>
+        <pre><?php if(isset($wtgcsv_schedule_array)){var_dump($wtgcsv_schedule_array);}else{echo 'No array stored';} ?></pre>
                 
     <?php wtgcsv_panel_footer();
 }?> 
