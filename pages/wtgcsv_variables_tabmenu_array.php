@@ -505,8 +505,8 @@ $wtgcsv_mpt_arr['creation']['tabs'][0]['display'] = wtgcsv_page_show_hide();
 // 3. Results sub page 1 tab 2
 $wtgcsv_mpt_arr['creation']['tabs'][1]['active'] = true;
 $wtgcsv_mpt_arr['creation']['tabs'][1]['slug'] = 'tab1_pagecreation';
-$wtgcsv_mpt_arr['creation']['tabs'][1]['label'] = 'Drip Feed';
-$wtgcsv_mpt_arr['creation']['tabs'][1]['name'] = 'dripfeed';
+$wtgcsv_mpt_arr['creation']['tabs'][1]['label'] = 'Schedule';
+$wtgcsv_mpt_arr['creation']['tabs'][1]['name'] = 'schedule';
 $wtgcsv_mpt_arr['creation']['tabs'][1]['helpurl'] = 'http://www.wordpresscsvimporter.com/';
 $wtgcsv_mpt_arr['creation']['tabs'][1]['allowhide'] = false;// is tab screen allowed to be hidden (boolean)
 $wtgcsv_mpt_arr['creation']['tabs'][1]['display'] = wtgcsv_page_show_hide(1); 

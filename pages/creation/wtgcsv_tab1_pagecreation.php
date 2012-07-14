@@ -1,6 +1,108 @@
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
+$panel_array['panel_name'] = 'eventsstatus';// slug to act as a name and part of the panel ID 
+$panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
+$panel_array['panel_title'] = __('Events Status *global panel*');// user seen panel header text 
+$panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
+$panel_array['tabnumber'] = $wtgcsv_tab_number; 
+$panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
+$panel_array['panel_intro'] = __('Details of the last event and actions during the event');
+$panel_array['panel_help'] = __('Many different types of actions can happen during events but there is only one action per event. There is normally many events, depending on user configuration of the permitted days and hours. This panel tells us if things are running smothly and helps us test the schedule. With this panel we can see that automated things are actually happening without having to check posts, categories, twitter plugins, the database, widgets etc');
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);?>
+<?php wtgcsv_panel_header( $panel_array );?>
+
+    <h4>Events Counter - 60 Minute Period</h4>
+    <p>
+    <?php 
+    if(isset($wtgcsv_schedule_array['history']['hourcounter'])){
+        echo $wtgcsv_schedule_array['history']['hourcounter']; 
+    }else{
+        echo 'No events have been done during the current 60 minute period';    
+    }?>
+    </p> 
+
+    <h4>Events Counter - 24 Hour Period</h4>
+    <p>
+    <?php 
+    if(isset($wtgcsv_schedule_array['history']['daycounter'])){
+        echo $wtgcsv_schedule_array['history']['daycounter']; 
+    }else{
+        echo 'No events have been done during the current 24 hour period';    
+    }?>
+    </p>
+
+    <h4>Last Event Type</h4>
+    <p>
+    <?php 
+    if(isset($wtgcsv_schedule_array['history']['lasteventtype'])){
+        
+        if($wtgcsv_schedule_array['history']['lasteventtype'] == 'dataimport'){
+            echo 'Data Import';            
+        }elseif($wtgcsv_schedule_array['history']['lasteventtype'] == 'dataupdate'){
+            echo 'Data Update';
+        }elseif($wtgcsv_schedule_array['history']['lasteventtype'] == 'postcreation'){
+            echo 'Post Creation';
+        }elseif($wtgcsv_schedule_array['history']['lasteventtype'] == 'postupdate'){
+            echo 'Post Update';
+        }elseif($wtgcsv_schedule_array['history']['lasteventtype'] == 'twittersend'){
+            echo 'Twitter: New Tweet';
+        }elseif($wtgcsv_schedule_array['history']['lasteventtype'] == 'twitterupdate'){
+            echo 'Twitter: Send Update';
+        }elseif($wtgcsv_schedule_array['history']['lasteventtype'] == 'twitterget'){
+            echo 'Twitter: Get Reply';
+        }
+         
+    }else{
+        echo 'No events have been carried out yet';    
+    }?>
+    </p>
+
+    <h4>Last Event Action</h4>
+    <p>
+    <?php 
+    if(isset($wtgcsv_schedule_array['history']['lasteventaction'])){
+        echo $wtgcsv_schedule_array['history']['lasteventaction']; 
+    }else{
+        echo 'No event actions have been carried out yet';    
+    }?>
+    </p>
+        
+    <h4>Last Event Time</h4>
+    <p>
+    <?php 
+    if(isset($wtgcsv_schedule_array['history']['lasteventtime'])){
+        echo date("F j, Y, g:i a",$wtgcsv_schedule_array['history']['lasteventtime']); 
+    }else{
+        echo 'No schedule events have ran on this server yet';    
+    }?>
+    </p>
+
+    <h4>Last Hourly Reset</h4>
+    <p>
+    <?php 
+    if(isset($wtgcsv_schedule_array['history']['hour_lastreset'])){
+        echo date("F j, Y, g:i a",$wtgcsv_schedule_array['history']['hour_lastreset']); 
+    }else{
+        echo 'No hourly reset has been done yet';    
+    }?>
+    </p>   
+        
+    <h4>Last 24 Hour Period Reset</h4>
+    <p>
+    <?php 
+    if(isset($wtgcsv_schedule_array['history']['day_lastreset'])){
+        echo date("F j, Y, g:i a",$wtgcsv_schedule_array['history']['day_lastreset']); 
+    }else{
+        echo 'No 24 hour reset has been done yet';    
+    }?>
+    </p>    
+
+<?php wtgcsv_panel_footer();?> 
+
+<?php
+++$panel_number;// increase panel counter so this panel has unique ID
+$panel_array = array();
 $panel_array['panel_name'] = 'dripfeedprojects';// slug to act as a name and part of the panel ID 
 $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
 $panel_array['panel_title'] = __('Drip Feed Projects *global panel*');// user seen panel header text 
@@ -75,9 +177,9 @@ $jsform_set['noticebox_content'] = 'You are about to stop or start drip feeding 
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
-$panel_array['panel_name'] = 'dripfeedschedule';// slug to act as a name and part of the panel ID 
+$panel_array['panel_name'] = 'scheduletimes';// slug to act as a name and part of the panel ID 
 $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
-$panel_array['panel_title'] = __('Drip Feed Schedule *global panel*');// user seen panel header text 
+$panel_array['panel_title'] = __('Schedule Times *global panel*');// user seen panel header text 
 $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
@@ -87,8 +189,8 @@ $panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);
 // Form Settings - create the array that is passed to jQuery form functions
 $jsform_set_override = array();
 $jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);   
-$jsform_set['dialoguebox_title'] = 'Saving Drip Feed Schedule';
-$jsform_set['noticebox_content'] = 'You are about to change the drip-feeding schedule, do you want to continue?';
+$jsform_set['dialoguebox_title'] = 'Saving Schedule Times';
+$jsform_set['noticebox_content'] = 'You are about to change the schedule times, do you want to continue?';
 // TODO: LOWPRIORITY, add a checkbox to allow user to save design for the mapping approach
 ?>
 <?php wtgcsv_panel_header( $panel_array );?>
@@ -165,9 +267,9 @@ $jsform_set['noticebox_content'] = 'You are about to change the drip-feeding sch
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
-$panel_array['panel_name'] = 'dripfeedlimits';// slug to act as a name and part of the panel ID 
+$panel_array['panel_name'] = 'schedulelimits';// slug to act as a name and part of the panel ID 
 $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
-$panel_array['panel_title'] = __('Drip Feed Limits *global panel*');// user seen panel header text 
+$panel_array['panel_title'] = __('Schedule Limits *global panel*');// user seen panel header text 
 $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
@@ -274,9 +376,9 @@ if(!$wtgcsv_is_free){
 if(!$wtgcsv_is_free){
     ++$panel_number;// increase panel counter so this panel has unique ID
     $panel_array = array();
-    $panel_array['panel_name'] = 'dripfeedschedulearraydump';// slug to act as a name and part of the panel ID 
+    $panel_array['panel_name'] = 'schedulearraydump';// slug to act as a name and part of the panel ID 
     $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
-    $panel_array['panel_title'] = __('Drip Feed Schedule Array Dump');// user seen panel header text 
+    $panel_array['panel_title'] = __('Schedule Array Dump');// user seen panel header text 
     $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
     $panel_array['tabnumber'] = $wtgcsv_tab_number; 
     $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique

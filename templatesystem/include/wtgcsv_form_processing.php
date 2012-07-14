@@ -118,10 +118,10 @@ if($cont){
     $cont = wtgcsv_form_save_dripfeedprojects_switch();
     
     // Save global allowed days and hours
-    $cont = wtgcsv_form_save_schedule_global();
+    $cont = wtgcsv_form_save_scheduletimes_global();
     
     // Save drip feed limits
-    $cont = wtgcsv_form_save_dripfeedlimits();
+    $cont = wtgcsv_form_save_schedulelimits();
     
     // Start post creation even manually
     $cont = wtgcsv_form_start_post_creation();        
@@ -705,9 +705,9 @@ function wtgcsv_form_upload_csv_file(){
 /**
 * Save drip feed limits  
 */
-function wtgcsv_form_save_dripfeedlimits(){
+function wtgcsv_form_save_schedulelimits(){
     global $wtgcsv_projectslist_array,$wtgcsv_schedule_array;
-    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'creation' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'dripfeedlimits'){
+    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'creation' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'schedulelimits'){
 
         // if any required values are not in $_POST set them to zero
         if(!isset($_POST['day'])){
@@ -741,9 +741,9 @@ function wtgcsv_form_save_dripfeedlimits(){
 /**
 * Saves global allowed days and hours
 */
-function wtgcsv_form_save_schedule_global(){
+function wtgcsv_form_save_scheduletimes_global(){
     global $wtgcsv_projectslist_array,$wtgcsv_schedule_array;
-    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'creation' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'dripfeedschedule'){
+    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'creation' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'scheduletimes'){
 
         // ensure $wtgcsv_schedule_array is an array, it may be boolean false if schedule has never been set
         if(isset($wtgcsv_schedule_array) && is_array($wtgcsv_schedule_array)){

@@ -49,25 +49,6 @@ function wtgcsv_admin_menu(){
 }
 
 /**
- * Displays notice. Used in wtgcsv_check_requirements_display 
- * 
- * @return true if a message is being output, indicating a problem. false is returned if this function is not displaying notice
- */
-function wtgcsv_install_status_display($display = true){
-    
-    global $wtgcsv_was_installed,$wtgcsv_is_installed;
-           
-    // trace of an installation exists but is not fully installed then display warnings 
-    if($wtgcsv_was_installed == true && $wtgcsv_is_installed != true){
-                      
-        if(wtgcsv_templatefiles_missing()){
-            wtgcsv_notice('One or more files important for the plugin to operate appear to be missing. Please
-            check the plugins Status page and correct the problem using the help tools there.','error','Small',WTG_CSV_PLUGINTITLE . ' Core File Missing: ');             
-        }
-    }
-}
-
-/**
 * Checks all critical template system files and returns
 * @uses wtgcsv_jquery_status_list_portlets(), for this function the script is placed at the top of the tab file 
 */
@@ -161,10 +142,7 @@ function wtgcsv_header_page($pagetitle,$layout){
 
         <?php
         // decide if user is probably activating for the first time and display message accordingly
-        wtgcsv_first_activation_check();
-            
-        // check installation status and display warnings about any critical problems
-        wtgcsv_install_status_display();?>
+        wtgcsv_first_activation_check();?>
     
         <div id="icon-options-general" class="icon32"><br /></div>
         <h2><?php echo $pagetitle;?></h2>

@@ -96,6 +96,16 @@ not push users through a linear step by step process.
 6. You can use up to 3 columns of data to create 3 levels of categories.
  
 == Changelog ==
+= 0.1.9 =
+* Bug Fixes
+    * Missing file warning for a file no longer included in package
+* Interface Improvements
+    * Message regarding missing files now includes the expected path
+* Web Services, Support and Websites changes
+    * Plugin no longer checks web service status, not required until web services are complete
+* Public Messages
+    * Happy Bastille Day, just make it a weekend
+    
 = 0.1.8 =
 * Bug Fixes
     * Error related to wtgcsv_sql_query_unusedrecords_singletable() missing parameter

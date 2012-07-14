@@ -86,8 +86,8 @@ function wtgcsv_is_installed(){
         } 
     }
 
-    // check plugins required files
-    $templatefiles_result = wtgcsv_templatefiles_missing();
+    // check plugins required files but do not display message, we only want a true or false outcome
+    $templatefiles_result = wtgcsv_templatefiles_missing(false);
     if($templatefiles_result){
         // a template file is missing, user will find more info on status screen
         $returnresult = false;

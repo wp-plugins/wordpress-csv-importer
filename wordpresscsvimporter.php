@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Wordpress CSV Importer
-Version: 0.1.8
+Version: 0.1.9
 Plugin URI: http://www.wordpresscsvimporter.com
 Description: Wordpress CSV Importer released 2012 by Zara Walsh and Ryan Bayne
 Author: Zara Walsh
@@ -78,7 +78,7 @@ if(is_admin() && $UNDERCONSTRUCTIONS_SWITCH != 0 && (!defined('DOING_AJAX') || !
 unset($underconstruction);
 
 // development variable values
-$wtgcsv_currentversion = '0.1.8';// this value should not be relied on but only used for guidance
+$wtgcsv_currentversion = '0.1.9';// this value should not be relied on but only used for guidance
 $wtgcsv_php_version_tested = '5.3.1';// current version the plugin is being developed on
 $wtgcsv_php_version_minimum = '5.3.0';// minimum version required for plugin to operate
 // plugin build
@@ -116,6 +116,7 @@ if(!$wtgcsv_is_free){add_action('init', 'wtgcsv_event_check');}
 
 // admin end and public load different                  
 if(is_admin()){ 
+    
     // register plugin activation hook - must be in the main file
     register_activation_hook( __FILE__ ,'wtgcsv_register_activation_hook');
 
@@ -163,7 +164,11 @@ if(is_admin()){
     ################################################################
     //$wtgcsv_activationcode = wtgcsv_get_activationcode(); ### TODO:MEDIUMPRIORITY, part of activation code system 
     $wtgcsv_is_installed = wtgcsv_is_installed();// boolean - if false either plugin has never been installed or installation has been tampered with 
-    if(!$wtgcsv_is_free){$wtgcsv_is_webserviceavailable = wtgcsv_is_webserviceavailable();}else{$wtgcsv_is_webserviceavailable == false;}
+    if(!$wtgcsv_is_free){
+        //$wtgcsv_is_webserviceavailable = wtgcsv_is_webserviceavailable();
+    }else{
+        $wtgcsv_is_webserviceavailable == false;
+    }
                   
     // if web services are available, we can then check if domain is registered or not
     if(!$wtgcsv_is_free && $wtgcsv_is_webserviceavailable){
@@ -224,7 +229,10 @@ if(is_admin()){
     add_action('init','wtgcsv_export_singlesqltable_as_csvfile');// export CSV file request by $_POST
         
     wtgcsv_script('admin');
-    wtgcsv_css('admin');        
+    wtgcsv_css('admin');
+    
+    // display a message if any files are missing from package
+    wtgcsv_templatefiles_missing(true);              
 }
 
 // load public only scripts,styles,files (can use this to avoid loading files only required on the admin side)

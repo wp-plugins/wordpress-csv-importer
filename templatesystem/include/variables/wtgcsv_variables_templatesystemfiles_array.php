@@ -119,11 +119,6 @@ $wtgcsv_templatesystem_files[21]['path'] = '/include/';
 $wtgcsv_templatesystem_files[21]['name'] = WTG_CSV_ABB . 'install_functions';
 $wtgcsv_templatesystem_files[21]['extension'] = 'php';
 $wtgcsv_templatesystem_files[21]['level'] = 0;
-// wtg?_interfacetext.php
-$wtgcsv_templatesystem_files[22]['path'] = '/include/';
-$wtgcsv_templatesystem_files[22]['name'] = WTG_CSV_ABB . 'interfacetext';
-$wtgcsv_templatesystem_files[22]['extension'] = 'php';
-$wtgcsv_templatesystem_files[22]['level'] = 0;
 // wtg?_post_processing.php
 $wtgcsv_templatesystem_files[24]['path'] = '/include/';
 $wtgcsv_templatesystem_files[24]['name'] = WTG_CSV_ABB . 'form_processing';

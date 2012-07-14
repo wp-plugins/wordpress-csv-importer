@@ -381,7 +381,7 @@ function wtgcsv_update_tabmenu(){
 * Checks all critical template system files and returns
 * @return boolean, true if all files found or false if any are missing 
 */
-function wtgcsv_templatefiles_missing(){
+function wtgcsv_templatefiles_missing($output = false){
     global $wtgcsv_templatesystem_files;
 
     if(!isset($wtgcsv_templatesystem_files) || !is_array($wtgcsv_templatesystem_files)){
@@ -397,8 +397,14 @@ function wtgcsv_templatefiles_missing(){
             $path .= '.' . $fileitem['extension']; 
         }
 
-        if(!file_exists($path)){   
-            return true;
+        if(!file_exists($path)){ 
+        
+            if($output){
+                wtgcsv_notice('A files important for the plugin to operate appear to be missing. The expect
+                file should be on the follow path...<br /><br />' . $path,'error','Small',' Core File Missing: ','','echo');             
+            }
+               
+            return true;// yes file is missing
         } 
     }
         
