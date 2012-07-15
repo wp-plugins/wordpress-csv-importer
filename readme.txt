@@ -96,6 +96,16 @@ not push users through a linear step by step process.
 6. You can use up to 3 columns of data to create 3 levels of categories.
  
 == Changelog ==
+= 0.2.1 =
+* Bug Fixes
+    * Field count was not being submitted for some selected CSV files
+* General Improvements
+    * None
+* Web Services, Support and Websites changes
+    * None
+* Public Messages
+    * Donations help to continue this project, even $5.00 makes a difference, send to paypal@wordpresscsvimporter.com
+    
 = 0.2.0 =
 * Bug Fixes
     * A data import update query was fixed

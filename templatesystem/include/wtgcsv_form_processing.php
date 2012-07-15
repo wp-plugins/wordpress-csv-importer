@@ -1629,8 +1629,8 @@ function wtgcsv_form_createdataimportjob(){
                     }                     
    
                     // establish number of fields/columns - we need seperator at least to do this if user never submitted integer value
-                    if(isset($_POST['wtgcsv_csvfile_fieldcount']) && is_numeric($_POST['wtgcsv_csvfile_fieldcount'])){
-                        $jobarray[$csvfile_name]['fields'] = $_POST['wtgcsv_csvfile_fieldcount'];    
+                    if(isset($_POST['wtgcsv_csvfile_fieldcount_'.$fileChunks[0]]) && is_numeric($_POST['wtgcsv_csvfile_fieldcount_'.$fileChunks[0]])){
+                        $jobarray[$csvfile_name]['fields'] = $_POST['wtgcsv_csvfile_fieldcount_'.$fileChunks[0]];    
                     }else{
                         $jobarray[$csvfile_name]['fields'] = wtgcsv_establish_csvfile_fieldnumber($csvfile_name,$separator);
                     }   

@@ -3091,7 +3091,7 @@ function wtgcsv_display_csvfiles_fornewdataimportjob(){
                         ### TODO:HIGHPRIORITY, change the PEARCSVmethod for quote in the fget column
                         echo '</td>
                         <td>'.$filename.'</td>
-                        <td><input type="text" name="wtgcsv_csvfile_fieldcount" size="2" maxlength="2" /></td>
+                        <td><input type="text" name="wtgcsv_csvfile_fieldcount_'.$fileChunks[0].'" size="2" maxlength="2" value="" /></td>
                         <td>'; ?>
 
                             <script>
