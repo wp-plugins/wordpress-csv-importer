@@ -214,21 +214,21 @@ function wtgcsv_sql_update_record( $row, $csvfile_name, $column_total, $jobcode,
     foreach( $header_array as $header_key => $header ){
       
         $set .= ',';
-
+        
         // use different sql column if multiple file (sql_adapted has an appended number to avoid columns with shared names conflicting)
         if($filegrouping == 'single'){
-            $set .= $header['sql'] ." = '". $row[$col] ."'";    
+            $set .= $header['sql'] ." = '". mysql_real_escape_string($row[$col]) ."'";    
         }else{
-            $set .= $header['sql_adapted'] ." = '". $row[$col] ."'";
-        }
+            $set .= $header['sql_adapted'] ." = '". mysql_real_escape_string($row[$col]) ."'";
+        }            
 
         ++$col;
     }    
-    
+     
     // put together parts of query
     $updatequery_complete = 'UPDATE wtgcsv_' . $jobcode . $set . $where;
     global $wpdb;    
-    $updatequery_result = $wpdb->query($updatequery_complete);
+    $updatequery_result = $wpdb->query($updatequery_complete);                
     return $updatequery_result;
 }
 

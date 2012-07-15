@@ -626,12 +626,12 @@ function wtgcsv_create_jobarray($jobname,$code){
 
 /**
 * Adds a job table too the job tables array record in wordpress options table
-* @uses wtgcsv_save_jobtables_array() which uses update_option()
+* @uses wtgcsv_update_option_jobtables_array() which uses update_option()
 */
 function wtgcsv_add_jobtable($new_jobtable){
     global $wtgcsv_jobtable_array;// set in main file
     $wtgcsv_jobtable_array[] = $new_jobtable;
-    wtgcsv_save_jobtables_array($wtgcsv_jobtable_array);
+    wtgcsv_update_option_jobtables_array($wtgcsv_jobtable_array);
 }
 
 /**

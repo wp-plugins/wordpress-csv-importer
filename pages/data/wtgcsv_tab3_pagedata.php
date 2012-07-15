@@ -31,3 +31,21 @@ $jsform_set['noticebox_content'] = 'Do you want to delete the selected database 
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
 <?php wtgcsv_panel_footer();?>
+
+<?php if($wtgcsv_is_dev){
+++$panel_number;// increase panel counter so this panel has unique ID
+$panel_array = array();
+$panel_array['panel_name'] = 'jobtablearraydump';// slug to act as a name and part of the panel ID 
+$panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
+$panel_array['panel_title'] = __('Data Import Job Table Array Dump');// user seen panel header text 
+$panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
+$panel_array['tabnumber'] = $wtgcsv_tab_number; 
+$panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
+$panel_array['panel_intro'] = __('A dump of the array that holds a list of all database tables created');
+$panel_array['panel_help'] = __('The purpose of this array is to track database tables created using Wordpress CSV Importer. Users can delete a Data Import Job but that will not remove the database table. To help avoid major loss of data the action of deleting database tables has to be done on its own.');
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);?>
+<?php wtgcsv_panel_header( $panel_array );?> 
+
+     <pre><?php var_dump($wtgcsv_jobtable_array);?></pre>
+
+<?php wtgcsv_panel_footer();}?>

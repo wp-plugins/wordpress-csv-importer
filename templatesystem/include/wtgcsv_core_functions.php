@@ -1508,8 +1508,8 @@ function wtgcsv_get_option_jobtable_array(){
 /**
 * Creates or updates existing a job tables array record in wordpress options table
 */
-function wtgcsv_save_jobtables_array($jobtables_array){
-    $jobtables_array_seralized = maybe_serialize($jobtables_array);
+function wtgcsv_update_option_jobtables_array($wtgcsv_jobtable_array){
+    $jobtables_array_seralized = maybe_serialize($wtgcsv_jobtable_array);
     $result = update_option('wtgcsv_jobtables',$jobtables_array_seralized);
     $wperror_result = wtgcsv_is_WP_Error($result);
     if($wperror_result){

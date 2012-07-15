@@ -2454,11 +2454,11 @@ function wtgcsv_get_dataimportjob_name_by_table($table_name){
         if(isset($wtgcsv_dataimportjobs_array[$code]['name'])){
             return $wtgcsv_dataimportjobs_array[$code]['name'];
         }else{
-            return 'Error:No Job Found';
+            return 'Warning:No Job Using Giving Table Name';
         }  
     }
     
-    return 'test';  
+    return 'Warning:Job Does Not Exist Using Giving Table Name';  
 }
 
 /**

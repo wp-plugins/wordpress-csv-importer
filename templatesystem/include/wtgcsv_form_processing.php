@@ -299,14 +299,33 @@ function wtgcsv_form_drop_database_tables(){
             return false;
         }else{
             
-            global $wpdb;
+            global $wpdb,$wtgcsv_jobtable_array,$wtgcsv_dataimportjobs_array;
             
             foreach($_POST["wtgcsv_table_array"] as $key => $table_name){
-                $wpdb->query( 'DROP TABLE '. $table_name );    
+                
+                // if table is in use by a data import job we do not delete it, the job must be deleted first
+                $code = str_replace('wtgcsv_','',$table_name);   
+                
+                if(isset($wtgcsv_dataimportjobs_array[$code])){
+                    wtgcsv_notice('Table named '.$table_name.' is still used by Data Import Job named '.$wtgcsv_dataimportjobs_array[$code]['name'].'. Please delete the job first then delete the database table.','warning','Large','Cannot Delete ' . $table_name,'','echo');
+                }else{
+                    // drop table
+                    $wpdb->query( 'DROP TABLE '. $table_name );
+                    
+                    // remove table from $wtgcsv_jobtable_array
+                    foreach($wtgcsv_jobtable_array as $key => $jobtable_name){
+                        if($table_name == $jobtable_name){
+                            unset($wtgcsv_jobtable_array[ $key ]);
+                            wtgcsv_update_option_jobtables_array($wtgcsv_jobtable_array);
+                            break;
+                        }
+                    } 
+                
+                    wtgcsv_notice('Selected database tables have been deleted (dropped) from your database. This change cannot be reversed.','success','Large','Database Tables Deleted','','echo');
+                }  
             }
         }
 
-        wtgcsv_notice('Selected database tables have been deleted (dropped) from your database. This change cannot be reversed.','success','Large','Database Tables Deleted','','echo');
         return false;
     }else{
         return true;

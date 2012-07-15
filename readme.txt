@@ -96,6 +96,17 @@ not push users through a linear step by step process.
 6. You can use up to 3 columns of data to create 3 levels of categories.
  
 == Changelog ==
+= 0.2.0 =
+* Bug Fixes
+    * A data import update query was fixed
+* General Improvements
+    * Database names are no longer kept in the list of created tables after being deleted
+    * Users must delete Data Import Job before deleting a jobs database table
+* Web Services, Support and Websites changes
+    * None
+* Public Messages
+    * None
+    
 = 0.1.9 =
 * Bug Fixes
     * Missing file warning for a file no longer included in package
