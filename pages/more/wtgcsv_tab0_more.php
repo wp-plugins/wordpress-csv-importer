@@ -1,18 +1,3 @@
-<?php 
-if($wtgcsv_is_free){?>
-<script type="text/javascript"><!--
-google_ad_client = "ca-pub-4923567693678329";
-/* Wordpress CSV Importer Wide */
-google_ad_slot = "2263056755";
-google_ad_width = 728;
-google_ad_height = 90;
-//-->
-</script>
-<script type="text/javascript"
-src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
-<?php }?>
-
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();

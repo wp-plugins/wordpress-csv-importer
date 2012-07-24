@@ -13,7 +13,7 @@ if($wtgcsv_is_installed){
     '.WTG_CSV_PLUGINTITLE.'.','info','Small','');
     
     // going to exit here, this tab should never be loaded if the plugin is installed or was installed (it is for first time install only)
-    exit;
+    exit;### TODO:HIGHPRIORITY, how does this effect the blog when it happens? it may need to be removed
 }?>
 
 <?php

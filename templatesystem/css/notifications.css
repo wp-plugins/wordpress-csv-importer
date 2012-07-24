@@ -3,12 +3,12 @@ WTG MESSAGE BOXES VERSION 1.1
 Created: 14th January 2009
 Author: Zara Walsh
 Site: www.wordpresscsvimporter.com
-Email: zara@webtechglobal.com
+Email: info@wordpresscsvimporter.com
 */
 
 /*  TINY MESSAGE BOXES START */
 .infoTiny, .successTiny, .warningTiny, .errorTiny, .validationTiny, 
-.questionTiny, .processingTiny, .restrictedTiny, .stopTiny {  
+.questionTiny, .processingTiny, .restrictedTiny, .stopTiny, .stepTiny {  
 	margin: 10px 0px; /* top and bottom */ 
 	padding:5px 5px 5px 28px;  
 	background-repeat: no-repeat;  
@@ -65,14 +65,21 @@ Email: zara@webtechglobal.com
 	background-color: #FFBABA;  
 	background-image:url(../images/stop_large.png);  
 	border: 5px solid #FF7979;
+}
+
+.stepTiny{  
+    color: #00529B;  
+    background-color: #BDE5F8;  
+    background-image: url(../images/step_large.png);  
+    border: 4px solid #86CFF2;
 }  
 /*  TINY MESSAGE BOXES FINISH */
 
 /*  SMALL MESSAGE BOXES START */
 .infoSmall, .successSmall, .warningSmall, .errorSmall, .validationSmall, 
-.questionSmall, .processingSmall, .restrictedSmall, .stopSmall {  
+.questionSmall, .processingSmall, .restrictedSmall, .stopSmall, .stepSmall {  
 	margin: 10px 0px; /* top and bottom */ 
-	padding:15px 10px 15px 60px;  
+	padding:17px 10px 17px 60px;  
 	background-repeat: no-repeat;  
 	background-position: 10px center; 
 	display: block;
@@ -127,13 +134,20 @@ Email: zara@webtechglobal.com
 	background-color: #FFBABA;  
 	background-image:url(../images/stop_large.png);  
 	border: 5px solid #FF7979;
-}  
+}
+
+.stepSmall{  
+    color: #00529B;  
+    background-color: #BDE5F8;  
+    background-image: url(../images/step_large.png);  
+    border: 4px solid #86CFF2;
+}   
 /*  SMALL MESSAGE BOXES FINISH */
 
 /* LARGE MESSAGE BOXES START */
 
 .infoLarge, .successLarge, .warningLarge, .errorLarge, .validationLarge, 
-.questionLarge, .processingLarge, .restrictedLarge, .stopLarge {  
+.questionLarge, .processingLarge, .restrictedLarge, .stopLarge, .stepLarge {  
 	margin: 10px 0px; /* top and bottom */ 
 	padding:10px 20px 20px 115px;  
 	background-repeat: no-repeat;  
@@ -192,12 +206,25 @@ Email: zara@webtechglobal.com
 	border: 5px solid #FF7979;
 }  
 
+.stepLarge{  
+    color: #FFF;  
+    background-color: #158DC8;  
+    background-image: url(../images/step_large.png);  
+    border: 5px solid #6DB6D5;
+    text-decoration: none;
+}
+
+.stepLargeTest a:link {text-decoration:none;}
+.stepLargeTest a:visited {text-decoration:none;}
+.stepLargeTest a:hover {text-decoration:none;}
+.stepLargeTest a:active {text-decoration:none;}
+
 /* LARGE MESSAGE BOXES END */
 
 /* EXTRA MESSAGE BOXES START */
 
 .infoExtra, .successExtra, .warningExtra, .errorExtra, .validationExtra, 
-.questionExtra, .processingExtra, .restrictedExtra, .stopExtra {  
+.questionExtra, .processingExtra, .restrictedExtra, .stopExtra, .stepExtra {  
 	margin: 5px 0px; /* top and bottom */ 
 	padding:0px 20px 30px 20px;  
 	background-repeat: no-repeat;  
@@ -253,6 +280,13 @@ Email: zara@webtechglobal.com
 	background-color: #FFBABA;  
 	background-image:url(../images/stop_extra.png);  
 	border: 5px solid #FF7979;
+}
+
+.stepExtra{  
+    color: #004380;  
+    background-color: #BDE5F8;  
+    background-image: url(../images/step_extra.png);  
+    border: 5px solid #86CFF2;
 }  
 
 /* LARGE MESSAGE BOXES END */

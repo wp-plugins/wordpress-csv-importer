@@ -1,18 +1,3 @@
-<?php 
-if($wtgcsv_is_free){?>
-<script type="text/javascript"><!--
-google_ad_client = "ca-pub-4923567693678329";
-/* Wordpress CSV Importer Wide */
-google_ad_slot = "2263056755";
-google_ad_width = 728;
-google_ad_height = 90;
-//-->
-</script>
-<script type="text/javascript"
-src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
-<?php }?>
-
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
@@ -24,18 +9,7 @@ $panel_array['tabnumber'] = $wtgcsv_tab_number;
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('Upload a new .csv file to the plugins own content folder.');
 $panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);
-$panel_array['panel_help'] = __('    
-    <script type="text/javascript"><!--
-google_ad_client = "ca-pub-4923567693678329";
-/* Wordpress CSV Importer */
-google_ad_slot = "9636544082";
-google_ad_width = 468;
-google_ad_height = 60;
-//-->
-</script>
-<script type="text/javascript"
-src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>Upload a new .csv file to the plugins own content folder. This file uploader allows .csv files to be uploaded to the plugins own content folder which you will find in the wp-content directory.');
+$panel_array['panel_help'] = __('Upload a new .csv file to the plugins own content folder. This file uploader allows .csv files to be uploaded to the plugins own content folder which you will find in the wp-content directory.');
 // Form Settings - create the array that is passed to jQuery form functions
 $jsform_set_override = array();
 $jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);            

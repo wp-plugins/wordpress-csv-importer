@@ -1,3 +1,8 @@
+<?php 
+// display messages regarding schedule to give users a quick idea of the current configuration
+wtgcsv_schedulescreen_notices();
+?>
+
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
@@ -7,7 +12,7 @@ $panel_array['panel_title'] = __('Events Status *global panel*');// user seen pa
 $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
-$panel_array['panel_intro'] = __('Details of the last event and actions during the event');
+$panel_array['panel_intro'] = __('Details of the last event and actions during the event (times are set by your server)');
 $panel_array['panel_help'] = __('Many different types of actions can happen during events but there is only one action per event. There is normally many events, depending on user configuration of the permitted days and hours. This panel tells us if things are running smothly and helps us test the schedule. With this panel we can see that automated things are actually happening without having to check posts, categories, twitter plugins, the database, widgets etc');
 $panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);?>
 <?php wtgcsv_panel_header( $panel_array );?>
@@ -78,6 +83,16 @@ $panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);?>
     }?>
     </p>
 
+    <h4>Last Refusal Reason</h4>
+    <p>
+    <?php 
+    if(isset($wtgcsv_schedule_array['history']['lastreturnreason'])){
+        echo $wtgcsv_schedule_array['history']['lastreturnreason']; 
+    }else{
+        echo 'No event refusal reason has been set yet';    
+    }?>
+    </p>
+    
     <h4>Last Hourly Reset</h4>
     <p>
     <?php 
@@ -96,8 +111,11 @@ $panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);?>
     }else{
         echo 'No 24 hour reset has been done yet';    
     }?>
-    </p>    
-
+    </p> 
+       
+    <h4>Your Servers Current Data and Time</h4>
+    <p><?php echo date("F j, Y, g:i a",time());?></p>
+    
 <?php wtgcsv_panel_footer();?> 
 
 <?php
@@ -262,7 +280,7 @@ $jsform_set['noticebox_content'] = 'You are about to change the schedule times, 
 
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
-  <?php wtgcsv_panel_footer();?> 
+<?php wtgcsv_panel_footer();?> 
 
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
@@ -351,6 +369,126 @@ $jsform_set['noticebox_content'] = 'These are global settings and will take effe
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>
 
 <?php wtgcsv_panel_footer();?> 
+
+<?php
+++$panel_number;// increase panel counter so this panel has unique ID
+$panel_array = array();
+$panel_array['panel_name'] = 'eventtypes';// slug to act as a name and part of the panel ID 
+$panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
+$panel_array['panel_title'] = __('Event Types *global panel*');// user seen panel header text 
+$panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
+$panel_array['tabnumber'] = $wtgcsv_tab_number; 
+$panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
+$panel_array['panel_intro'] = __('Activate or disabled specific automated event types used by the plugins schedule system');
+$panel_array['panel_help'] = __('Event types are the names giving to different things Wordpress CSV Importer can do during automated processing. You should only activate event types you actually want to use. The more you activate, the less priority each event type has i.e. if you activate 10 different event types, each event type will be run 10 or more minutes apart as there is a 60 second cooldown between all events of any type. Many event types require you to complete configuration elsewhere. Please ensure you have done that before activation. The plugin will try to avoid error where configuration is not complete but it is not an easy task.');
+$panel_array['help_button'] = wtgcsv_helpbutton_text(false,true);
+$panel_array['panel_url'] = 'http://www.wordpresscsvimporter.com/hacking/event-types';
+// Form Settings - create the array that is passed to jQuery form functions
+$jsform_set_override = array();
+$jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);            
+$jsform_set['dialoguebox_title'] = 'Save Event Types';
+$jsform_set['noticebox_content'] = 'You are about to change the permitted event types to be run as part of the automated schedule system, do you want to continue?';
+?>
+<?php wtgcsv_panel_header( $panel_array );?>
+
+<?php wtgcsv_formstart_standard($jsform_set['form_name'],$jsform_set['form_id'],'post','wtgcsv_form','');?>
+
+    <h1>Posts</h1>                                                                                                                            
+    <h4>Post Creation</h4>
+    <script>
+    $(function() {
+        $( "#wtgcsv_eventtypeactivation_postcreation" ).buttonset();
+    });
+    </script>                
+    <div id="wtgcsv_eventtypeactivation_postcreation">
+        <input type="radio" id="wtgcsv_radio1_eventtypeactivation_postcreation" name="wtgcsv_eventtype_postcreation" value="1" <?php if(isset($wtgcsv_schedule_array['eventtypes']['postcreation']) && $wtgcsv_schedule_array['eventtypes']['postcreation'] == 1){echo 'checked';} ?> /><label for="wtgcsv_radio1_eventtypeactivation_postcreation">Enabled</label>
+        <input type="radio" id="wtgcsv_radio2_eventtypeactivation_postcreation" name="wtgcsv_eventtype_postcreation" value="0" <?php if(isset($wtgcsv_schedule_array['eventtypes']['postcreation']) && $wtgcsv_schedule_array['eventtypes']['postcreation'] == 0 || !isset($wtgcsv_schedule_array['eventtypes']['postcreation'])){echo 'checked';} ?> /><label for="wtgcsv_radio2_eventtypeactivation_postcreation">Disabled</label>    
+    </div>    
+ 
+    <h4>Post Update</h4>
+    <script>
+    $(function() {
+        $( "#wtgcsv_eventtypeactivation_postupdate" ).buttonset();
+    });
+    </script>                
+    <div id="wtgcsv_eventtypeactivation_postupdate">
+        <input type="radio" id="wtgcsv_radio1_eventtypeactivation_postupdate" name="wtgcsv_eventtype_postupdate" value="1" <?php if(isset($wtgcsv_schedule_array['eventtypes']['postupdate']) && $wtgcsv_schedule_array['eventtypes']['postupdate'] == 1){echo 'checked';} ?> /><label for="wtgcsv_radio1_eventtypeactivation_postupdate">Enabled</label>
+        <input type="radio" id="wtgcsv_radio2_eventtypeactivation_postupdate" name="wtgcsv_eventtype_postupdate" value="0" <?php if(isset($wtgcsv_schedule_array['eventtypes']['postupdate']) && $wtgcsv_schedule_array['eventtypes']['postupdate'] == 0 || !isset($wtgcsv_schedule_array['eventtypes']['postupdate'])){echo 'checked';} ?> /><label for="wtgcsv_radio2_eventtypeactivation_postupdate">Disabled</label>    
+    </div> 
+    
+     
+    <br />
+    <h1>Data</h1>    
+    <h4>Data Import</h4>
+    <script>
+    $(function() {
+        $( "#wtgcsv_eventtypeactivation_dataimport" ).buttonset();
+    });
+    </script>                
+    <div id="wtgcsv_eventtypeactivation_dataimport">
+        <input type="radio" id="wtgcsv_radio1_eventtypeactivation_dataimport" name="wtgcsv_eventtype_dataimport" value="1" <?php if(isset($wtgcsv_schedule_array['eventtypes']['dataimport']) && $wtgcsv_schedule_array['eventtypes']['dataimport'] == 1){echo 'checked';} ?> /><label for="wtgcsv_radio1_eventtypeactivation_dataimport">Enabled</label>
+        <input type="radio" id="wtgcsv_radio2_eventtypeactivation_dataimport" name="wtgcsv_eventtype_dataimport" value="0" <?php if(isset($wtgcsv_schedule_array['eventtypes']['dataimport']) && $wtgcsv_schedule_array['eventtypes']['dataimport'] == 0 || !isset($wtgcsv_schedule_array['eventtypes']['dataimport'])){echo 'checked';} ?> /><label for="wtgcsv_radio2_eventtypeactivation_dataimport">Disabled</label>    
+    </div>
+
+    <h4>Data Update</h4>
+    <script>
+    $(function() {
+        $( "#wtgcsv_eventtypeactivation_dataupdate" ).buttonset();
+    });
+    </script>                
+    <div id="wtgcsv_eventtypeactivation_dataupdate">
+        <input type="radio" id="wtgcsv_radio1_eventtypeactivation_dataupdate" name="wtgcsv_eventtype_dataupdate" value="1" <?php if(isset($wtgcsv_schedule_array['eventtypes']['dataupdate']) && $wtgcsv_schedule_array['eventtypes']['dataupdate'] == 1){echo 'checked';} ?> /><label for="wtgcsv_radio1_eventtypeactivation_dataupdate">Enabled</label>
+        <input type="radio" id="wtgcsv_radio2_eventtypeactivation_dataupdate" name="wtgcsv_eventtype_dataupdate" value="0" <?php if(isset($wtgcsv_schedule_array['eventtypes']['dataupdate']) && $wtgcsv_schedule_array['eventtypes']['dataupdate'] == 0 || !isset($wtgcsv_schedule_array['eventtypes']['dataupdate'])){echo 'checked';} ?> /><label for="wtgcsv_radio2_eventtypeactivation_dataupdate">Disabled</label>    
+    </div> 
+ 
+ 
+    <br />
+    <h1>Twitter</h1>
+    <p><strong>Experimental only. Our plan is to allow posts to be tweeted automatically.</strong></p>
+ 
+    <h4>Twitter Send</h4>
+    <script>
+    $(function() {
+        $( "#wtgcsv_eventtypeactivation_twittersend" ).buttonset();
+    });
+    </script>                
+    <div id="wtgcsv_eventtypeactivation_twittersend">
+        <input type="radio" id="wtgcsv_radio1_eventtypeactivation_twittersend" name="wtgcsv_eventtype_twittersend" value="1" <?php if(isset($wtgcsv_schedule_array['eventtypes']['twittersend']) && $wtgcsv_schedule_array['eventtypes']['twittersend'] == 1){echo 'checked';} ?> /><label for="wtgcsv_radio1_eventtypeactivation_twittersend">Enabled</label>
+        <input type="radio" id="wtgcsv_radio2_eventtypeactivation_twittersend" name="wtgcsv_eventtype_twittersend" value="0" <?php if(isset($wtgcsv_schedule_array['eventtypes']['twittersend']) && $wtgcsv_schedule_array['eventtypes']['twittersend'] == 0 || !isset($wtgcsv_schedule_array['eventtypes']['twittersend'])){echo 'checked';} ?> /><label for="wtgcsv_radio2_eventtypeactivation_twittersend">Disabled</label>    
+    </div>
+
+    <h4>Twitter Update</h4>
+    <script>
+    $(function() {
+        $( "#wtgcsv_eventtypeactivation_twitterupdate" ).buttonset();
+    });
+    </script>                
+    <div id="wtgcsv_eventtypeactivation_twitterupdate">
+        <input type="radio" id="wtgcsv_radio1_eventtypeactivation_twitterupdate" name="wtgcsv_eventtype_twitterupdate" value="1" <?php if(isset($wtgcsv_schedule_array['eventtypes']['twitterupdate']) && $wtgcsv_schedule_array['eventtypes']['twitterupdate'] == 1){echo 'checked';} ?> /><label for="wtgcsv_radio1_eventtypeactivation_twitterupdate">Enabled</label>
+        <input type="radio" id="wtgcsv_radio2_eventtypeactivation_twitterupdate" name="wtgcsv_eventtype_twitterupdate" value="0" <?php if(isset($wtgcsv_schedule_array['eventtypes']['twitterupdate']) && $wtgcsv_schedule_array['eventtypes']['twitterupdate'] == 0 || !isset($wtgcsv_schedule_array['eventtypes']['twitterupdate'])){echo 'checked';} ?> /><label for="wtgcsv_radio2_eventtypeactivation_twitterupdate">Disabled</label>    
+    </div>   
+    
+    <h4>Twitter Get Replies</h4>
+    <script>
+    $(function() {
+        $( "#wtgcsv_eventtypeactivation_twitterget" ).buttonset();
+    });
+    </script>                
+    <div id="wtgcsv_eventtypeactivation_twitterget">
+        <input type="radio" id="wtgcsv_radio1_eventtypeactivation_twitterget" name="wtgcsv_eventtypes_twitterget" value="1" <?php if(isset($wtgcsv_schedule_array['eventtypes']['twitterget']) && $wtgcsv_schedule_array['eventtypes']['twitterget'] == 1){echo 'checked';} ?> /><label for="wtgcsv_radio1_eventtypeactivation_twitterget">Enabled</label>
+        <input type="radio" id="wtgcsv_radio2_eventtypeactivation_twitterget" name="wtgcsv_eventtypes_twitterget" value="0" <?php if(isset($wtgcsv_schedule_array['eventtypes']['twitterget']) && $wtgcsv_schedule_array['eventtypes']['twitterget'] == 0 || !isset($wtgcsv_schedule_array['eventtypes']['twitterget'])){echo 'checked';} ?> /><label for="wtgcsv_radio2_eventtypeactivation_twitterget">Disabled</label>    
+    </div>    
+
+    <?php
+    // add the javascript that will handle our form action, prevent submission and display dialogue box
+    wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
+
+    // add end of form - dialogue box does not need to be within the <form>
+    wtgcsv_formend_standard('Submit',$jsform_set['form_id']);?>
+
+    <?php wtgcsv_jquery_form_prompt($jsform_set);?>
+
+<?php wtgcsv_panel_footer();?>
 
 <?php
 if(!$wtgcsv_is_free){

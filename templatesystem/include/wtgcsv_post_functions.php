@@ -35,7 +35,7 @@ function wtgcsv_create_posts($project_code,$posts_target,$request_method){
 */
 function wtgcsv_create_posts_basic($project_code,$request_method){ 
 
-    global $wpdb,$wtgcsv_debugmode_strict;
+    global $wpdb;
     
     ############################################################################
     #                                                                          #
@@ -44,6 +44,17 @@ function wtgcsv_create_posts_basic($project_code,$request_method){
     ############################################################################
     $project_array = wtgcsv_get_project_array($project_code);
     
+    // get data - if no data we return now
+    $records = wtgcsv_sql_query_unusedrecords_singletable($project_array['tables'][0]);
+    if(!$records){
+        if($request_method == 'manual'){
+            wtgcsv_notice('No posts were created as your project does not have any unused records. No project statistics were changed either.','info','Large','No Posts Created','','echo');    
+        }else{
+            ### TODO:MEDIUMPRIORITY, log this event when log system complete
+        }
+        return false;        
+    }
+        
     // get title template design
     if(!isset($project_array['default_titletemplate_id'])){
         $title_template = 'No Default Title Template Selected';    
@@ -60,18 +71,7 @@ function wtgcsv_create_posts_basic($project_code,$request_method){
         
     // increase events counter for campaign
         //++$pro[$filename]['events'];
-    
-    // get data
-    $records = wtgcsv_sql_query_unusedrecords_singletable($project_array['tables'][0]);
-     
-    if(!$records){
-        if($request_method == 'manual'){
-            wtgcsv_notice('No posts were created as your project does not have any unused records. No project statistics were changed either.','info','Large','No Posts Created','','echo');    
-        }else{
-            ### TODO:MEDIUMPRIORITY, log this event when log system complete
-        }
-        return false;        
-    }   
+   
        
     // initilize variables
     $new_posts = 0;
@@ -82,11 +82,6 @@ function wtgcsv_create_posts_basic($project_code,$request_method){
                 
     // begin looping through all records
     foreach( $records as $record_array ){
-         
-        // store record id if debugging so that we know where scripts ends on failure
-        if($wtgcsv_debugmode_strict){
-            ### TODO:HIGHPRIORITY, make log entry for each ID and state post creation started with the ID        
-        }
                     
         // set $category_array if $project_array['categories']['level1']['table'] is set (get existing, create or a mix of both)
         $category_array = array();
@@ -316,7 +311,10 @@ function wtgcsv_categorysetup_basicscript_normalcategories($r,$project_array){
 }   
  
 /**
-* Creates post creation project
+* Creates post creation project.
+* 1. Saves all selected tables as ['tables'] within project array
+* 2. Sets a main project table in most circumstances, used to create a relationship between all other tables
+* 
 * @returns boolean false on fail and project code on success
 * @returns string, $project_array['code'] if success
 */
@@ -331,19 +329,42 @@ function wtgcsv_create_post_creation_project($project_name,$projecttables_array,
         $project_array['code'] = 'freeproject';    
     }else{
         $project_array['code'] = 'pro' . wtgcsv_create_code(6);
-        ### TODO:HIGHPRIORITY, ensure code is unique else generation another, loop until we have a unique code
+        ### TODO:HIGHPRIORITY, ensure code is unique else generation another, loop until we have a unique code, this code will be used to create main project table name
     }
-    
+
     // set the csv column to database table mapping method (required for advanced updating)
     $project_array['mappingmethod'] = $mapping_method;
 
-    // add tables
-    $tablecounter = 0; 
+    // add tables to project array (in this loop we also determine if an appropriate project table has been selected)
+    $tablecounter = 0;
+    $wtgcsv_projecttable_included = false;// change to true when we confirm a suitable project table is in use 
     foreach( $projecttables_array as $key => $table_name ){
-        $project_array['tables'][$tablecounter] = $table_name; 
+        
+        // all tables are added to the "tables" node of the $project_array
+        $project_array['tables'][$tablecounter] = $table_name;
+
+        // establish if a suitable project table has been selected - we set a table as the main table
+        if($wtgcsv_projecttable_included == false){
+            $is_wtgcsv_table = wtgcsv_is_wtgcsv_postprojecttable($table_name);
+            if($is_wtgcsv_table){
+                $wtgcsv_projecttable_included = true;// ensures the check is not done again, first found table is project table
+                $project_array['tables'][$tablecounter] = $table_name;
+                $project_array['maintable'] = $table_name;
+            } 
+        }
+         
         ++$tablecounter;   
     }
     
+    // if no project table found, create one (set the $maintableonly parameter to false for this)
+    if(!$wtgcsv_projecttable_included){
+
+        wtgcsv_create_dataimportjob_table($project_array['code'],false,true);
+
+        // set main table as the one just created
+        $project_array['maintable'] = $table_name;
+    }
+        
     // create option record for project
     $createoptionrecord_result = wtgcsv_update_option_postcreationproject($project_array['code'],$project_array);
     if($createoptionrecord_result === false){
@@ -380,29 +401,6 @@ function wtgcsv_initialize_postcreationproject_array($project_name){
                                         
     return $project_array;                
 }
-
-/**
- * Create post title. 
- * Replaces tokens in giving value with any matching giving column title values
- * 
- * @param string $value (value of tokens to build a string of values)
- * @param array $record_array (the current record being used to create post)
- * @param array $titles (must pass the sql prepared array)
- * @param array $tokensymbols 
- */
-function wtgcsv_post_strreplacetokens_titlesloop($value,$record_array,$columns,$columns_sql,$tokensymbols)
-{
-    foreach($columns as $key=>$col)
-    {
-        // use original column title to create token
-        $token = $tokensymbols[$key].$col.$tokensymbols[$key];
-        // use sql column title to extract data value
-        $value = str_replace($token, $record_array[ $columns_sql[$key] ], $value);
-    }
-
-    return $value;
-}
-
 
 /**
  * Returns post status based on giving criteria

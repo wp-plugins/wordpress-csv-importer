@@ -1,5 +1,5 @@
 <?php 
-global $wtgcsv_mpt_arr,$wpdb,$wtgcsv_options_array,$wtgcsv_nav_type;
+global $wtgcsv_mpt_arr,$wpdb,$wtgcsv_options_array,$wtgcsv_nav_type,$wtgcsv_is_free;
 $pageid = 'more';// used to access variable.php configuration
 $pagefolder = 'more';// the folder in pages folder holding this pages files
 

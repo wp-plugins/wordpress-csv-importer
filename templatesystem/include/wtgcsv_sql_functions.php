@@ -64,6 +64,10 @@ function wtgcsv_update_project_databasetable_basic($record_id,$post_id,$table_na
 function wtgcsv_sql_query_unusedrecords_singletable($table_name,$posts_target = '1'){
     global $wpdb,$wtgcsv_is_free;
     
+    // ensure user has not manually deleted table 
+    $table_exist = wtgcsv_does_table_exist($table_name);
+    if(!$table_exist){return false;}
+    
     // if free edition then we do not allow us of specific target as the interface does not allow the entry
     if($wtgcsv_is_free){$posts_target = '999999';}
         
@@ -246,9 +250,10 @@ function wtgcsv_query_insert_new_record ( $table_name,$csvfile_modtime ){
 * Create the table for a data import job, table is named using job code
 * 
 * @param mixed $jobcode
-* @param mixed $job_file_group, single or multiple, used to decide if column names should get appended number or not 
+* @param mixed $job_file_group, single or multiple, used to decide if column names should get appended number or not
+* @param boolean $maintableonly, default false - if true a project table is required, only project columns added
 */
-function wtgcsv_create_dataimportjob_table($jobcode,$job_file_group){
+function wtgcsv_create_dataimportjob_table($jobcode,$job_file_group,$maintableonly = false){
     global $wtgcsv_is_free;
 
     /**
@@ -261,6 +266,12 @@ function wtgcsv_create_dataimportjob_table($jobcode,$job_file_group){
     * wtgcsv_changed     - latest date that the plugin auto changed or user manually changed values in record
     * wtgcsv_applied     - last date and time the record was applied too its post
     * wtgcsv_filetime    - csv file datestamp when record imported, can then be compared against a newer file to trigger updates
+    * 
+    * Update Webpage
+    * http://www.wordpresscsvimporter.com/hacking/post-creation-project-database-tables
+    * 
+    * Update Functions
+    * wtgcsv_is_wtgcsv_postprojecttable()
     */
     
     // CREATE TABLE beginning
@@ -274,44 +285,47 @@ function wtgcsv_create_dataimportjob_table($jobcode,$job_file_group){
     `wtgcsv_changed` datetime NOT NULL COMMENT '',
     `wtgcsv_applied` datetime NOT NULL COMMENT '',";
     
-                                             
-    $column_int = 0;
-    $fileid = 1;
-                
-    $job_array = wtgcsv_get_dataimportjob($jobcode);
     
-    // loop through jobs files
-    foreach($job_array['files'] as $fileid => $csv_filename){
+    // if $maintableonly, request is to build a table with the above columns only for a multi file project
+    if($maintableonly == false){                                         
+        $column_int = 0;
+        $fileid = 1;
+                    
+        $job_array = wtgcsv_get_dataimportjob($jobcode);
         
-        // establish file ID value - if a single file is in use or free edition we do not append a value
-        if($wtgcsv_is_free || $job_file_group == 'single'){$mod_append = '';}else{$mod_append = $fileid;}
-        
-        // add file modification time column for each file, do not append $fileid for single file jobs
-        /**
-        * wtgcsv_filemod(ID) - the CSV files last checked modification
-        * wtgcsv_filedone(ID) - boolean true or false, indicates if the row has been update using specific file (with ID)
-        */      
-        $table .= "
-        `wtgcsv_filemoddate".$mod_append."` datetime default NULL COMMENT '',
-        `wtgcsv_filedone".$mod_append."` text default NULL COMMENT '',";
-
-        // loop through each files set of headers (3 entries in array per header)
-        foreach( $job_array[$csv_filename]['headers'] as $header_key => $header){
+        // loop through jobs files
+        foreach($job_array['files'] as $fileid => $csv_filename){
             
-            // if this is a single file job, do not append number
-            if($job_file_group == 'single'){
-                $column_name = $header['sql'];
-            }else{
-                $column_name = $header['sql_adapted'];// has appended number based on the order of all files
+            // establish file ID value - if a single file is in use or free edition we do not append a value
+            if($wtgcsv_is_free || $job_file_group == 'single'){$mod_append = '';}else{$mod_append = $fileid;}
+            
+            // add file modification time column for each file, do not append $fileid for single file jobs
+            /**
+            * wtgcsv_filemod(ID) - the CSV files last checked modification
+            * wtgcsv_filedone(ID) - boolean true or false, indicates if the row has been update using specific file (with ID)
+            */      
+            $table .= "
+            `wtgcsv_filemoddate".$mod_append."` datetime default NULL COMMENT '',
+            `wtgcsv_filedone".$mod_append."` text default NULL COMMENT '',";
+
+            // loop through each files set of headers (3 entries in array per header)
+            foreach( $job_array[$csv_filename]['headers'] as $header_key => $header){
+                
+                // if this is a single file job, do not append number
+                if($job_file_group == 'single'){
+                    $column_name = $header['sql'];
+                }else{
+                    $column_name = $header['sql_adapted'];// has appended number based on the order of all files
+                }
+                
+                $table .= "
+                `" . $column_name . "` text default NULL COMMENT '',";                                                                                                              
             }
             
-            $table .= "
-            `" . $column_name . "` text default NULL COMMENT '',";                                                                                                              
+            ++$fileid;
         }
-        
-        ++$fileid;
     }
-
+        
     // end of table
     $table .= "PRIMARY KEY  (`wtgcsv_id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Table created by Wordpress CSV Importer';";
@@ -363,10 +377,40 @@ function wtgcsv_sql_get_tables(){
 
 /**
 * Returns an array holding the column names for the giving table
+* 
+* @param mixed $t, table name
+* @param boolean $return_array, passing true causes array to be built and returned instead of mysql_query resource
+* @return false if query returns false, returns array of results if array requested, returns a resource directly from mysql_query by default
+* @param boolean
+*  $columns_only
 */
-function wtgcsv_sql_get_tablecolumns($t){
+function wtgcsv_sql_get_tablecolumns($t,$return_array = false,$columns_only = false){
     global $wpdb;
-    return mysql_query("SHOW COLUMNS FROM `".$t."`");      
+    $mysql_query_result = mysql_query("SHOW COLUMNS FROM `".$t."`");
+    if(!$mysql_query_result){return false;}
+    
+    if(!$return_array){return $mysql_query_result;}
+    
+    if($return_array == true && $columns_only == false){
+        
+        $newarray = array();
+        while ($column = mysql_fetch_row($mysql_query_result)) {
+            $newarray[] = $column;    
+        }
+        return $newarray;
+                
+    }elseif($return_array == true && $columns_only == true){
+        
+        $newarray = array();
+        $column_counter = 0;
+        while ($column = mysql_fetch_row($mysql_query_result)) {
+
+            $newarray[] = $column[0];// $column holds column configuration, [0] is the table name
+            
+            ++$column_counter;    
+        }
+        return $newarray;  
+    }   
 }
 
 /**

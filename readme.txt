@@ -96,6 +96,42 @@ not push users through a linear step by step process.
 6. You can use up to 3 columns of data to create 3 levels of categories.
  
 == Changelog ==
+= 0.2.2 =
+* Bug Fixes
+    * Undefined variable $wtgcsv_is_free when creating post creation project
+    * Undefined variable $wtgcsv_is_free on More page
+* General Improvements
+    * Google Ads removed from free edition
+    * New notification boxes called "Next Step" boxes introduced to free and paid edition to help guide user (they will slowly be added throughout the plugin)
+    * Corrected html header mistake causing h4 to be applied to entire paragraph on About screen
+    * wtgcsv_check_requirements no longer calls fsockopen() to check for an internet connection (not needed yet)
+    * Reduced number of variables loaded in main file for development purposes in the aim of less memory usage
+    * Files and variables for the automated system now load during public visits to the blog (not just admin side)
+    * Panel added to show scheduled eventa history times and counters
+    * Panel added to Schedule tab on Your Creation screen: Event Types (used to control what types of event are run during automated scheduled processing)
+    * Schedule screen will display various notices indicating if the schedule cannot run and why so that users may take action
+    * Spelling mistake on Create Project panel "Immport"
+    * Event Types panels help url added: http://www.wordpresscsvimporter.com/hacking/event-types
+    * Default page for all View More Help buttons is now the main support page on plugin website: http://www.wordpresscsvimporter.com/support
+    * Button with "Multiple Key Columns" on the Create Post Creation Project has been removed, it will not be supported until later due to the complexity of the feature
+    * Added new column with menu to the Create Post Creation Project panel, inside the tables list, for selecting a key (creates relationship between multiple tables)
+    * New html table column on Create Post Creation Project panel was removed, decided a new panel required to handle multiple file configuration
+    * New panel called Multiple Table Project for configuring the relationship between selected project tables
+    * New images for "Next Step" notification boxes, CSS styling and wtgcsv_notifications function updated
+    * Removed panel named "Database Tables Mapping" from Project Data screen, it is now on main Projects screen and called "Multiple Table Projects" 
+* Technical Improvements
+    * wtgcsv_event_decide() now allows event types to be excluded totally (interfacing coming for user configuration)
+    * Critical change when using multiple database tables in a project, plugin now determines if a project table was selected with required columns else it creates one
+    * wtgcsv_notifications function now stores the $wtgcsv_notice_array in wp_options table (used for persistent messages)
+    * jQuery UI tab script updated to display the hash and tab number in url
+* Known Issues
+    * Adding tables to a project that were not created by this plugin are not handled properly, this will be worked on soon
+* Web Services, Support and Websites changes
+    * Support page updated: http://www.wordpresscsvimporter.com/support
+    * New page explaining Multiple Table Project panel: http://www.wordpresscsvimporter.com/feature-guides/multiple-table-project-panel
+* Public Messages
+    * Our heart goes to the victims in Colorado especially the 4 month old baby and 6 year old girl.
+
 = 0.2.1 =
 * Bug Fixes
     * Field count was not being submitted for some selected CSV files

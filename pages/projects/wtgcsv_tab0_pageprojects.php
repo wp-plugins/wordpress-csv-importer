@@ -1,25 +1,8 @@
-<?php 
-if($wtgcsv_is_free){?>
-<script type="text/javascript"><!--
-google_ad_client = "ca-pub-4923567693678329";
-/* Wordpress CSV Importer Wide */
-google_ad_slot = "2263056755";
-google_ad_width = 728;
-google_ad_height = 90;
-//-->
-</script>
-<script type="text/javascript"
-src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
-<?php }?>
-
-<?php 
+<?php  
 if(count($wtgcsv_projectslist_array) == 0){
     echo wtgcsv_notice('Start here on this screen if you want to create posts. You need to create a project, then continue by clicking on the other tabs above.','warning','Tiny','','','return');
 }
-?>
 
-<?php 
 if(!$wtgcsv_is_free){         
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();
@@ -93,8 +76,9 @@ $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
 $panel_array['tabnumber'] = $wtgcsv_tab_number; 
 $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
 $panel_array['panel_intro'] = __('Make a post creation project that makes use of one or more database tables');
-$panel_array['panel_help'] = __('Create a new project for creating posts. This should be done after you have imported your data too your Wordpress database or already have a suitable table holding your data. Wordpress CSV Importer allows us to use multiple database tables in a single project. You can make use of columns from one table and some columns from a totally different table. The more this approach is used the more time it will take per post to be created so please consider the increased strain it will put on your server. Each post published manually, one at a time, requires multiple SQL queries too your database. Mass creating posts generates a lot of queries and the more tables you use the more querying this plugin will have to do. Simply slow the rate of creation down if your server is experiencing problems and avoid over 20 seconds of processing.');
+$panel_array['panel_help'] = __('Create a new project for creating posts. This should be done after you have imported your data too your Wordpress database or already have a suitable table holding your data. Wordpress CSV Importer allows us to use multiple database tables in a single project. You can make use of columns from one table and some columns from a totally different table. More tables equals more work for Wordpress so please only added essential tables. If you do not select a table created by Wordpress CSV Importer, one will be created for tracking project progress and acting as a link between all other tables. This is also where Mapping Type comes into play. This is a very advanced feature and will no doubt need more development over 2012 to suit everyones needs so please contact us if your unsure. If you use multiple tables, you have further configuration to do in the Multiple Table Project panel.');
 $panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);
+$panel_array['panel_url'] = 'http://www.wordpresscsvimporter.com/feature-guides/create-post-creation-project';
 // Form Settings - create the array that is passed to jQuery form functions
 $jsform_set_override = array();
 $jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);            
@@ -170,8 +154,14 @@ $nonce = wp_create_nonce( "wtgcsv_referer_createproject_checkprojectname" );
     <!-- jquery and ajax output start -->
     <div id='<?php echo $jsform_set['form_id'];?>loading_projectnamechange'>Checking Project Name Please Wait 10 Seconds</div>                 
     <div id='<?php echo $jsform_set['form_id'];?>formstatus'></div>  
-    <!-- jquery and ajax output end -->            
+    <!-- jquery and ajax output end --> 
+               
     <h4>Select CSV File</h4>
+    <?php if(!$wtgcsv_is_free){?>
+    <p>Selecting more than one file will create a more complex project and require the plugin to perform more
+    advanced management of your data. Some data and configurations may not work as expected. Please seek advice if issues arise with your project.</p>
+    <?php }?>
+    
     <?php wtgcsv_display_databasetables_withjobnames(true);?>
 
     <?php // TODO: LOWPRIORITY, only display mapping methods when user selects more than 1 table, only show the third method when user selects 3 or more ?>
@@ -198,9 +188,9 @@ $nonce = wp_create_nonce( "wtgcsv_referer_createproject_checkprojectname" );
         }?>
 
         <input type="radio" id="wtgcsv_projecttables_mappingmethod_defaultorder" name="wtgcsv_projecttables_mappingmethod_inputname" value="defaultorder" <?php echo $checked_defaultorder;?> <?php if($wtgcsv_is_free){echo 'disabled="disabled"';}?> /><label for="wtgcsv_projecttables_mappingmethod_defaultorder">Default Order</label>
-        <input type="radio" id="wtgcsv_projecttables_mappingmethod_singlekeycolumn" name="wtgcsv_projecttables_mappingmethod_inputname" value="singlekeycolumn" <?php echo $checked_singlekeycolumn;?> <?php if($wtgcsv_is_free){echo 'disabled="disabled"';}?> /><label for="wtgcsv_projecttables_mappingmethod_singlekeycolumn">Single Key Column</label>
-        <input type="radio" id="wtgcsv_projecttables_mappingmethod_manykeycolumns" name="wtgcsv_projecttables_mappingmethod_inputname" value="manykeycolumns" <?php echo $checked_manykeycolumns;?> <?php if($wtgcsv_is_free){echo 'disabled="disabled"';}?> /><label for="wtgcsv_projecttables_mappingmethod_manykeycolumns">Many Key Columns</label>            
-
+        <input type="radio" id="wtgcsv_projecttables_mappingmethod_singlekeycolumn" name="wtgcsv_projecttables_mappingmethod_inputname" value="singlekeycolumn" <?php echo $checked_singlekeycolumn;?> <?php if($wtgcsv_is_free){echo 'disabled="disabled"';}?> /><label for="wtgcsv_projecttables_mappingmethod_singlekeycolumn">Single Key Column</label>          
+        <?php ### TODO:LOWPRIORITY, add multiplekeycolumns mapping type: this method will allow mapping of different columns holding different data between multiple project tables ?>
+    
     </div>
         
     <?php
@@ -213,7 +203,85 @@ $nonce = wp_create_nonce( "wtgcsv_referer_createproject_checkprojectname" );
     <?php wtgcsv_jquery_form_prompt($jsform_set);?>            
 
 <?php wtgcsv_panel_footer();?> 
-      
+    
+<?php
+if(!$wtgcsv_is_free){
+    ++$panel_number;// increase panel counter so this panel has unique ID
+    $panel_array = array();
+    $panel_array['panel_name'] = 'multipletableproject';// slug to act as a name and part of the panel ID 
+    $panel_array['panel_number'] = $panel_number;// number of panels counted on page, used to create object ID
+    $panel_array['panel_title'] = __('Multiple Table Project');// user seen panel header text 
+    $panel_array['pageid'] = $pageid;// store the $pageid for sake of ease
+    $panel_array['tabnumber'] = $wtgcsv_tab_number; 
+    $panel_array['panel_id'] = $panel_array['panel_name'].$panel_number;// creates a unique id, may change from version to version but within a version it should be unique
+    $panel_array['panel_intro'] = __('Extended configuration for a multiple table projects');
+    $panel_array['panel_help'] = __('Multiple table projects require the user to tell Wordpress CSV Importer what columns can be used to link the tables together. In database speak, these columns are Primary Key and Foreign Key. The important thing to know is that all tables must be mapped by a key column so they their data is included. Select the column in each table that is that tables primary key. Then in the second menu, select the column that the primary column matches exactly in terms of data (column names can be different). The second selection creates a relationship between the tables. You do not need to select a secondary column for one of the tables, it is recommended that you do this with the table that contains the most important data, the bulk of what will make up posts.');
+    $panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);
+    $panel_array['panel_url'] = 'http://www.wordpresscsvimporter.com/feature-guides/multiple-table-project-panel';
+    // Form Settings - create the array that is passed to jQuery form functions
+    $jsform_set_override = array();
+    $jsform_set = wtgcsv_jqueryform_commonarrayvalues($pageid,$panel_array['tabnumber'],$panel_array['panel_number'],$panel_array['panel_name'],$panel_array['panel_title'],$jsform_set_override);            
+    $jsform_set['dialoguebox_title'] = 'Save Multiple Table Configuration';
+    $jsform_set['noticebox_content'] = 'You are about to save your projects multiple table configuration, getting this wrong will not create the posts you need, please backup your database if you are unsure about your choices. Do you wish to continue saving now?';?>
+    <?php wtgcsv_panel_header( $panel_array );?>
+
+        <?php 
+        // 1.check if project exists 2.check if current project has more than one table
+        if(!isset($wtgcsv_projectslist_array) || $wtgcsv_projectslist_array == false){
+            echo '<strong>You do not have any projects</strong>';
+        }elseif( count($wtgcsv_project_array['tables']) == 1 ){
+            echo '<strong>Your project is not a multiple file project, you do not need to use this panel so its contents have been hidden</strong>';
+        }else{
+            
+            wtgcsv_formstart_standard($jsform_set['form_name'],$jsform_set['form_id'],'post','wtgcsv_form','');
+
+            echo '<table class="widefat post fixed">';
+            
+            echo '<tr><td width="150"><strong>Project Tables</strong></td><td><strong>Key Column</strong></td><td><strong>Other Tables Key Column</strong></td>';
+                        
+            foreach( $wtgcsv_project_array['tables'] as $key => $table_name ){
+                
+                echo '<tr><td>'.$table_name.'</td><td>';
+
+                    // we need to get the current values - lets not assume they are set for the tables we cycle through
+                    $current_value = false;  
+                    if(isset($wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['primarykey']) && $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['primarykey'] != 'notselected'){
+                        $current_value = $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['primarykey'];
+                    }
+
+                    wtgcsv_menu_tablecolumns_multipletableproject($table_name,$current_value);
+                
+                echo '</td><td>';
+                
+                    // we need to get the current values - lets not assume they are set for the tables we cycle through
+                    $current_table = false;
+                    $current_column = false;  
+                    if( isset( $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['foreignkey_table'] ) && $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['foreignkey_table'] != 'notselected'
+                    && isset( $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['foreignkey_column'] ) && $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['foreignkey_column'] != 'notselected' ){
+                       
+                        $current_table = $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['foreignkey_table'];
+                        $current_column = $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['foreignkey_column'];             
+                    }                
+
+                    wtgcsv_display_menu_keycolumnselection($table_name,$current_table,$current_column);
+                
+                echo '</td></tr>';       
+            }
+            
+            echo '</table>';
+
+            // add the javascript that will handle our form action, prevent submission and display dialogue box
+            wtgcsv_jqueryform_singleaction_middle($jsform_set,$wtgcsv_options_array);
+
+            // add end of form - dialogue box does not need to be within the <form>
+            wtgcsv_formend_standard('Submit',$jsform_set['form_id']);
+                    
+            wtgcsv_jquery_form_prompt($jsform_set);    
+        }?>
+
+    <?php wtgcsv_panel_footer();
+}?>
+  
 <?php
 if(!$wtgcsv_is_free){
     ++$panel_number;// increase panel counter so this panel has unique ID

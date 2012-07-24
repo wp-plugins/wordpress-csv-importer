@@ -8,10 +8,10 @@ function wtgcsv_page_install(){wtgcsv_include_form_processing_php();require_once
 function wtgcsv_page_more(){wtgcsv_include_form_processing_php();require_once(WTG_CSV_DIR.'pages/more/wtgcsv_main_more.php');}
 
 function wtgcsv_include_form_processing_php(){
-    global $wtgcsv_dumppostget;
+    global $wtgcsv_debug_mode;
     
-    // if $wtgcsv_dumppostget set to true or 1 on wordpresscsvimporter.php we dump $_POST
-    if($wtgcsv_dumppostget){
+    // if $wtgcsv_debug_mode set to true or 1 on wordpresscsvimporter.php we dump $_POST
+    if($wtgcsv_debug_mode){
         echo '<h1>$_POST</h1>';
         echo '<pre>';
         var_dump($_POST);
@@ -87,31 +87,6 @@ function wtgcsv_templatefiles_statuslist(){
 }
 
 /**
-* Outputs the contents of $wtgcsv_notice_array, used in wtgcsv_header_page 
-*/
-function wtgcsv_notice_output(){
-    global $wtgcsv_notice_array;
-    
-    foreach($wtgcsv_notice_array as $key => $notice){
-        // begin building output
-        $output = '';
-        $output .= '<div class="'.$notice['type'].$notice['size'].'">';
-
-        // set h4 where required
-        if($notice['size'] == 'Large' || $notice['size'] == 'Extra'){$output .= '<h4>'.$notice['title'].'</h4>';}
-        elseif($notice['size'] == 'Small'){$output .= $notice['title'];}
-
-        $output .= $notice['message'].'</div>';
-
-        echo $output;                                               
-    }
-    
-    ### TODO:LOWPRIORITY, if needed, can store $wtgcsv_notice_array but only keep persistent messages requiring attention 
-    
-    unset($wtgcsv_notice_array);   
-}
-
-/**
  * Adds Script Start and Stylesheets to the beginning of pages
  */
 function wtgcsv_header_page($pagetitle,$layout){
@@ -147,12 +122,13 @@ function wtgcsv_header_page($pagetitle,$layout){
         <div id="icon-options-general" class="icon32"><br /></div>
         <h2><?php echo $pagetitle;?></h2>
 
-        <?php wtgcsv_notice_output(); ?>
+        <?php 
+        // display all notifications (both new ones as a result of form submission and persistent messages)
+        wtgcsv_notice_output();?>
         
         <?php 
         // process global security and any other types of checks here such such check systems requirements, also checks installation status
-        $wtgcsv_requirements_missing = wtgcsv_check_requirements(true);
-        ?>
+        $wtgcsv_requirements_missing = wtgcsv_check_requirements(true);?>
 
         <div class="postbox-container" style="width:99%">
                 <div class="metabox-holder">
@@ -212,7 +188,7 @@ function wtgcsv_helpbutton_closebox($panel_array){
     'panel_intro' => 'No Intro Text Found',
     'panel_help' => 'No Help Text Found',
     'panel_icon' => 'invalid-image-or-image-not-yet-created-notice.png',
-    'panel_url' => 'http://www.wordpresscsvimporter.com/',
+    'panel_url' => 'http://www.wordpresscsvimporter.com/support',
     'help_button' => 'Help' 
     ), $panel_array ) );   
     
@@ -644,16 +620,6 @@ function wtgcsv_install_optionstatus_list(){
 function wtgcsv_check_requirements($display){
     // variable indicates message being displayed, we will only show 1 message at a time
     $requirement_missing = false;
-        
-    // internet connection (required for jquery ui)
-    if(!fsockopen("www.direct.gov.uk", 80, $errno, $errstr, 5)){
-        $requirement_missing = true;
-        if($display == true){
-            global $wtgcsv_nointernet_1010;
-            wtgcsv_notice('An internet connection could not be detected and is required. Wordpress CSV Importer loads files from jQuery.com and Google. Without the files JavaScript, jQuery and Ajax will not work properly. Please note that this test is done by attempting to connect to Google.com due to reliable but should it ever go offline, it will cause this message.','warning','Large',__('No Internet Connection Detected: '));
-        }
-    }
-    @fclose($fp);
 
     // php version
     if(defined("WTG_CSV_PHPVERSIONMINIMUM")){
@@ -1822,14 +1788,15 @@ function wtgcsv_navigation_jquery($thepagekey){
 
     <script>
     $(function() {
-        
          $( "#wtgcsv_maintabs" ).tabs({
             cookie: {
                 // store cookie for a day, without, it would be a session cookie
                 expires: 1
+            },
+            select: function(event, ui){
+              window.location = ui.tab.href;
             }
         });       
-        
     });
     </script>
                 
@@ -2056,8 +2023,13 @@ function wtgcsv_list_replacement_tokens($currentproject_code){
         
         // loop through project tables
         foreach($project_array['tables'] as $key => $table_name){
-
+ 
             echo '<h4>' . $table_name . '</h4>';
+            
+            // confirm table still exists else display warning - great opportunity to let user know they deleted the WRONG table :) 
+            if(!wtgcsv_does_table_exist($table_name)){
+                echo wtgcsv_notice('This table is missing, have you possibly manually deleted it?','error','Tiny','','','return');
+            }
             
             $table_columns = wtgcsv_sql_get_tablecolumns($table_name);
             
@@ -2071,6 +2043,9 @@ function wtgcsv_list_replacement_tokens($currentproject_code){
                 // excluded columns array
                 $excluded_columns = array('wtgcsv_id','wtgcsv_postid','wtgcsv_postcontent','wtgcsv_inuse','wtgcsv_imported','wtgcsv_updated','wtgcsv_changed','wtgcsv_applied','wtgcsv_filemoddate','wtgcsv_filemoddate1','wtgcsv_filemoddate2','wtgcsv_filemoddate3','wtgcsv_filemoddate4','wtgcsv_filemoddate5','wtgcsv_filedone','wtgcsv_filedone1','wtgcsv_filedone2','wtgcsv_filedone3','wtgcsv_filedone4','wtgcsv_filedone5');
 
+                // we will count the number of none wtgcsv columns, if 0 we know it is a main project table for multiple table project
+                $count_users_columns = 0;
+                
                 while ($row_column = mysql_fetch_row($table_columns)) { 
                     
                     if(!in_array($row_column[0],$excluded_columns)){
@@ -2078,13 +2053,18 @@ function wtgcsv_list_replacement_tokens($currentproject_code){
                         // if free edition, do not add the table, we make it a little more simple
                         // it is also more secure for users who may be beginners because database table names are not in use
                         if($wtgcsv_is_free){
-                            echo '#' . $row_column[0].'<br />';                    
+                            echo '#' . $row_column[0].'<br />';                   
                         }else{            
                             echo $table_name . '#' . $row_column[0].'<br />';
+                            ++$count_users_columns;
                         }
                     }
                 } 
-            }           
+                
+                if(!$wtgcsv_is_free && $count_users_columns == 0){
+                    echo '<p><strong>This is your main project table created by this plugin, no columns need to be displayed</strong></p>';
+                }
+            } 
         }    
     }            
 }
@@ -2860,76 +2840,70 @@ function wtgcsv_display_project_database_tables_and_columns(){
 function wtgcsv_display_databasetables_withjobnames($checkbox_column = false,$ignore_free = false){
     global $wtgcsv_dataimportjobs_array,$wtgcsv_jobtable_array,$wtgcsv_is_free;
     
-    $html_table = '<table class="widefat post fixed">
-    <tr class="first">';
-    
-    if($checkbox_column){
-        $html_table .= '<td width="80"><strong>Select</strong></td>';        
-    }
-    
-    $html_table .= '
-        <td width="200"><strong>Database Table Names</strong></td>
-        <td width="250"><strong>Data Immport Job Names</strong></td>
-        <td><strong>Tables Records</strong></td>                                                               
-    </tr>'; 
-    
-    $table_count = 0;
-
-    $tables = wtgcsv_sql_get_tables();
-
-    while ($table_name = mysql_fetch_row($tables)) {                
-           
-        // I decided free users should not get a plugin that offers open access to Wordpress database tables.
-        // I would like to reduce such access at least until better documentation is released and more security added
-        if($wtgcsv_is_free && !strstr($table_name[0],'wtgcsv_')){
-        
-            // we do nothing - we do not add database tables to our table if wtgcsv_ is not within the name     
-            
-        }else{
-        
-            // we want to display data import job names if a table belongs to one
-            // first determine if table was created by Wordpress CSV Importer
-            $tables_jobname = '.'; 
-            $is_wtgcsv_table = strstr($table_name[0],'wtgcsv_');
-            if($is_wtgcsv_table){
-                // remove wtgcsv_ from string to be left with possible job code (may not be a job)
-                $possible_jobcode = str_replace('wtgcsv_','',$table_name[0]);
-                 
-                if(isset($wtgcsv_dataimportjobs_array[$possible_jobcode]['name'])){
-                    $tables_jobname = $wtgcsv_dataimportjobs_array[$possible_jobcode]['name'];
-                }               
-            }
-        
-
-            $table_row_count = wtgcsv_sql_counttablerecords($table_name[0]);    
-
-            $html_table .= '
-            <tr>';
-     
-            if($checkbox_column){
-                if($wtgcsv_is_free){
-                    $html_table .= '<td><input type="radio" name="wtgcsv_databasetables_array" value="'.$table_name[0].'" /></td>';        
-                }else{
-                    $html_table .= '<td><input type="checkbox" name="wtgcsv_databasetables_array[]" value="'.$table_name[0].'" /></td>';                
-                }
-            }
-                
-            $html_table .= '
-                <td>'.$table_name[0].'</td>
-                <td>'.$tables_jobname.'</td>
-                <td>'.$table_row_count.'</td>
-            </tr>';
-            ++$table_count;
-        }
-    }   
-                 
-    $html_table .= '</table>';
-    
     // if no applicable database tables would be displayed, display message
     if($wtgcsv_is_free && $table_count == 0){
         echo wtgcsv_notice('Your database does not have any tables created by Wordpress CSV Importer. You will need to create a Data Import Job which creates a new database table.','warning','Small','','','return');    
     }else{
-        echo $html_table;
+        
+        echo '<table class="widefat post fixed"><tr class="first">';
+        
+        if($checkbox_column){
+            echo '<td width="80"><strong>Select</strong></td>';        
+        }
+        
+        echo '<td width="200"><strong>Table Names</strong></td>
+            <td width="150"><strong>Data Import Job</strong></td>
+            <td width="100"><strong>Records</strong></td>                                                              
+        </tr>'; 
+        
+        $table_count = 0;
+
+        $tables = wtgcsv_sql_get_tables();
+
+        while ($table_name = mysql_fetch_row($tables)) {                
+               
+            // I decided free users should not get a plugin that offers open access to Wordpress database tables.
+            // I would like to reduce such access at least until better documentation is released and more security added
+            if($wtgcsv_is_free && !strstr($table_name[0],'wtgcsv_')){
+            
+                // we do nothing - we do not add database tables to our table if wtgcsv_ is not within the name     
+                
+            }else{
+            
+                // we want to display data import job names if a table belongs to one
+                // first determine if table was created by Wordpress CSV Importer
+                $tables_jobname = '.'; 
+                $is_wtgcsv_table = strstr($table_name[0],'wtgcsv_');
+                if($is_wtgcsv_table){
+                    // remove wtgcsv_ from string to be left with possible job code (may not be a job)
+                    $possible_jobcode = str_replace('wtgcsv_','',$table_name[0]);
+                     
+                    if(isset($wtgcsv_dataimportjobs_array[$possible_jobcode]['name'])){
+                        $tables_jobname = $wtgcsv_dataimportjobs_array[$possible_jobcode]['name'];
+                    }               
+                }
+            
+                $table_row_count = wtgcsv_sql_counttablerecords($table_name[0]);    
+
+                echo '<tr>';
+         
+                if($checkbox_column){
+                    if($wtgcsv_is_free){
+                        echo '<td><input type="radio" name="wtgcsv_databasetables_array" value="'.$table_name[0].'" /></td>';        
+                    }else{
+                        echo '<td><input type="checkbox" name="wtgcsv_databasetables_array[]" value="'.$table_name[0].'" /></td>';                
+                    }
+                }
+                    
+                echo '<td>'.$table_name[0].'</td>
+                    <td>'.$tables_jobname.'</td>
+                    <td>'.$table_row_count.'</td></tr>';
+                    
+                ++$table_count;
+            }
+        }   
+                     
+        echo '</table>';
     }
     
     return $table_count;               
@@ -3131,5 +3105,227 @@ function wtgcsv_display_csvfiles_fornewdataimportjob(){
     echo '</table>';    
 } 
 
+/**
+* Displays various notice boxes to help users get a quick idea of the current schedule and auto events setup 
+*/
+function wtgcsv_schedulescreen_notices(){
+    global $wtgcsv_schedule_array,$wtgcsv_projectslist_array;
 
+    // if not allowed today display
+    $day = strtolower( date('l') );
+    if(!isset($wtgcsv_schedule_array['times']['days'][$day])){
+        echo wtgcsv_notice('Scheduled events have not been permitted for ' . date('l'),'info','Tiny','','','return');     
+    }
+    
+    // if not allowed this hour display
+    $hour = strtolower(date('G'));
+    if(!isset($wtgcsv_schedule_array['times']['hours'][$hour])){
+        echo wtgcsv_notice('Scheduled events have not been permitted for the current hour: ' . date('G'),'info','Tiny','','','return');    
+    }
+    
+    // if no hours array set OR if no boolean true exists for any hours
+    if( !isset($wtgcsv_schedule_array['times']) || !isset($wtgcsv_schedule_array['times']['hours']) ){
+        echo wtgcsv_notice('Schedule is not ready as no hours have been permitted','info','Tiny','','','return');    
+    }else{
+        // if no hours are boolean true
+        $hour_permitted = false;
+        foreach( $wtgcsv_schedule_array['times']['hours'] as $key => $hour ){
+            if($hour == true){
+                $hour_permitted = true;
+                break;    
+            }    
+        }    
+        
+        if(!$hour_permitted){
+            echo wtgcsv_notice('Schedule paused because no hours are permitted','info','Tiny','','','return');    
+        }
+    }
+    
+    // if no days array set OR if no boolean true exists for any days
+    if( !isset($wtgcsv_schedule_array['times']) || !isset($wtgcsv_schedule_array['times']['days']) ){
+        echo wtgcsv_notice('Schedule is not ready as no days have been permitted','info','Tiny','','','return');    
+    }else{
+        // if no hours are boolean true
+        $days_permitted = false;
+        foreach( $wtgcsv_schedule_array['times']['days'] as $key => $day ){
+            if($day == true){
+                $days_permitted = true;
+                break;    
+            }    
+        }    
+        
+        if(!$days_permitted){
+            echo wtgcsv_notice('Schedule has been disabled because no days are permitted','info','Tiny','','','return');    
+        }
+    }
+    
+    // if no event types set display this
+    if(!isset($wtgcsv_schedule_array['eventtypes'])){
+        echo wtgcsv_notice('Schedule is not setup, no event types have been activated yet','info','Tiny','','','return');    
+    }else{
+        // have event types been disabled
+        $event_type_set = false;
+        foreach($wtgcsv_schedule_array['eventtypes'] as $event_type){
+            if($event_type == true){
+                $event_type_set = true;
+                break;    
+            }    
+        }
+        
+        if(!$event_type_set){
+            echo wtgcsv_notice('Schedule has been stopped because all event types are disabled','info','Tiny','','','return');    
+        }
+    }
+
+    // if current 24 hour period limit reached display this
+    if(isset($wtgcsv_schedule_array['history']['daycounter']) && $wtgcsv_schedule_array['history']['daycounter'] >= $wtgcsv_schedule_array['limits']['day']){
+        echo wtgcsv_notice('The maximum events number for the current 24 hour period has been reached','info','Tiny','','','return');        
+    }
+    
+    // if current 60 minute period limit reached display this
+    if(isset($wtgcsv_schedule_array['history']['hourcounter']) && $wtgcsv_schedule_array['history']['hourcounter'] >= $wtgcsv_schedule_array['limits']['hour']){
+        echo wtgcsv_notice('The maximum events number for the current 60 minute period has been reached','info','Tiny','','','return');        
+    }
+
+    // if no projects are on drip feeding display
+    $project_dripfeeding = false;
+    foreach($wtgcsv_projectslist_array as $project_code => $project_array){
+        if(isset($project_array['dripfeeding']) && $project_array['dripfeeding'] == 'on'){
+            $project_dripfeeding = true;
+            break;
+        }        
+    }
+    
+    if(!$project_dripfeeding){
+        echo wtgcsv_notice('You do not have any Post Creation Projects activated for drip-feeding through the plugins schedule','info','Tiny','','','return');    
+    } 
+}
+
+/**
+* Outputs a form menu of the giving database tables columns for single selection
+* 
+* @param string $table_name
+*/
+function wtgcsv_menu_tablecolumns($table_name){?>
+            
+    <select name="wtgcsv_table_columns_<?php echo $table_name;?>" id="wtgcsv_table_columns_<?php echo $table_name;?>_id" class="wtgcsv_multiselect_menu">
+        <?php wtgcsv_options_tablecolumns($table_name);?>                                                                                                                     
+    </select>        
+
+    <script>
+    $("#wtgcsv_table_columns_<?php echo $table_name;?>_id").multiselect({
+       multiple: false,
+       header: "Table Columns",
+       noneSelectedText: "Table Columns",
+       selectedList: 1
+    });
+    </script><?php    
+}
+
+/**
+* Used on Multiple Table Project panel.
+* Outputs a form menu of the giving database tables columns for single selection
+* 
+* @param string $table_name
+*/
+function wtgcsv_menu_tablecolumns_multipletableproject($table_name,$current_value = false){
+    global $wtgcsv_project_array;?>
+            
+    <select name="wtgcsv_multitable_columns_<?php echo $table_name;?>" id="wtgcsv_multitable_columns_<?php echo $table_name;?>_id" class="wtgcsv_multiselect_menu">
+        <?php wtgcsv_options_columns($table_name,$current_value);?>                                                                                                                     
+    </select>        
+
+    <script>
+    $("#wtgcsv_multitable_columns_<?php echo $table_name;?>_id").multiselect({
+       multiple: false,
+       header: "Table Columns",
+       noneSelectedText: "Table Columns",
+       selectedList: 1
+    });
+    </script><?php    
+}
+
+/**
+* Outputs the option items for form menu, adding column names from giving database table
+* 
+* @param mixed $table_name
+* @param mixed $current_value, default boolean false, pass the current value to make it selected="selected"
+*/
+function wtgcsv_options_tablecolumns($table_name,$current_value = false){
+    
+    $column_array = wtgcsv_sql_get_tablecolumns($table_name,true,true);
+     
+    if(!$column_array || !is_array($column_array)){
+        
+        echo '<option value="error">Problem Detected</option>';
+            
+    }else{
+        
+        echo '<option value="notrequired">Not Required</option>';
+        
+        foreach($column_array as $key => $column_name){
+            
+            $selected = '';
+            if($current_value != false && $current_value == $column_name ){
+                $selected = 'selected="selected"';     
+            }
+
+            echo '<option value="'.$table_name.'_'.$column_name.'" '.$selected.'>'.$column_name.'</option>';    
+        }
+    }
+    
+}
+
+/**
+* Menu of giving database tables columns
+* 
+* @param mixed $table_name
+* @param mixed $current_value
+*/
+function wtgcsv_options_columns($table_name,$current_value = false){
+    
+    $column_array = wtgcsv_sql_get_tablecolumns($table_name,true,true);
+     
+    if(!$column_array || !is_array($column_array)){
+        
+        echo '<option value="error">Problem Detected</option>';
+            
+    }else{
+        
+        echo '<option value="notrequired">Not Required</option>';
+        
+        foreach($column_array as $key => $column_name){
+            
+            $selected = '';
+            if($current_value != false && $current_value == $column_name ){
+                $selected = 'selected="selected"';     
+            }
+
+            echo '<option value="'.$column_name.'" '.$selected.'>'.$column_name.'</option>';    
+        }
+    }
+    
+}
+
+/**
+* Used on Multiple Tables Project panel for selecting a tables key column
+* 
+* @param mixed $primary_table
+*/
+function wtgcsv_display_menu_keycolumnselection($table_name,$current_table = false,$current_column = false){
+    global $wtgcsv_currentproject_code;?>
+    <select name="wtgcsv_multitable_pairing_<?php echo $table_name;?>" id="wtgcsv_multitable_pairing_<?php echo $table_name;?>_id" class="wtgcsv_multiselect_menu">
+        <option value="notrequired">Not Required</option>
+        <?php wtgcsv_display_project_columnsandtables_menuoptions($wtgcsv_currentproject_code,$current_table,$current_column);?>                                                                                                                     
+    </select>
+
+    <script>
+    $("#wtgcsv_multitable_pairing_<?php echo $table_name;?>_id").multiselect({
+       multiple: false,
+       header: "Select Database Column (table - column)",
+       noneSelectedText: "Select Database Table",
+       selectedList: 1
+    });
+    </script><?php    
+}
 ?>

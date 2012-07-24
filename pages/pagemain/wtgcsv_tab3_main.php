@@ -3,26 +3,13 @@
 </p>
 
 <p>Wordpress CSV Importer is the most advanced data import and post creation plugin created 2012. It will be supported
-for many years. Users can import data, manage it then use newly created database tables in their post creation projects.
-The plugins design allows unlimited expansion while reducing the usual complexity. Unique approaches
-have been implemented to deliver more accurate results, long-term project management and safer auto-blogging. Included in the
-full edition is the ability to update data, apply new data to posts and many other features still not seen in other 
-plugins. The full edition will eventually be supported with Web Services with the aim to deliver a superior service
-by the end of 2013.</p> 
+for many years. Users can import data, manage it then use newly created database tables in their post creation projects.</p>
 
-<?php if($wtgcsv_is_free){?>
-    <script type="text/javascript"><!--
-    google_ad_client = "ca-pub-4923567693678329";
-    /* Wordpress CSV Importer */
-    google_ad_slot = "9636544082";
-    google_ad_width = 468;
-    google_ad_height = 60;
-    //-->
-    </script>
-    <script type="text/javascript"
-    src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-    </script>
-<?php }?>
+<h4>Developed For Internet Professionals</h4>
+<p>Experts in all areas of Web Design and Internet Development have helped to shape Wordpress CSV Importer. Their
+requests related to SEO, data management and far more advanced features. Has ensured that Wordpress CSV Importer is on the 
+right path to becoming the ultimate CSV importer for Wordpress. If your not using a plugin as advanced as Wordpress CSV Importer,
+you have to ask yourself, 'Are you doing it the best way possible?'.</p> 
 
 <h4>Free and Paid Editions</h4>
 <p>It is my objective to create a free edition that offers a useful tool for data import and post creation. A goal

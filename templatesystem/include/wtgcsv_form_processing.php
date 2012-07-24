@@ -1,5 +1,5 @@
 <?php 
-// NOTICE
+// Instructions
 // 1. wtgcsv_include_form_processing_php() calls this file, used in the same functions that include page files 
 // 2. wtgcsv_form_submission_processing() requires $_POST[WTG_CSV_ABB.'post_processing_required']
 // 3. This file does initial validation of values before processing i.e. database changes or file changes
@@ -33,6 +33,9 @@ if($cont){
 
     // Create post creation project
     $cont = wtgcsv_form_create_post_creation_project();
+    
+    // Multiple file project relationship settings panel
+    $cont = wtgcsv_form_save_multiplefilesproject();
     
     // Delete one or more post creation projects
     $cont = wtgcsv_form_delete_post_creation_projects();
@@ -124,7 +127,10 @@ if($cont){
     $cont = wtgcsv_form_save_schedulelimits();
     
     // Start post creation even manually
-    $cont = wtgcsv_form_start_post_creation();        
+    $cont = wtgcsv_form_start_post_creation();
+    
+    // Save event types
+    $cont = wtgcsv_form_save_eventtypes();        
 }
 
 if($cont){
@@ -169,7 +175,80 @@ if($cont){
     $cont = wtgcsv_form_createcontentfolder();
     $cont = wtgcsv_form_deletecontentfolder();    
 }
+  
+/**
+* Saves Multiple File Project panel - the configuration options that create relationships between tables
+*/
+function wtgcsv_form_save_multiplefilesproject(){
+    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'multipletableproject'){
+        global $wtgcsv_project_array,$wtgcsv_currentproject_code;
+        
+        // ensure there are not too many "notrequired" values submitted
+        foreach($wtgcsv_project_array['tables'] as $key => $table_name){
+            
+            // set tables own key column
+            if(isset($_POST["wtgcsv_multitable_columns_" . $table_name])){
+                if($_POST["wtgcsv_multitable_pairing_" . $table_name] != 'notrequired'){
+                    $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['primarykey'] = $_POST["wtgcsv_multitable_columns_" . $table_name];    
+                }else{
+                    $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['primarykey'] = false;                    
+                }
+            }    
 
+            // set the table and column (foreign key) that the current tables primary key has a relationship with
+            if(isset($_POST["wtgcsv_multitable_pairing_" . $table_name])){
+                
+                if($_POST["wtgcsv_multitable_pairing_" . $table_name] != 'notrequired'){
+                    // extract table and column name from $_POST value
+                    $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['foreignkey_table'] = wtgcsv_explode_tablecolumn_returnnode(',',0,$_POST["wtgcsv_multitable_pairing_" . $table_name]); 
+                    $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['foreignkey_column'] = wtgcsv_explode_tablecolumn_returnnode(',',1,$_POST["wtgcsv_multitable_pairing_" . $table_name]);    
+                }else{
+                    $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['foreignkey_table'] = false; 
+                    $wtgcsv_project_array['multipletableproject']['relationships'][$table_name]['foreignkey_column'] = false;                    
+                }
+            }
+                   
+        } 
+        
+        // update $wtgcsv_project_array
+        wtgcsv_update_option_postcreationproject($wtgcsv_currentproject_code,$wtgcsv_project_array);        
+             
+        wtgcsv_notice('Your configuration for the current multiple files project has been saved. 
+        If done properly the relationship setup should allow Wordpress CSV Importer to query records 
+        properly during post creation.','success','Large','Multiple Files Project','','echo');
+        
+        ### TODO:LOWPRIORITY, add tests here if there is data in all of the tables, check that primary key columns have matching data in foreign key columns 
+        
+        return false;
+    }else{
+        return true;
+    }          
+} 
+  
+/**
+* Create a data rule for replacing specific values after import 
+*/
+function wtgcsv_form_save_eventtypes(){
+    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'creation' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'eventtypes'){
+        global $wtgcsv_schedule_array;   
+
+        $wtgcsv_schedule_array['eventtypes']["postcreation"] = $_POST["postcreation"];
+        $wtgcsv_schedule_array['eventtypes']["postupdate"] = $_POST["postupdate"];
+        $wtgcsv_schedule_array['eventtypes']["dataimport"] = $_POST["dataimport"];
+        $wtgcsv_schedule_array['eventtypes']["dataupdate"] = $_POST["dataupdate"];
+        $wtgcsv_schedule_array['eventtypes']["twittersend"] = $_POST["twittersend"];
+        $wtgcsv_schedule_array['eventtypes']["twitterupdate"] = $_POST["twitterupdate"];
+        $wtgcsv_schedule_array['eventtypes']["twitterget"] = $_POST["twitterget"];
+      
+        wtgcsv_update_option_schedule_array($wtgcsv_schedule_array);
+        
+        wtgcsv_notice('Schedule event types have been saved, the changes will have an effect on the types of events run, straight away.','success','Large','Schedule Event Types Saved','','echo');
+        return false;
+    }else{
+        return true;
+    }          
+} 
+    
 /**
 * Create a data rule for replacing specific values after import 
 */
@@ -177,7 +256,7 @@ function wtgcsv_form_create_datarule_replacevalue(){
     if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'data' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'replacevalues'){
         global $wtgcsv_currentjob_code;
 
-        echo 'UNDER CONSTRUCTION';
+        echo '<p>UNDER CONSTRUCTION</p>';
 
         return false;
     }else{
@@ -1470,7 +1549,7 @@ function wtgcsv_form_delete_post_creation_projects(){
 function wtgcsv_form_create_post_creation_project(){
     if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'createpostcreationproject'){
         
-        global $wtgcsv_currentproject_code;
+        global $wtgcsv_currentproject_code,$wtgcsv_is_free;
         
         if(!isset($_POST['wtgcsv_databasetables_array'])){
             
@@ -1480,7 +1559,7 @@ function wtgcsv_form_create_post_creation_project(){
         }else{
             
             // free edition does not allow mapping method selection on form
-            if(isset($_POST['wtgcsv_projecttables_mappingmethod_inputname'])){
+            if(isset($_POST['wtgcsv_projecttables_mappingmethod_inputname']) && !$wtgcsv_is_free){
                 $mapping_method = $_POST['wtgcsv_projecttables_mappingmethod_inputname'];    
             }else{
                 $mapping_method = 'defaultorder';
@@ -1488,9 +1567,9 @@ function wtgcsv_form_create_post_creation_project(){
             
             // free edition will submit selected database table as string, not array, make array for rest of plugins use
             if(!is_array($_POST['wtgcsv_databasetables_array'])){
-                $tables_array = array($_POST['wtgcsv_databasetables_array']);                                
+                $tables_array = array($_POST['wtgcsv_databasetables_array']);// we add the single table name to an array in free edition                                
             }else{
-                $tables_array = $_POST['wtgcsv_databasetables_array'];
+                $tables_array = $_POST['wtgcsv_databasetables_array'];// paid edition value will already be an array
             }
 
             // create project function will return project code on success
@@ -1503,6 +1582,14 @@ function wtgcsv_form_create_post_creation_project(){
                 
                 // do notification
                 wtgcsv_notice('Your new Post Creation Project has been made. Please click on the Content Designs tab and create your main content layout for this project or select an existing one.','success','Large','Post Creation Project Created');
+            
+                // display next step message
+                if(!$wtgcsv_is_free){
+                    $table_count = count($_POST['wtgcsv_databasetables_array']);
+                    if($table_count != 1){
+                        wtgcsv_notice('You must now complete the Multiple Tables Project panel on the Projects screen.','step','Large','Next Step','','echo');    
+                    }
+                }
             
             }else{
                 
@@ -1561,7 +1648,7 @@ function wtgcsv_form_createdataimportjob(){
         // set variable for building output html
         $extendednotice = '';
         
-        // set function boolean outcome
+        // set function boolean outcome (used at end to display notification for success or fail)
         $functionoutcome = false;
         
         $importjobname_validate_result = wtgcsv_validate_dataimportjob_name($_POST['wtgcsv_jobname_name']);
@@ -1713,6 +1800,15 @@ function wtgcsv_form_createdataimportjob(){
         // display result
         wtgcsv_notice('<h4>Create New Data Import Job Results</h4>' . $initialnotice . $extendednotice);
 
+        if($functionoutcome){
+            if($wtgcsv_is_free){
+                wtgcsv_notice('You should now click on the Import Jobs screen and begin importing your data manually.','step','Large','Next Step',false,'echo');    
+            }else{
+                wtgcsv_notice('You should now click on the Import Jobs screen and begin importing your data manually. If
+                you want automated import, click on 3. Your Creations in the main menu, then click on the Schedule tab to continue.','step','Large','Next Step',false,'echo');                
+            }        
+        }
+        
         return false;
     }else{
         return true;
@@ -2195,69 +2291,7 @@ function wtgcsv_form_contactformsubmission(){
      
         $finalemailmessage = $emailmessage_start . $emailmessage_middle . $emailmessage_end;
         
-        wp_mail('help@wordpresscsvimporter.com','Contact From '.WTG_CSV_PLUGINTITLE,$emailmessage);
-                            
-                        
-        /*  LAST POST TEST EXAMPLE VALUES
-        multiselect_wtgcsv_contactmethods = email 
-        wtgcsv_contactreason = bug 
-        multiselect_wtgcsv_contactreason = bug 
-        wtgcsv_contactinclude = none 
-        multiselect_wtgcsv_contactinclude = none 
-        wtgcsv_contactpriority = medium 
-        multiselect_wtgcsv_contactpriority = medium 
-        wtg_contactdescription = Please include further details here 
-        wtgcsv_linkone = vv 
-        wtgcsv_linktwo = bb 
-        wtgcsv_linkthree = vv 
-        wtgcsv_hidden_step = 1 
-        wtgcsv_hidden_pageid = more 
-        wtgcsv_hidden_panel_name = contact 
-        wtgcsv_hidden_panel_title = Contact 
-        wtgcsv_hidden_panels = 1     
-        
-        
-        
-        wtgcsv_contactpriority  
-           high,medium,low       
-                           
-
-                wtgcsv_contactreason_frompost 
-                          POSSIBLE VALUES
-                        pluginhelp              
-                        openhire                  
-                        testimonial               
-                        bug                       
-                        generaladvice             
-                        requestchanges            
-                        requestfeature            
-                        requesttutorial
-                        affiliateenquiry
-                        provideftp
-                        provideadmin
-                        providemysql
-                        providehosting
-                              
-                wtgcsv_contactmethods        
-                        email                  
-                        ticket             
-                        forum            
-                        testimonialservice
-
-
-                wtgcsv_contactreason
-                        hire  
-                        pluginhelp 
-                        testimonial
-                        bug  
-                        generaladvice 
-                        requestchanges
-                        requestfeature  
-                         requesttutorial 
-                         affiliateenquiry 
-
-                                   */
-              
+        wp_mail('help@wordpresscsvimporter.com','Contact From '.WTG_CSV_PLUGINTITLE,$emailmessage); 
         
        // return false to stop all further post validation function calls
        return false;// must go inside $_POST validation, not at end of function         

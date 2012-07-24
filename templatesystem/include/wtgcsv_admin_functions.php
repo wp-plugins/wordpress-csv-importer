@@ -774,4 +774,56 @@ function wtgcsv_get_project_datecolumn($project_code){
         return 'Date Column Not Set';
     }
 }
+
+/**
+* Determines if a database table is a ready to be used a post creation project table 
+* 
+* @param string $table_name
+* @return boolean
+*/
+function wtgcsv_is_wtgcsv_postprojecttable($table_name){
+
+    // ensure the table exists before running tests
+    $table_exists = wtgcsv_does_table_exist($table_name);
+    if(!$table_exists){return;} 
+        
+    // list of all the post project columns required
+    $required_columns = array('wtgcsv_id',
+                    'wtgcsv_postid',
+                    'wtgcsv_postcontent',
+                    'wtgcsv_inuse',
+                    'wtgcsv_imported',
+                    'wtgcsv_updated',
+                    'wtgcsv_changed',
+                    'wtgcsv_applied');
+    
+    // confirm wtgcsv_ exists in tablename                
+    $wtgcsv_in_tablename = strstr($table_name,'wtgcsv_');
+    if(!$wtgcsv_in_tablename){
+        return false;
+    }
+
+    // get the tables array of column names
+    $table_columns_array = wtgcsv_sql_get_tablecolumns($table_name,true);
+    if(!$table_columns_array){return;}
+    
+    // change $all_required_columns_found to false if one of the $required_columns are not found
+    $all_required_columns_found = true;
+    
+    $column_counter = 0;
+    $config_counter = 0;// reset per column
+    
+    foreach( $required_columns as $key => $column_name){
+
+        $is_in_array = in_array($column_name,$table_columns_array);
+        if(!$is_in_array){ echo $column_name .'<br />'; 
+            return false;    
+        }
+        
+        ++$column_counter;
+    }  
+  
+    return $all_required_columns_found;     
+}       
+    
 ?>

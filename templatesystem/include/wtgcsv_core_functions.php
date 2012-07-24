@@ -4,11 +4,9 @@
 * This is where new .js files should be added. 
 */
 function wtgcsv_print_admin_scripts() {
-    
-    // load switches for scripts, used to respond to failed script loading
-    global $wtgcsv_js_switch;
-                 
+         
      // $wtgcsv_js_switch and similiar variables set in main file
+     $wtgcsv_js_switch = true;
      if($wtgcsv_js_switch == true){
         
         ########################################
@@ -57,7 +55,6 @@ function wtgcsv_print_admin_scripts() {
         // multi-select (lists, not the same as multiselect menus)
         wp_register_script('jquery-cookie',WTG_CSV_URL.'templatesystem/script/jquery.cookie.js');
         wp_enqueue_script('jquery-cookie');        
-       
      }
 }
     
@@ -78,11 +75,11 @@ function wtgcsv_exit_forbidden_request($file = 'Unknown'){
 * When request will display maximum php errors including Wordpress errors 
 */
 function wtgcsv_debugmode(){
-    global $wtgcsv_display_errors;
-    if($wtgcsv_display_errors){
-        global $wtgcsv_debugmode_strict,$wpdb;
+    global $wtgcsv_debug_mode;
+    if($wtgcsv_debug_mode){
+        global $wpdb;
         ini_set('display_errors',1);
-        if($wtgcsv_debugmode_strict == 1){error_reporting(E_ALL);}else{error_reporting(-1);}
+        error_reporting(E_ALL);
         $wpdb->show_errors();
         $wpdb->print_error();
     }
@@ -788,8 +785,8 @@ function wtgcsv_form_submission_processing(){
             if($_POST['wtgcsv_post_processing_required']){
                 
                 // has $_POST dump been request?
-                global $wtgcsv_dumppostget;// set in main file for development use only
-                if($wtgcsv_dumppostget){
+                global $wtgcsv_debug_mode;// set in main file for development use only
+                if($wtgcsv_debug_mode){
                     echo '<h1>$_POST</h1>';
                     echo '<pre>';
                     var_dump($_POST);
@@ -927,13 +924,14 @@ function wtgcsv_templatefunction(){
 }
 
 /**
- * Displays a notification with a long list of style options available
+ * Creates a new notification with a long list of style options available.
+ * Can return the message for echo or add it to an array, which can also be stored for persistent messages.
  * Requires visitor to be logged in and on an admin page, dont need to do prevalidation before calling function
  *     
  * Dont include a title attribute if you want to use defaults and stick to a standard format
  *  
  * @param string $message, main message
- * @param mixed $type, determines colour styling (question,info,success,warning,error,processing,stop)
+ * @param mixed $type, determines colour styling (question,info,success,warning,error,processing,stop,step)
  * @param mixed $size, determines box size (Tiny,Small,Large,Extra)
  * @param mixed $title, a simple header
  * @param mixed $helpurl, when required can offer link too help content (will be added closer to 2013)
@@ -945,21 +943,17 @@ function wtgcsv_templatefunction(){
  * @todo LOWPRIORITY, add url to all notifications, this could take days!
  * @todo LOWPRIORITY, add a paragraphed section of the message for a second $message variable for extra information
  */
-function wtgcsv_notice($message,$type = 'success',$size = 'Extra',$title = false, $helpurl = 'http://www.webtechglobal.co.uk/forum', $output_type = 'echo',$persistent = false){
+function wtgcsv_notice($message,$type = 'success',$size = 'Extra',$title = false, $helpurl = 'http://www.wordpresscsvimporter.co.uk/support', $output_type = 'echo',$persistent = false){
     if(is_admin()){
-
+        
+        // change unexpected values into expected values (for flexability and to help avoid fault)
+        if($type == 'accepted'){$type == 'success';}
+        if($type == 'fault'){$type == 'error';}
+        if($type == 'next'){$type == 'step';}
+        if($helpurl != false && $helpurl != '' && $helpurl != 'http://www.wordpresscsvimporter.co.uk/support'){$clickable = true;}else{$clickable = false;}
+            
         if($output_type == 'return'){
-            // begin building output
-            $output = '';
-            $output .= '<div class="'.$type.$size.'">';
-
-            // set h4 where required
-            if($size == 'Large' || $size == 'Extra'){$output .= '<h4>'.$title.'</h4>';}
-            elseif($size == 'Small'){$output .= $title;}
-
-            $output .= $message.'</div>';           
-
-            return $output;
+            return wtgcsv_notice_display($type,$helpurl,$size,$title,$message,$clickable);
         }else{
             global $wtgcsv_notice_array;
 
@@ -969,9 +963,65 @@ function wtgcsv_notice($message,$type = 'success',$size = 'Extra',$title = false
             $wtgcsv_notice_array[$next_key]['type'] = $type;
             $wtgcsv_notice_array[$next_key]['size'] = $size;
             $wtgcsv_notice_array[$next_key]['title'] = $title;
-            $wtgcsv_notice_array[$next_key]['helpurl'] = $helpurl;           
+            $wtgcsv_notice_array[$next_key]['helpurl'] = $helpurl; 
+            $wtgcsv_notice_array[$next_key]['clickable'] = $clickable;
+            
+            // if notification is persistent requiring user to delete it (not adding the value otherwise makes the array lighter)
+            ### TODO:MEDIUMPRIORITY, persistent messages are not yet in use, we need script for easily deleting them first
+            if($persistent){
+                $wtgcsv_notice_array[$next_key]['persistent'] = true;
+                wtgcsv_update_option_schedule_array($wtgcsv_notice_array);    
+            }          
         }
     }
+}
+
+/**
+* Returns notification HTML.
+* This function has the html and css to make all notifications standard.
+
+* @param mixed $type
+* @param string $helpurl
+* @param string $size
+* @param string $title
+* @param string $message
+* @param bool $clickable
+*/
+function wtgcsv_notice_display($type,$helpurl,$size,$title,$message,$clickable){
+    // begin building output
+    $output = '';
+
+    // if not default url giving, we make the entire div clickable with the giving url
+    if($clickable){
+        $output .= '<div class="stepLargeTest"><a href="'.$helpurl.'">';
+    }
+
+    // start div
+    $output .= '<div class="'.$type.$size.'">';
+
+        // set h4 when required
+        if($size == 'Large' || $size == 'Extra'){$output .= '<h4>'.$title.'</h4>';}
+        elseif($size == 'Small'){$output .= $title;}
+
+    $output .= $message.'</div>';
+
+    if($clickable){$output .= '</a></div>';}
+
+    return $output;    
+}
+
+/**
+* Outputs the contents of $wtgcsv_notice_array, used in wtgcsv_header_page.
+* Will hold new and none persistent notifications. May also hold persistent. 
+*/
+function wtgcsv_notice_output(){
+    global $wtgcsv_notice_array;
+    
+    foreach($wtgcsv_notice_array as $key => $notice){
+        echo wtgcsv_notice_display($notice['type'],$notice['helpurl'],$notice['size'],$notice['title'],$notice['message'],$notice['clickable']);                                               
+    }
+
+    unset($wtgcsv_notice_array);   
 }
 
 /**
@@ -1372,6 +1422,8 @@ function wtgcsv_get_default_titletemplate_id( $wtgcsv_currentproject_code ){
 * @uses unserialize before return 
 * @param mixed $project_code
 * @return mixed
+* 
+* @link http://www.wordpresscsvimporter.com/hacking/project-array-wtgcsv_project_array
 */
 function wtgcsv_get_project_array($project_code){
     $getproject_array = get_option( 'wtgcsv_' . $project_code );
@@ -1476,6 +1528,29 @@ function wtgcsv_update_option_schedule_array($schedule_array){
     return $update_result;    
 }
 
+/**
+* Updates notifications array in Wordpress options table
+* 
+* @param array $notifications_array
+* @return bool
+*/
+function wtgcsv_update_option_notifications_array($notifications_array){
+    $notifications_array_serialized = maybe_serialize($notifications_array);
+    $update_result = update_option('wtgcsv_notifications',$notifications_array_serialized);
+    return $update_result;    
+}
+
+/**
+* Gets notifications array if it exists in Wordpress options table else returns empty array
+*/
+function wtgcsv_get_option_notifications_array(){
+    $a = get_option('wtgcsv_notifications');
+    $v = maybe_unserialize($a);
+    if(!is_array($v)){
+        return array();    
+    }
+    return $val;    
+}
 
 /**
 * Gets array of data import jobs and returns it as it is from Wordpress options record

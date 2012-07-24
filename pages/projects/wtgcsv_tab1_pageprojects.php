@@ -84,12 +84,9 @@ $panel_array['panel_intro'] = __('Copy and paste these to place your data where 
 $panel_array['panel_help'] = __('There is a token for each of your database columns and a group of them for each table included in your project. You will notice numbers appended to the column names. Those numbers increment per table and prevent duplicate column names conflicting. These are replaced with data from the column they represent. Please be aware that any content which matches these strings will also be replaced however the asterix between table name and column name should help to prevent this.');
 $panel_array['help_button'] = wtgcsv_helpbutton_text(false,false);?>
 <?php wtgcsv_panel_header( $panel_array );?>
-
 <?php wtgcsv_list_replacement_tokens($wtgcsv_currentproject_code);?>
-
 <?php wtgcsv_panel_footer();?>                           
-                          
-                          
+                                            
 <?php
 ++$panel_number;// increase panel counter so this panel has unique ID
 $panel_array = array();

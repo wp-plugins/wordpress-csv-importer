@@ -45,34 +45,16 @@ function wtgcsv_soapresponse( $soapcall_result_array ){
 
     if (is_soap_fault($soapcall_result_array)) {
         
-        // return default response array which indicates failure
-        global $wtgcsv_dumpsoapcalls;
-        if($wtgcsv_dumpsoapcalls){
-            echo '<br /><br />is_soap_fault in ' . __FILE__ . ' Line: ' . __LINE__ .' Function: ' . __FUNCTION__;        
-        } 
-               
+        ### TODO, replace this line with a persistent none displayed notice, not echo or return
+        //echo '<br /><br />is_soap_fault in ' . __FILE__ . ' Line: ' . __LINE__ .' Function: ' . __FUNCTION__;        
+     
         return wtgapi_responsearray_initiate();
         
     }else{
-        wtgcsv_dump_soapcall_results($soapcall_result_array);       
+     
         return $soapcall_result_array; 
     }                      
 }  
-
-/**
-* If activated will dump the results of all api calls 
-* (in some cases will not show anything for a soap fault)
-* 
-* @param mixed $soapcall_result_array
-*/
-function wtgcsv_dump_soapcall_results($soapcall_result_array){
-    global $wtgcsv_dumpsoapcalls;
-    if($wtgcsv_dumpsoapcalls){
-        echo '<pre>';
-        var_dump($soapcall_result_array);
-        echo '</pre>';        
-    }     
-}
 
 /**
 * SOAP CALL - determines if giving $callcode is valid and not expired, returns standard web service array

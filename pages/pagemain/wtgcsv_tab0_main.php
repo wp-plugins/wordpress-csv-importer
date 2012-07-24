@@ -88,24 +88,6 @@ $(function() {
         <img src="<?php echo WTG_CSV_IMAGEFOLDER_URL;?>pageicons/contact.png" width="90" height="70" />            
         </a>Contact
     </li>
-    
-    <?php if($wtgcsv_is_free){?>
-    <li>
-    
-        <script type="text/javascript"><!--
-        google_ad_client = "ca-pub-4923567693678329";
-        /* Wordpress CSV Importer */
-        google_ad_slot = "9636544082";
-        google_ad_width = 468;
-        google_ad_height = 60;
-        //-->
-        </script>
-        <script type="text/javascript"
-        src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-        </script>
-    </li>
-    <?php }?>
-
 </ul>
 
 <div style="clear:both;"></div>

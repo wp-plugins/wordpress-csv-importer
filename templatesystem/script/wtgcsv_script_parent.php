@@ -9,9 +9,7 @@
  * Site: http://www.wordpresscsvimporter.com 
  *
  * Created: 05/09/2011
- * 
- * $wtgcsv_js_switch: global switch for javascript,ajax,jQuery (overiding all other switchings)
- * 
+
  * TODO: MEDIUMPRIORITY, would it be worth loading scripts only when visiting pages that require them?
  * TODO: LOWPRIORITY, investigate the use of min files, is it worth replacing all or having a copy of each in package?
  */
@@ -243,8 +241,7 @@ if($side == 'admin'){
                 modal: true,
                 buttons: {                    
                     "View More Help": function() {
-                        document.location = '<?php echo $panel_url;?>';
-                        //document.open = '<?php echo $panel_url;// TODO:LOWPRIORITY,open in new tab currently using location which uses current tab?>';       
+                        document.location = '<?php echo $panel_url;?>';       
                         $(this).dialog("close");
                     },                                        
                     "Close": function() {
