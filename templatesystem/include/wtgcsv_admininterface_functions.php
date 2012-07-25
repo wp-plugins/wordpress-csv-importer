@@ -1251,7 +1251,8 @@ function wtgcsv_commas($originalstring){
 }
           
 /**
-* Returns human readable age based on giving file modified date                           
+* Returns human readable age based on giving file modified date
+* @todo                           
 */
 function wtgcsv_get_files_age($time){
                
@@ -1262,7 +1263,9 @@ function wtgcsv_get_files_age($time){
 
 /**
 * Returns human readable time passed since giving date.
-* Years,months etc all separated with comma and as plurals where required 
+* Years,months etc all separated with comma and as plurals where required.
+* 
+* PHP 5.2 - date_create does not exist in 5.2 but is used in 5.2 so we have different methods in this function. 
 * 
 * @param mixed $datetime 
 * @param boolean $use_year (this will only be used if value is not 0)
@@ -1274,6 +1277,19 @@ function wtgcsv_get_files_age($time){
 */
 function wtgcsv_ago( $datetime,$use_year = true,$use_month = true,$use_day = true,$use_hour = true,$use_minute = true,$use_second = false ){
     
+    // if not php 5.3 we use a different method
+    if(phpversion() < '5.3'){
+        $unixOriginalDate = strtotime($originalDate);
+        $unixNowDate = strtotime('now');
+        $difference = $unixNowDate - $unixOriginalDate ;
+        $days = (int)($difference / 86400);
+        $hours = (int)($difference / 3600);
+        $minutes = (int)($difference / 60);
+        $seconds = $difference;
+        return;
+    }
+    
+    // PHP 5.3 method is currently the best             
     $interval = date_create('now')->diff( $datetime );
     
     $ago_string = ' ';

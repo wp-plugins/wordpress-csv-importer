@@ -114,6 +114,9 @@ if($cont){
     
     // Save tag creation rules
     $cont = wtgcsv_form_save_tag_rules();
+    
+    // Save a new HTML shortcode - this one offers a shortcode showing shortcode name (no need for user to enter values in shortcode)
+    $cont = wtgcsv_form_save_htmlshortcode();
 }
 
 // Creation Screen
@@ -174,6 +177,58 @@ if($cont){
     $cont = wtgcsv_form_uninstallplugin();
     $cont = wtgcsv_form_createcontentfolder();
     $cont = wtgcsv_form_deletecontentfolder();    
+}
+
+/**
+* // Save a new HTML shortcode - this one offers a shortcode showing shortcode name (no need for user to enter values in shortcode) 
+*/
+function wtgcsv_form_save_htmlshortcode(){
+    if(isset( $_POST['wtgcsv_hidden_pageid'] ) && $_POST['wtgcsv_hidden_pageid'] == 'projects' && isset($_POST['wtgcsv_hidden_panel_name']) && $_POST['wtgcsv_hidden_panel_name'] == 'createrandomvalueshortcodes'){
+        
+        // error if name not entered
+        if(!isset($_POST['wtgcsv_shortcodename']) || $_POST['wtgcsv_shortcodename'] == '' || $_POST['wtgcsv_shortcodename'] == ' '){
+            wtgcsv_notice('You did not enter a shortcode name, please enter a name that will help you remember what values you have setup.','error','Large','No Shortcode Name Submitted','','echo',false);    
+            return false;// stops further post processing
+        }
+        
+        // ensure at least one value has been set
+        $values_set = 0;
+        for ($i = 1; $i <= 8; $i++) {
+            if(isset($_POST['wtgcsv_textspin_v' . $i]) && $_POST['wtgcsv_textspin_v' . $i] != NULL && $_POST['wtgcsv_textspin_v' . $i] != ''){
+                ++$values_set;    
+            }
+        }
+        
+        if($values_set < 2){
+            wtgcsv_notice('You must enter at least two values. Please populate two or more of the text fields.','error','Large','More Values Required','','echo');
+            return false;// stops further post processing
+        }
+        
+        // if name already exists
+        global $wtgcsv_textspin_array;
+        if(isset($wtgcsv_textspin_array['randomvalue'][ $_POST['wtgcsv_shortcodename'] ])){
+            wtgcsv_notice('The shortcode name you submitted already exists, please use a different name or delete the existing shortcode.','warning','Large','Shortcode Name Exists Already','','echo');
+            return false;
+        }
+                
+        // cant assume user filled out text fields in order so go through all of them
+        for ($i = 1; $i <= 8; $i++) {
+            if(isset($_POST['wtgcsv_textspin_v' . $i]) && $_POST['wtgcsv_textspin_v' . $i] != NULL && $_POST['wtgcsv_textspin_v' . $i] != ''){
+                // dont use for loop $i as key because some values may not be set
+                $wtgcsv_textspin_array['randomvalue'][ $_POST['wtgcsv_shortcodename'] ]['values'][] = $_POST['wtgcsv_textspin_v' . $i];   
+            }
+        }        
+        
+        wtgcsv_update_option_textspin($wtgcsv_textspin_array);      
+
+        wtgcsv_notice('You saved a new Random Value Shortcode named ' . $_POST['wtgcsv_shortcodename'] . '. You
+        can use this shortcode by copying and pasting this bold text: <br />
+        <strong>[wtgcsv_random name="'.$_POST['wtgcsv_shortcodename'].'"]</strong>','success','Large','Random Value Shortcode Created','','echo');
+
+        return false;
+    }else{
+        return true;
+    }       
 }
   
 /**

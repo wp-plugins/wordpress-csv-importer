@@ -96,7 +96,32 @@ not push users through a linear step by step process.
 6. You can use up to 3 columns of data to create 3 levels of categories.
  
 == Changelog ==
+= 0.2.3 =
+* Public Messages
+    * This update includes changes for both paid and free editions
+    * Good luck to all countries in the Olympics, but being British I especially want to see us getting more golds this time around 
+* Bug Fixes
+    * Error regarding ksort() in function wtgcsv_get_array_nextkey()
+    * Undefined function wtgcsv_exit_forbidden_request() (function and function called was removed)
+    * PHP 5.2 related bugs have been fixed
+* General Improvements
+    * Plugin now supports PHP 5.2 
+    * New random value shortcode panel added as part of text spinning (text spinning ability test and working well)
+    * New advanced shortcode called "wtgcsv_random_advanced"
+    * New basic shortcode called "wtgcsv_random_basic"  
+* Technical Improvements
+    * Panel added for displaying $wtgcsv_textspin_array dump on the Text Spinning screen
+    * add_shortcode function is now being used in wordpresscsvimporter.php
+    * Error regarding ksort() in function wtgcsv_get_array_nextkey(), returning from function if no array passed now (will also log the event)
+    * Function wtgcsv_exit_forbidden_request() removed
+* Known Issues
+    * Lightbox type overlay applied by jQuery UI dialogue, on 2. Your Projects page, appears to have two overlays (there is a light gap between two of them)
+* Web Services, Support and Websites changes
+    * Updated specifications page
+
 = 0.2.2 =
+* Public Messages
+    * Our heart goes to the victims in Colorado especially the 4 month old baby and 6 year old girl.
 * Bug Fixes
     * Undefined variable $wtgcsv_is_free when creating post creation project
     * Undefined variable $wtgcsv_is_free on More page
@@ -129,19 +154,17 @@ not push users through a linear step by step process.
 * Web Services, Support and Websites changes
     * Support page updated: http://www.wordpresscsvimporter.com/support
     * New page explaining Multiple Table Project panel: http://www.wordpresscsvimporter.com/feature-guides/multiple-table-project-panel
-* Public Messages
-    * Our heart goes to the victims in Colorado especially the 4 month old baby and 6 year old girl.
 
 = 0.2.1 =
+* Public Messages
+    * Donations help to continue this project, even $5.00 makes a difference, send to paypal@wordpresscsvimporter.com
 * Bug Fixes
     * Field count was not being submitted for some selected CSV files
 * General Improvements
     * None
 * Web Services, Support and Websites changes
     * None
-* Public Messages
-    * Donations help to continue this project, even $5.00 makes a difference, send to paypal@wordpresscsvimporter.com
-    
+
 = 0.2.0 =
 * Bug Fixes
     * A data import update query was fixed
@@ -154,25 +177,25 @@ not push users through a linear step by step process.
     * None
     
 = 0.1.9 =
+* Public Messages
+    * Happy Bastille Day, just make it a weekend
 * Bug Fixes
     * Missing file warning for a file no longer included in package
 * Interface Improvements
     * Message regarding missing files now includes the expected path
 * Web Services, Support and Websites changes
     * Plugin no longer checks web service status, not required until web services are complete
-* Public Messages
-    * Happy Bastille Day, just make it a weekend
-    
+
 = 0.1.8 =
+* Public Messages
+    * Thanks to Eric from Quebec for days of good feedback
 * Bug Fixes
     * Error related to wtgcsv_sql_query_unusedrecords_singletable() missing parameter
 * Interface Improvements
     * None
 * Web Services, Support and Websites changes
     * New YouTube video, a lot more to come: http://www.youtube.com/watch?v=uGA8R0PVR8M
-* Public Messages
-    * Thanks to Eric from Quebec for days of good feedback
-    
+       
 = 0.1.7 = 
 * Added support to read CSV files using 2 different methods: PEAR CSV and fget/fgetcsv (each method often suits different files or purposes)
 * Can select files separator on the Test CSV File panel

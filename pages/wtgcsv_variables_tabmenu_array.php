@@ -21,7 +21,7 @@ function wtgcsv_page_show_hide($package_allowed = 0){
     }elseif($wtgcsv_is_free && $package_allowed == 0){
         return true;     
     }elseif($wtgcsv_is_free && $package_allowed == 1){
-        return false;// paid edition page not be displayed in free edition
+        return false;// paid edition page only, not be displayed in free edition
     }
     return true;
 }
@@ -467,7 +467,7 @@ $wtgcsv_mpt_arr['projects']['tabs'][12]['label'] = 'Text Spinning';
 $wtgcsv_mpt_arr['projects']['tabs'][12]['name'] = 'textspinning';
 $wtgcsv_mpt_arr['projects']['tabs'][12]['helpurl'] = 'http://www.wordpresscsvimporter.com/';
 $wtgcsv_mpt_arr['projects']['tabs'][12]['allowhide'] = true;// is tab screen allowed to be hidden (boolean)
-$wtgcsv_mpt_arr['projects']['tabs'][12]['display'] = wtgcsv_page_show_hide(2);
+$wtgcsv_mpt_arr['projects']['tabs'][12]['display'] = wtgcsv_page_show_hide(1);
 // 2. Project sub page 1 tab 13
 $wtgcsv_mpt_arr['projects']['tabs'][13]['active'] = true;
 $wtgcsv_mpt_arr['projects']['tabs'][13]['slug'] = 'tab13_pageprojects';

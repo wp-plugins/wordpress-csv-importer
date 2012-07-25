@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Wordpress CSV Importer
-Version: 0.2.2
+Version: 0.2.3
 Plugin URI: http://www.wordpresscsvimporter.com
 Description: Wordpress CSV Importer released 2012 by Zara Walsh and Ryan Bayne
 Author: Zara Walsh
@@ -35,9 +35,9 @@ if(!is_admin() || defined('DOING_AJAX') && DOING_AJAX){
 ### TODO:HIGHPRIORITY, detect paid edition folder automatically, if not found set as free edition
 $wtgcsv_is_free = true;// changing this in free copy does not activate a paid edition, it may break the plugin
 $wtgcsv_is_dev = false;// boolean, true displays more panels with even more data i.e. array dumps
-$wtgcsv_currentversion = '0.2.2';// this value should not be relied on but only used for guidance
+$wtgcsv_currentversion = '0.2.3';// this value should not be relied on but only used for guidance
 $wtgcsv_php_version_tested = '5.3.1';// current version the plugin is being developed on
-$wtgcsv_php_version_minimum = '5.3.0';// minimum version required for plugin to operate
+$wtgcsv_php_version_minimum = '5.2.17';// minimum version required for plugin to operate
 $wtgcsv_pluginname = 'wordpresscsvimporter';// should not be used to make up paths
 $wtgcsv_homeslug = $wtgcsv_pluginname;// @todo page slug for plugin main page used in building menus
 $wtgcsv_isbeingactivated = false;
@@ -152,12 +152,26 @@ $wtgcsv_dataimportjobs_array = wtgcsv_get_option_dataimportjobs_array();
 $wtgcsv_currentproject_code = wtgcsv_get_current_project_code();
 $wtgcsv_project_array = wtgcsv_get_project_array($wtgcsv_currentproject_code);
 $wtgcsv_projectslist_array = wtgcsv_get_projectslist();
-
+$wtgcsv_textspin_array = wtgcsv_get_option_textspin_array();
+        
 // get all other admin variables    
 $wtgcsv_was_installed = wtgcsv_was_installed();// boolean - indicates if a trace of previous installation found       
 $wtgcsv_schedule_array = wtgcsv_get_option_schedule_array();
 $wtgcsv_panels_closed = true;// boolean true forces all panels closed, false opens them all
 
+####################################################
+####                                            ####
+####               Add Shortcodes               ####
+#### We will only add shortcodes when rules set ####
+####################################################
+if(!$wtgcsv_is_free){
+    // add less advanced shortcodes, those that use values in shortcode itself
+    add_shortcode( 'wtgcsv_random_basic', 'wtgcsv_shortcode_textspinning_randombasic' );
+    
+    if(isset($wtgcsv_textspin_array['randomvalue'])){
+        add_shortcode( 'wtgcsv_random_advanced', 'wtgcsv_shortcode_textspinning_randomadvanced' );    
+    }
+}
 
 ####################################################
 ####                                            ####

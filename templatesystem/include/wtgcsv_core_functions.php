@@ -1498,15 +1498,6 @@ function wtgcsv_get_array_lastkey($array){
 }
 
 /**
-* Get arrays next key (only works with numeric key)
-*/
-function wtgcsv_get_array_nextkey($array){
-    ksort($array);
-    end($array);
-    return key($array) + 1;
-}
-
-/**
 * Gets the schedule array from wordpress option table.
 * Array [times] holds permitted days and hours.
 * Array [limits] holds the maximum post creation numbers 
@@ -1578,6 +1569,34 @@ function wtgcsv_get_option_jobtable_array(){
         return false;
     }
     return $val;    
+}
+
+/**
+* Gets the text spin array ($wtgcsv_textspin_array) if stored in wp_option table 
+*/
+function wtgcsv_get_option_textspin_array(){
+    $textsspin_array = get_option('wtgcsv_textspin');
+    $val = maybe_unserialize($textsspin_array);
+    if(!is_array($val)){
+        return false;
+    }
+    return $val;    
+}
+
+/**
+* Updates option record for $wtgcsv_textspin_array
+* 
+* @param mixed $textspin_array
+*/
+function wtgcsv_update_option_textspin($textspin_array){
+    $textspin_array_seralized = maybe_serialize($textspin_array);
+    $result = update_option('wtgcsv_textspin',$textspin_array_seralized);
+    $wperror_result = wtgcsv_is_WP_Error($result);
+    if($wperror_result){
+        return false;
+    }else{
+        return true;
+    }    
 }
 
 /**
@@ -1728,5 +1747,19 @@ function wtgcsv_establish_csvfile_fieldnumber($csvfile_name,$separator){
 
     $header_array = explode($separator,$header_row_string);// explode the header row 
     return count( $header_array );// count number of values in array    
-}       
+}     
+
+/**
+* Get arrays next key (only works with numeric key)
+*/
+function wtgcsv_get_array_nextkey($array){
+    if(!is_array($array)){
+        ### TODO:CRITICAL,log this issue,a bug has been reported with it. 
+        return 1;   
+    }
+    
+    ksort($array);
+    end($array);
+    return key($array) + 1;
+}  
 ?>

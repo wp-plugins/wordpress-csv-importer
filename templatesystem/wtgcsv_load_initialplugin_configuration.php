@@ -5,9 +5,6 @@
 ####                                                                                            ####
 #################################################################################################### 
 
-//avoid direct calls to this file where wp core files not present
-wtgcsv_exit_forbidden_request();
-
 // early php version compatibility check
 wtgcsv_php_version_check_wp_die();
   
